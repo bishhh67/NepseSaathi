@@ -100,13 +100,16 @@ CACHES = {
 }
 
 
-# settings.py - Add at the bottom
 
-# Google Gemini API Configuration
-GEMINI_API_KEY = "AIzaSyDuCdPkzabLzJZNbsTRAmTV2NUulbjPTAs"  # Replace with your actual API key
 
 # Cache duration for AI analysis (6 hours - market doesn't change much)
 AI_ANALYSIS_CACHE_DURATION = 21600  # 6 hours in seconds
 
 # Enable/disable AI features (set False for maintenance)
 AI_ANALYSIS_ENABLED = True
+
+
+# settings.py
+GROQ_API_KEY = "sk_Sh2ttYtbEH9J6YTiaAlMWGdyb3FYmeNCDFo1i79r4xhWbZc7XEXj"
+
+

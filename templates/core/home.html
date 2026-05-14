@@ -10,466 +10,233 @@
 <!-- ═══════════════════════════════════════════════════
      TICKER TAPE
 ════════════════════════════════════════════════════ -->
-
-
-<!-- ═══════════════════════════════════════════════════
-     SECTION 1 — HERO
-════════════════════════════════════════════════════ -->
-<!-- MARKET SNAPSHOT DIV - Fixed Version -->
-<div class="market-snapshot-wrapper" style="max-width: 85%; margin: 0 auto; padding-top: 100px;">
+<div class="market-snapshot-wrapper" style="max-width: 90%; margin: 0 auto; padding-top: 100px;">
     
     {% if market_data.close == 0 %}
-    <!-- Data Loading Message -->
-    <div class="bg-yellow-900/30 border-2 border-yellow-600 rounded-2xl p-8 text-center">
-        <div class="text-yellow-400 text-6xl mb-4">📊</div>
-        <h3 class="text-white text-2xl font-bold mb-3">Loading Market Data</h3>
-        <p class="text-gray-400 mb-4">{{ market_summary }}</p>
-        <p class="text-gray-500 text-sm">Please ensure nepse_data.csv is placed in core/data/ folder</p>
+    <div class="bg-gray-800 rounded-xl p-8 text-center">
+        <div class="text-6xl mb-4">📊</div>
+        <h3 class="text-white text-xl font-bold mb-3">Loading Market Data</h3>
+        <p class="text-gray-400">{{ market_summary }}</p>
     </div>
     {% else %}
     
-    <!-- Main Market Snapshot Card -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-        
-        <!-- LEFT SIDE: Stats -->
-        <div class="animate-fade-up">
-            <!-- Market Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6 
-                {% if market_data.direction_color == 'green' %}border-green-500/30 bg-green-500/10 text-green-400
-                {% elif market_data.direction_color == 'red' %}border-red-500/30 bg-red-500/10 text-red-400
-                {% else %}border-yellow-500/30 bg-yellow-500/10 text-yellow-400{% endif %}">
-                <span class="w-2 h-2 rounded-full {% if market_data.direction_color == 'green' %}bg-green-400 animate-pulse
-                     {% elif market_data.direction_color == 'red' %}bg-red-400
-                     {% else %}bg-yellow-400{% endif %}"></span>
-                <span class="text-sm font-semibold">{{ market_data.direction }} Market</span>
-                <span class="text-xs">{{ market_data.direction_icon }}</span>
+    <!-- MAIN SNAPSHOT -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- LEFT COLUMN -->
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm mb-4 
+                {% if market_data.direction_color == 'green' %}bg-green-900/30 text-green-400
+                {% elif market_data.direction_color == 'red' %}bg-red-900/30 text-red-400
+                {% else %}bg-gray-700 text-gray-300{% endif %}">
+                <span>{{ market_data.direction_icon }}</span>
+                <span>{{ market_data.direction }} Market</span>
             </div>
-
-            <h2 class="text-3xl sm:text-4xl font-bold mb-2">
-                NEPSE <span class="gradient-text">Market Snapshot</span>
-            </h2>
+            <h1 class="text-3xl font-bold text-white">NEPSE Market Snapshot</h1>
+            <p class="text-gray-400 text-sm mb-6">{{ market_data.date }}</p>
             
-            <p class="text-slate-400 text-md mb-6">
-                {{ market_data.date }}
-            </p>
-
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-[#1E293B]/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
-                    <p class="text-slate-400 text-sm mb-1">Closing Point</p>
-                    <p class="text-white text-3xl font-bold font-mono">{{ market_data.close|floatformat:2 }}</p>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <p class="text-gray-400 text-xs">Closing</p>
+                    <p class="text-white text-2xl font-bold">{{ market_data.close|floatformat:2 }}</p>
                 </div>
-                
-                <div class="bg-[#1E293B]/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
-                    <p class="text-slate-400 text-sm mb-1">Day Range</p>
-                    <p class="text-white text-xl font-bold font-mono">
-                        {{ market_data.low|floatformat:0 }} - {{ market_data.high|floatformat:0 }}
-                    </p>
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <p class="text-gray-400 text-xs">Day Range</p>
+                    <p class="text-white text-lg font-bold">{{ market_data.low|floatformat:0 }} - {{ market_data.high|floatformat:0 }}</p>
                 </div>
-                
-                <div class="bg-[#1E293B]/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
-                    <p class="text-slate-400 text-sm mb-1">Point Change</p>
-                    <p class="{% if market_data.point_change >= 0 %}text-green-400{% else %}text-red-400{% endif %} text-2xl font-bold font-mono">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <p class="text-gray-400 text-xs">Change</p>
+                    <p class="{% if market_data.point_change >= 0 %}text-green-400{% else %}text-red-400{% endif %} text-xl font-bold">
                         {% if market_data.point_change >= 0 %}+{% endif %}{{ market_data.point_change|floatformat:2 }}
                     </p>
                 </div>
-                
-                <div class="bg-[#1E293B]/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
-                    <p class="text-slate-400 text-sm mb-1">% Change</p>
-                    <p class="{% if market_data.percent_change >= 0 %}text-green-400{% else %}text-red-400{% endif %} text-2xl font-bold font-mono">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <p class="text-gray-400 text-xs">% Change</p>
+                    <p class="{% if market_data.percent_change >= 0 %}text-green-400{% else %}text-red-400{% endif %} text-xl font-bold">
                         {% if market_data.percent_change >= 0 %}+{% endif %}{{ market_data.percent_change|floatformat:2 }}%
                     </p>
                 </div>
             </div>
-
-            <!-- Key Insights -->
-            {% if market_insights %}
-            <div class="mb-8 space-y-2">
-                {% for insight in market_insights %}
-                <div class="flex items-center gap-2 text-sm text-slate-300">
-                    <span>{{ insight }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
+            
+            {% for insight in market_insights %}
+            <div class="text-sm text-gray-400">{{ insight }}</div>
+            {% endfor %}
         </div>
-
-        <!-- RIGHT SIDE: 30-Day Chart -->
-        <div class="animate-float" style="animation-delay:0.3s">
-            <div class="relative bg-[#1E293B] border border-slate-700/50 rounded-2xl p-5 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-                
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">NEPSE Index - 30 Day Performance</p>
-                        <div class="flex items-end gap-2 mt-0.5">
-                            <span class="text-2xl font-bold text-white font-mono">{{ market_data.close|floatformat:2 }}</span>
-                            <span class="{% if market_data.percent_change >= 0 %}text-green-400{% else %}text-red-400{% endif %} text-sm font-semibold mb-0.5">
-                                {% if market_data.percent_change >= 0 %}▲{% else %}▼{% endif %} {{ market_data.percent_change|floatformat:2 }}%
-                            </span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs text-slate-500">Last 30 Days</span>
-                    </div>
+        
+        <!-- RIGHT COLUMN - CHART -->
+        <div>
+            <div class="bg-gray-800 rounded-xl p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <p class="text-gray-400 text-sm">30-Day Performance</p>
+                    <p class="text-white font-bold">{{ market_data.close|floatformat:2 }}</p>
                 </div>
-
-                <!-- Chart Canvas -->
-                <div class="relative h-64 mb-4 rounded-lg overflow-hidden bg-slate-900/50">
-                    <canvas id="nepse30DayChart" width="500" height="256" class="w-full h-full"></canvas>
-                </div>
-
-                <!-- Mini Stats -->
-                <div class="flex justify-between mt-4 pt-3 border-t border-slate-700/40 text-xs">
-                    <div><span class="text-slate-500">Trend</span> <span class="text-white font-medium ml-1">{{ market_data.trend }}</span></div>
-                    <div><span class="text-slate-500">High</span> <span class="text-white font-medium ml-1">{{ market_data.high|floatformat:0 }}</span></div>
-                    <div><span class="text-slate-500">Low</span> <span class="text-white font-medium ml-1">{{ market_data.low|floatformat:0 }}</span></div>
+                <div class="h-64"><canvas id="nepse30DayChart"></canvas></div>
+                <div class="flex justify-between mt-4 pt-3 border-t border-gray-700 text-xs text-gray-500">
+                    <div>Trend: <span class="text-white">{{ market_data.trend }}</span></div>
+                    <div>High: <span class="text-white">{{ market_data.high|floatformat:0 }}</span></div>
+                    <div>Low: <span class="text-white">{{ market_data.low|floatformat:0 }}</span></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Market Summary Section -->
-    <div class="mt-8 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl p-6 border border-slate-700">
-        <h3 class="text-white text-xl font-bold mb-3 flex items-center gap-2">
-            <span>📊</span> Market Summary
-        </h3>
-        <p class="text-slate-300 leading-relaxed">
-            {{ market_summary }}
+    <!-- SECTION 1: HARDCODED MARKET SUMMARY -->
+    <div class="mt-6 bg-gray-800 rounded-xl p-5">
+        <h3 class="text-white font-semibold mb-2">📋 Market Summary</h3>
+        <p class="text-gray-300 text-sm leading-relaxed">{{ market_summary }}</p>
+    </div>
+
+    <!-- SECTION 2: HARDCODED KEY MARKET FACTORS -->
+    <div class="mt-6">
+        <h3 class="text-white font-semibold mb-3">🔍 Key Market Factors</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {% for factor in market_factors %}
+            <div class="bg-gray-800 rounded-lg p-3">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xl">{{ factor.icon }}</span>
+                    <h4 class="text-white text-sm font-semibold">{{ factor.title }}</h4>
+                </div>
+                <p class="text-gray-400 text-xs">{{ factor.description }}</p>
+                {% if factor.impact %}
+                <span class="inline-block text-xs mt-2 px-2 py-0.5 rounded-full 
+                    {% if factor.impact == 'Positive' %}bg-green-900/50 text-green-400
+                    {% elif factor.impact == 'Negative' %}bg-red-900/50 text-red-400
+                    {% else %}bg-gray-700 text-gray-400{% endif %}">
+                    {{ factor.impact }}
+                </span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- SECTION 3: TECHNICAL ANALYSIS (from market_analyzer) -->
+    {% if technical_report %}
+    <div class="mt-6 bg-gray-800 rounded-xl p-5">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
+            <h3 class="text-white font-semibold text-lg">📊 Technical Analysis & Market Report</h3>
+            <span class="text-xs bg-blue-600/30 text-blue-300 px-3 py-1 rounded-full">
+                {{ technical_news|length }} News Sources
+            </span>
+        </div>
+        
+        <!-- Technical Report Content -->
+        <div class="text-gray-300 text-sm whitespace-pre-line leading-relaxed">
+            {{ technical_report|linebreaks }}
+        </div>
+        
+        <!-- News Items if available -->
+        {% if technical_news %}
+        <div class="mt-6">
+            <h4 class="text-yellow-300 font-semibold mb-3">📰 Latest Market News</h4>
+            <div class="space-y-3">
+                {% for news in technical_news|slice:":5" %}
+                <div class="bg-gray-700/50 p-3 rounded-lg">
+                    <p class="text-white text-sm font-semibold">{{ news.title }}</p>
+                    <div class="flex items-center gap-3 mt-1">
+                        <span class="text-xs text-gray-400">📅 {{ news.date }}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-purple-900/50 text-purple-300">{{ news.category|title }}</span>
+                        <span class="text-xs text-gray-400">Source: {{ news.source }}</span>
+                    </div>
+                    <p class="text-gray-400 text-xs mt-2">{{ news.summary|truncatechars:150 }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="mt-4 p-3 bg-yellow-900/20 rounded-lg">
+            <p class="text-yellow-400 text-xs">⚠️ News feeds temporarily unavailable. Analysis based on technical data only.</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- SECTION 4: AI-POWERED DEEP ANALYSIS (from ai_market_analyzer) -->
+    {% if ai_analysis and ai_analysis.analysis %}
+    <div class="mt-6 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-xl p-6 border border-purple-700">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-purple-700">
+            <h3 class="text-white font-bold text-xl flex items-center gap-2">
+                <span>🤖</span> AI-Powered Deep Market Analysis
+            </h3>
+            <span class="text-xs bg-purple-600/30 text-purple-300 px-3 py-1 rounded-full">
+                Gemini AI | {{ ai_analysis.generated_at }}
+            </span>
+        </div>
+        
+        <!-- AI Analysis Content -->
+        <div class="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+            {{ ai_analysis.analysis }}
+        </div>
+        
+        <!-- Quick Stats from AI -->
+        <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-gray-800 rounded p-2 text-center">
+                <p class="text-gray-400 text-xs">30-Day Return</p>
+                <p class="{% if ai_analysis.monthly_return >= 0 %}text-green-400{% else %}text-red-400{% endif %} font-bold text-lg">
+                    {{ ai_analysis.monthly_return|floatformat:1 }}%
+                </p>
+            </div>
+            <div class="bg-gray-800 rounded p-2 text-center">
+                <p class="text-gray-400 text-xs">RSI (14)</p>
+                <p class="{% if ai_analysis.rsi > 70 %}text-red-400{% elif ai_analysis.rsi < 30 %}text-green-400{% else %}text-yellow-400{% endif %} font-bold text-lg">
+                    {{ ai_analysis.rsi|floatformat:0 }}
+                </p>
+            </div>
+            <div class="bg-gray-800 rounded p-2 text-center">
+                <p class="text-gray-400 text-xs">Support</p>
+                <p class="text-white font-bold text-lg">{{ ai_analysis.support|floatformat:0 }}</p>
+            </div>
+            <div class="bg-gray-800 rounded p-2 text-center">
+                <p class="text-gray-400 text-xs">Resistance</p>
+                <p class="text-white font-bold text-lg">{{ ai_analysis.resistance|floatformat:0 }}</p>
+            </div>
+        </div>
+        
+        <div class="mt-4 pt-3 border-t border-purple-800">
+            <p class="text-gray-500 text-xs text-center">
+                🤖 AI-generated analysis using Google Gemini. For educational purposes only.
+            </p>
+        </div>
+    </div>
+    {% elif ai_analysis is None %}
+    <div class="mt-6 bg-yellow-900/20 rounded-xl p-4 border border-yellow-700">
+        <p class="text-yellow-400 text-sm text-center">
+            ⚠️ AI analysis temporarily unavailable. Technical analysis shown above.
         </p>
     </div>
-
-    <!-- Market Factors -->
-    <div class="mt-8">
-        <h3 class="text-white text-xl font-bold mb-4 flex items-center gap-2">
-            <span>🔍</span> Key Market Factors
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {% for factor in market_factors %}
-            <div class="bg-[#1E293B]/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50 hover:border-slate-600 transition-all">
-                <div class="flex items-start gap-3">
-                    <div class="text-2xl">{{ factor.icon }}</div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-semibold text-sm mb-1">{{ factor.title }}</h4>
-                        <p class="text-slate-400 text-xs leading-relaxed">{{ factor.description }}</p>
-                        {% if factor.impact %}
-                        <span class="inline-block text-xs mt-2 px-2 py-0.5 rounded-full 
-                            {% if factor.impact == 'Positive' %}bg-green-500/20 text-green-400
-                            {% elif factor.impact == 'Negative' %}bg-red-500/20 text-red-400
-                            {% else %}bg-yellow-500/20 text-yellow-400{% endif %}">
-                            {{ factor.impact }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    
-    <!-- AI-Powered Deep Analysis Section -->
-
-
-<!-- AI-Powered Deep Analysis Section -->
-<!-- Comprehensive Market Analysis -->
-{% if ai_analysis %}
-<div class="mt-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-gray-700">
-    
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
-            <span class="text-3xl">📊</span>
-            Comprehensive Market Analysis
-        </h3>
-        <div class="flex items-center gap-3">
-            <span class="text-xs bg-purple-600/20 text-purple-300 px-3 py-1 rounded-full">
-                {{ ai_analysis.news_count }} News Sources
-            </span>
-            <span class="text-xs bg-green-600/20 text-green-300 px-3 py-1 rounded-full">
-                Live Analysis
-            </span>
-        </div>
-    </div>
-    
-    <!-- Market Sentiment Banner -->
-    <div class="mb-6 p-4 rounded-xl {% if 'BULLISH' in ai_analysis.sentiment %}bg-green-900/30 border border-green-700/50{% elif 'BEARISH' in ai_analysis.sentiment %}bg-red-900/30 border border-red-700/50{% else %}bg-yellow-900/30 border border-yellow-700/50{% endif %}">
-        <div class="flex items-center justify-between flex-wrap gap-3">
-            <div>
-                <p class="text-gray-400 text-sm">Current Market Sentiment</p>
-                <p class="text-2xl font-bold text-white">{{ ai_analysis.sentiment }}</p>
-                <p class="text-gray-400 text-sm mt-1">{{ ai_analysis.sentiment_detail }}</p>
-            </div>
-            <div class="text-right">
-                <p class="text-gray-400 text-sm">RSI (14-day)</p>
-                <p class="text-3xl font-bold {% if ai_analysis.key_levels.rsi > 70 %}text-red-400{% elif ai_analysis.key_levels.rsi < 30 %}text-green-400{% else %}text-yellow-400{% endif %}">
-                    {{ ai_analysis.key_levels.rsi }}
-                </p>
-                <p class="text-gray-500 text-xs">
-                    {% if ai_analysis.key_levels.rsi > 70 %}Overbought{% elif ai_analysis.key_levels.rsi < 30 %}Oversold{% else %}Neutral{% endif %}
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Technical Analysis -->
-    <div class="mb-6">
-        <h4 class="text-blue-300 font-semibold mb-3 text-lg flex items-center gap-2">
-            <span>📈</span> Technical Analysis
-        </h4>
-        <div class="bg-slate-900/50 rounded-xl p-4">
-            <div class="prose prose-invert max-w-none">
-                {% for line in ai_analysis.technical_analysis.splitlines %}
-                    {% if '📈' in line or '📊' in line or '🔄' in line or '🎯' in line or '📦' in line %}
-                        <p class="text-purple-300 font-semibold mt-3 mb-2">{{ line }}</p>
-                    {% elif line.strip %}
-                        <p class="text-gray-300 text-sm mb-1">{{ line }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    
-    <!-- Top 5 News that Affected Market -->
-    {% if ai_analysis.top_news %}
-    <div class="mb-6">
-        <h4 class="text-yellow-300 font-semibold mb-3 text-lg flex items-center gap-2">
-            <span>📰</span> Top 5 News Affecting the Market
-        </h4>
-        <div class="space-y-3">
-            {% for news in ai_analysis.top_news|slice:":5" %}
-            <div class="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 p-3 rounded-lg border-l-4 border-yellow-500">
-                <p class="text-white font-semibold text-sm">{{ forloop.counter }}. {{ news.title }}</p>
-                <div class="flex items-center gap-3 mt-2">
-                    <span class="text-xs text-gray-500">📅 {{ news.date }}</span>
-                    <span class="text-xs text-purple-400">Source: {{ news.source }}</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300">Market Moving</span>
-                </div>
-                <p class="text-gray-400 text-xs mt-2">{{ news.summary|truncatechars:200 }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
     {% endif %}
-    
-    <!-- Categorized News by Sector -->
-    {% if ai_analysis.categorized_news %}
-    <div class="mb-6">
-        <h4 class="text-green-300 font-semibold mb-3 text-lg flex items-center gap-2">
-            <span>🏭</span> Sector-Wise News Impact
-        </h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {% for category, news_list in ai_analysis.categorized_news.items %}
-            {% if news_list %}
-            <div class="bg-slate-900/50 rounded-lg p-3">
-                <p class="text-purple-300 font-semibold text-sm mb-2">{{ category }}</p>
-                <ul class="space-y-1">
-                    {% for news in news_list|slice:":2" %}
-                    <li class="text-gray-400 text-xs">• {{ news.title|truncatechars:80 }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Key Market Drivers -->
-    <div class="mb-6">
-        <h4 class="text-orange-300 font-semibold mb-3 text-lg flex items-center gap-2">
-            <span>🔑</span> Key Market Drivers & Reasons
-        </h4>
-        <div class="space-y-2">
-            {% for driver in ai_analysis.market_drivers %}
-            <div class="bg-slate-900/50 p-3 rounded-lg">
-                <p class="text-gray-300 text-sm">{{ driver }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    
-    <!-- Weekly Outlook -->
-    <div class="mb-6 p-4 bg-gradient-to-r from-blue-900/20 to-cyan-900/20 rounded-xl border border-blue-700/30">
-        <h4 class="text-blue-300 font-semibold mb-3 text-lg flex items-center gap-2">
-            <span>🔮</span> Weekly Market Outlook
-        </h4>
-        <div class="prose prose-invert max-w-none">
-            {% for line in ai_analysis.weekly_outlook.splitlines %}
-                {% if '📅' in line or '📆' in line or '🎯' in line or '⚡' in line %}
-                    <p class="text-yellow-300 font-semibold mt-3 mb-2">{{ line }}</p>
-                {% elif line.strip %}
-                    <p class="text-gray-300 text-sm mb-1">{{ line }}</p>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    
-    <!-- Investment Recommendation -->
-    <div class="mb-6 p-4 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-xl border border-purple-700/30">
-        <h4 class="text-purple-300 font-semibold mb-3 text-lg flex items-center gap-2">
-            <span>💡</span> Investment Recommendation
-        </h4>
-        <div class="prose prose-invert max-w-none">
-            {% for line in ai_analysis.investment_recommendation.splitlines %}
-                {% if '**Strategy**' in line %}
-                    <p class="text-green-400 font-bold mt-2">{{ line|cut:'**' }}</p>
-                {% elif '**Rationale**' in line %}
-                    <p class="text-blue-300 font-semibold mt-2">{{ line|cut:'**' }}</p>
-                {% elif '**Actionable Steps**' in line %}
-                    <p class="text-yellow-300 font-semibold mt-2">{{ line|cut:'**' }}</p>
-                elif line.strip|slice:":1" == "1" or line.strip|slice:":1" == "2" or line.strip|slice:":1" == "3" or line.strip|slice:":1" == "4" or line.strip|slice:":1" == "5" %}
-                    <p class="text-gray-300 text-sm ml-4">{{ line }}</p>
-                {% elif line.strip %}
-                    <p class="text-gray-300 text-sm">{{ line }}</p>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    
-    <!-- Key Levels Table -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-        <div class="bg-slate-900/50 p-3 rounded-lg text-center">
-            <p class="text-gray-500 text-xs">Support</p>
-            <p class="text-white font-bold">{{ ai_analysis.key_levels.support|floatformat:0 }}</p>
-        </div>
-        <div class="bg-slate-900/50 p-3 rounded-lg text-center">
-            <p class="text-gray-500 text-xs">Resistance</p>
-            <p class="text-white font-bold">{{ ai_analysis.key_levels.resistance|floatformat:0 }}</p>
-        </div>
-        <div class="bg-slate-900/50 p-3 rounded-lg text-center">
-            <p class="text-gray-500 text-xs">5-Day MA</p>
-            <p class="text-white font-bold">{{ ai_analysis.key_levels.ma5|floatformat:0 }}</p>
-        </div>
-        <div class="bg-slate-900/50 p-3 rounded-lg text-center">
-            <p class="text-gray-500 text-xs">20-Day MA</p>
-            <p class="text-white font-bold">{{ ai_analysis.key_levels.ma20|floatformat:0 }}</p>
-        </div>
-    </div>
-    
 
-<!-- ....................-->
-    <!-- Main Disclaimer -->
-    <div class="mt-6 p-3 bg-yellow-900/10 rounded-lg border border-yellow-800/30">
-        <p class="text-yellow-600/80 text-xs text-center">
-            ⚠️ Disclaimer: These are analytical interpretations based on available market data. 
-            This is not investment advice. Please consult with a financial advisor.
+    <!-- FINAL DISCLAIMER -->
+    <div class="mt-6 p-3 bg-gray-800 rounded-lg">
+        <p class="text-gray-500 text-xs text-center">
+            ⚠️ Disclaimer: These are analytical interpretations based on available market signals and public news. 
+            This is not investment advice. Please consult with a financial advisor before making investment decisions.
         </p>
     </div>
     
     {% endif %}
 </div>
 
-<!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const chartLabels = {{ market_data.chart_labels|safe }};
-        const chartValues = {{ market_data.chart_values|safe }};
-        
-        if (chartLabels.length > 0 && chartValues.length > 0) {
+        const labels = {{ market_data.chart_labels|safe }};
+        const values = {{ market_data.chart_values|safe }};
+        if (labels && labels.length && values && values.length) {
             const ctx = document.getElementById('nepse30DayChart').getContext('2d');
-            
-            const isPositive = chartValues[chartValues.length - 1] >= chartValues[0];
-            const lineColor = isPositive ? '#10b981' : '#ef4444';
-            const gradient = ctx.createLinearGradient(0, 0, 0, 256);
-            gradient.addColorStop(0, lineColor + '40');
-            gradient.addColorStop(1, lineColor + '00');
-            
+            const isPositive = values[values.length-1] >= values[0];
             new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: 'NEPSE Closing Price',
-                        data: chartValues,
-                        borderColor: lineColor,
-                        backgroundColor: gradient,
-                        borderWidth: 2.5,
-                        pointRadius: 2,
-                        pointHoverRadius: 5,
-                        pointBackgroundColor: lineColor,
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 1,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(30, 41, 59, 0.95)',
-                            titleColor: '#f3f4f6',
-                            bodyColor: '#d1d5db',
-                            borderColor: '#374151',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    return `Close: ${context.parsed.y.toFixed(2)}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)', drawBorder: false },
-                            ticks: { color: '#64748b', maxRotation: 45, minRotation: 45, font: { size: 10 } }
-                        },
-                        y: {
-                            grid: { color: 'rgba(51, 65, 85, 0.3)', drawBorder: false },
-                            ticks: { color: '#64748b', font: { size: 10 } }
-                        }
-                    }
-                }
+                data: { labels: labels, datasets: [{ data: values, borderColor: isPositive ? '#10b981' : '#ef4444', borderWidth: 2, pointRadius: 1, fill: false, tension: 0.3 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
             });
         }
     });
 </script>
 
 <style>
-    .animate-fade-up {
-        animation: fadeUp 0.6s ease-out;
-    }
-    
-    .animate-float {
-        animation: float 3s ease-in-out infinite;
-    }
-    
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    .gradient-text {
-        background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .market-snapshot-wrapper {
-            max-width: 95% !important;
-            padding-top: 80px !important;
-        }
-    }
+    .market-snapshot-wrapper { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    @media (max-width: 768px) { .market-snapshot-wrapper { max-width: 95% !important; padding-top: 80px !important; } }
 </style>
-
 <!-- ═══════════════════════════════════════════════════
      SECTION 2 — MARKET SNAPSHOT
 ════════════════════════════════════════════════════ -->
