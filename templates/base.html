@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}NEPSE Sathi — Nepal's Intelligent Stock Platform{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Learn, analyze, and make smarter stock market decisions with NEPSE Sathi — Nepal's most intelligent stock education platform.{% endblock %}" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary:   { DEFAULT: '#0F172A', light: '#1a2744' },
+            secondary: { DEFAULT: '#1E293B', hover: '#273548' },
+            accent:    { DEFAULT: '#0EA5E9', hover: '#38BDF8', dim: '#0369A1' },
+            gain:      '#22C55E',
+            loss:      '#EF4444',
+            muted:     '#64748B',
+            border:    '#1E293B',
+          },
+          fontFamily: {
+            display: ['"DM Sans"', 'sans-serif'],
+            mono:    ['"JetBrains Mono"', 'monospace'],
+          },
+          animation: {
+            'float':        'float 6s ease-in-out infinite',
+            'float-delay':  'float 6s ease-in-out 1.5s infinite',
+            'pulse-slow':   'pulse 4s cubic-bezier(0.4,0,0.6,1) infinite',
+            'fade-up':      'fadeUp 0.6s ease forwards',
+            'slide-right':  'slideRight 0.5s ease forwards',
+          },
+          keyframes: {
+            float:      { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-14px)' } },
+            fadeUp:     { from: { opacity: 0, transform: 'translateY(24px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+            slideRight: { from: { opacity: 0, transform: 'translateX(-20px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+          },
+          boxShadow: {
+            'card':   '0 4px 24px rgba(0,0,0,0.3)',
+            'glow':   '0 0 30px rgba(14,165,233,0.15)',
+            'glow-lg':'0 0 60px rgba(14,165,233,0.2)',
+          },
+          backdropBlur: { xs: '2px' },
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% load static %}{% static 'css/main.css' %}" />
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-[#0F172A] text-slate-100 font-display antialiased overflow-x-hidden">
+
+  <!-- Ambient background blobs -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+    <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-accent/5 blur-[120px]"></div>
+    <div class="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-accent/5 blur-[100px]"></div>
+    <div class="absolute top-[50%] left-[40%] w-[300px] h-[300px] rounded-full bg-indigo-500/5 blur-[80px]"></div>
+  </div>
+
+  {% include "components/navbar.html" %}
+
+  <main class="relative z-10">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "components/footer.html" %}
+
+  <!-- Custom JS -->
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

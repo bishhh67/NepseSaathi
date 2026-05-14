@@ -1,0 +1,193 @@
+/* NEPSE Sathi — Main Stylesheet */
+
+:root {
+  --c-primary:   #0F172A;
+  --c-secondary: #1E293B;
+  --c-accent:    #0EA5E9;
+  --c-gain:      #22C55E;
+  --c-loss:      #EF4444;
+  --c-muted:     #64748B;
+}
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0F172A; }
+::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+/* Selection */
+::selection { background: rgba(14,165,233,0.25); color: #fff; }
+
+/* Remove default outline, add custom focus */
+*:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- Reusable Components ---------- */
+
+.card {
+  background: #1E293B;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  border-color: rgba(14,165,233,0.2);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: var(--c-accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0.625rem;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 20px rgba(14,165,233,0.25);
+}
+.btn-primary:hover {
+  background: #38BDF8;
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(14,165,233,0.4);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  color: #cbd5e1;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 0.625rem;
+  transition: all 0.2s;
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-gain  { background: rgba(34,197,94,0.15);  color: #4ade80; }
+.badge-loss  { background: rgba(239,68,68,0.15);   color: #f87171; }
+.badge-info  { background: rgba(14,165,233,0.15);  color: #38bdf8; }
+.badge-warn  { background: rgba(234,179,8,0.15);   color: #facc15; }
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #fff 0%, var(--c-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section divider */
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+
+/* Mini chart line (SVG sparkline look) */
+.sparkline { stroke: var(--c-gain); fill: none; stroke-width: 2; }
+.sparkline-loss { stroke: var(--c-loss); }
+
+/* Ticker tape animation */
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-wrap { overflow: hidden; position: relative; }
+.ticker-inner { display: flex; animation: ticker 30s linear infinite; width: max-content; }
+.ticker-wrap:hover .ticker-inner { animation-play-state: paused; }
+
+/* Light theme overrides */
+html.light body                  { background: #f1f5f9; color: #0f172a; }
+html.light .card                 { background: #fff; border-color: #e2e8f0; }
+html.light #navbar-bg.scrolled   { background: rgba(241,245,249,0.9) !important; }
+html.light .btn-ghost            { color: #334155; border-color: #cbd5e1; }
+html.light .btn-ghost:hover      { background: #e2e8f0; }
+html.light .section-label        { color: #0369a1; }
+
+/* Fade-in on scroll (JS toggled) */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* Dashboard mockup specific */
+.chart-bar { transition: height 0.4s ease; }
+.chart-line-path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawLine 2s ease forwards 0.5s; }
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
+
+/* Glow pulse on accent elements */
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 12px rgba(14,165,233,0.3); }
+  50%      { box-shadow: 0 0 28px rgba(14,165,233,0.6); }
+}
+.glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
+
+
+
+
+/* Add these to your existing CSS */
+.btn-primary {
+    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+}
+
+.btn-ghost {
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(14, 165, 233, 0.5);
+    transform: translateY(-2px);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
