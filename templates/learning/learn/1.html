@@ -1,0 +1,457 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Lesson 1 - Introduction to NEPSE{% endblock %}
+
+{% block content %}
+
+
+
+1<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEPSE Course — English / नेपाली (Bilingual)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0b0e13;
+    --bg-card: #12161e;
+    --bg-card-alt: #1a1f2b;
+    --fg: #e4e7ec;
+    --fg-dim: #c0c5ce;
+    --fg-muted: #717d91;
+    --accent: #00d4a1;
+    --accent-dim: rgba(0,212,161,0.10);
+    --accent-mid: rgba(0,212,161,0.20);
+    --accent-glow: rgba(0,212,161,0.25);
+    --gold: #f0b840;
+    --gold-dim: rgba(240,184,64,0.10);
+    --purple: #8b7cf6;
+    --purple-dim: rgba(139,124,246,0.10);
+    --red: #ff5c5c;
+    --red-dim: rgba(255,92,92,0.10);
+    --border: #1f2636;
+    --radius: 16px;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:'Karla',sans-serif;line-height:1.78;
+    min-height:100vh;overflow-x:hidden;
+  }
+
+  .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-scene .dot-grid{
+    position:absolute;inset:0;opacity:0.035;
+    background-image:radial-gradient(circle,var(--accent) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .bg-scene .orb{position:absolute;border-radius:50%;filter:blur(140px);}
+  .bg-scene .orb{display:none;}
+
+  .container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:48px 24px 90px;}
+
+  .course-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-dim);border:1px solid var(--accent-mid);
+    color:var(--accent);font-size:12px;font-weight:700;
+    letter-spacing:0.8px;text-transform:uppercase;
+    padding:7px 18px;border-radius:100px;margin-bottom:24px;
+  }
+  .course-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s ease infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.9rem,4.8vw,2.7rem);
+    font-weight:700;line-height:1.18;margin-bottom:14px;
+  }
+  h1 .accent{color:var(--accent);}
+  .subtitle{font-size:1.02rem;color:var(--fg-muted);margin-bottom:36px;max-width:580px;}
+
+  h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.22rem;font-weight:600;margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  p{margin-bottom:13px;font-size:0.96rem;color:var(--fg-dim);}
+  strong{color:var(--fg);font-weight:600;}
+
+  .progress-wrap{margin-bottom:44px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--fg-muted);margin-bottom:8px;font-weight:600;letter-spacing:0.3px;}
+  .progress-track{height:5px;background:var(--bg-card-alt);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,var(--accent),#00e8b0);transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:30px 28px;
+    margin-bottom:24px;position:relative;overflow:hidden;
+  }
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card--explain::after{background:linear-gradient(90deg,var(--accent),transparent 70%);}
+  .card--example::after{background:linear-gradient(90deg,var(--gold),transparent 70%);}
+  .card--why::after{background:linear-gradient(90deg,var(--purple),transparent 70%);}
+  .card--action::after{background:linear-gradient(90deg,var(--red),transparent 70%);}
+  .card--recap::after{background:linear-gradient(90deg,var(--fg-muted),transparent 70%);}
+  .card--quiz::after{background:linear-gradient(90deg,var(--gold),var(--accent));}
+
+  .card-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;margin-bottom:14px;
+  }
+  .card--explain .card-icon{background:var(--accent-dim);color:var(--accent);}
+  .card--example .card-icon{background:var(--gold-dim);color:var(--gold);}
+  .card--why .card-icon{background:var(--purple-dim);color:var(--purple);}
+  .card--action .card-icon{background:var(--red-dim);color:var(--red);}
+  .card--recap .card-icon{background:rgba(113,125,145,0.10);color:var(--fg-muted);}
+  .card--quiz .card-icon{background:var(--gold-dim);color:var(--gold);}
+
+  ul{list-style:none;padding:0;margin-bottom:12px;}
+  ul li{position:relative;padding-left:22px;margin-bottom:9px;font-size:0.96rem;color:var(--fg-dim);}
+  ul li::before{content:'';position:absolute;left:3px;top:11px;width:7px;height:7px;border-radius:50%;}
+  .card--explain ul li::before{background:var(--accent);}
+  .card--example ul li::before{background:var(--gold);}
+  .card--why ul li::before{background:var(--purple);}
+  .card--action ul li::before{background:var(--red);}
+  .card--recap ul li::before{background:var(--fg-muted);width:5px;height:5px;top:12px;left:4px;}
+
+  .callout{border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+  .callout p{margin:0;font-size:0.94rem;}
+  .callout--accent{background:var(--accent-dim);border-left:3px solid var(--accent);}
+  .callout--gold{background:var(--gold-dim);border-left:3px solid var(--gold);}
+  .callout--red{background:var(--red-dim);border-left:3px solid var(--red);}
+
+  .svg-center{display:flex;justify-content:center;margin:22px 0;}
+  .svg-center svg{max-width:100%;height:auto;}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.93rem;}
+  thead th{
+    text-align:left;padding:11px 16px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-size:0.82rem;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;
+  }
+  thead th:first-child{border-radius:10px 0 0 0;}
+  thead th:last-child{border-radius:0 10px 0 0;}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--fg-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .quiz-block{margin-bottom:28px;}
+  .quiz-block:last-of-type{margin-bottom:0;}
+  .quiz-question{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.98rem;font-weight:600;color:var(--fg);
+    margin-bottom:14px;display:flex;gap:10px;
+  }
+  .quiz-qnum{
+    flex-shrink:0;width:26px;height:26px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--gold-dim);color:var(--gold);font-size:12px;font-weight:700;
+  }
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-opt{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 18px;border-radius:12px;
+    background:var(--bg-card-alt);border:1.5px solid var(--border);
+    cursor:pointer;transition:all 0.25s ease;
+    font-size:0.94rem;color:var(--fg-dim);user-select:none;
+  }
+  .quiz-opt:hover{border-color:var(--fg-muted);background:rgba(255,255,255,0.03);}
+  .quiz-opt .opt-letter{
+    flex-shrink:0;width:28px;height:28px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(113,125,145,0.10);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;
+    transition:all 0.25s ease;
+  }
+  .quiz-opt.correct{border-color:var(--accent);background:var(--accent-dim);color:var(--fg);}
+  .quiz-opt.correct .opt-letter{background:var(--accent);color:var(--bg);}
+  .quiz-opt.wrong{border-color:var(--red);background:var(--red-dim);color:var(--fg);}
+  .quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;}
+  .quiz-opt.disabled{pointer-events:none;opacity:0.6;}
+  .quiz-opt.disabled.correct{opacity:1;}
+
+  .quiz-feedback{
+    margin-top:12px;padding:12px 16px;border-radius:10px;
+    font-size:0.91rem;display:none;line-height:1.6;
+  }
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback--correct{background:var(--accent-dim);color:var(--accent);border-left:3px solid var(--accent);}
+  .quiz-feedback--wrong{background:var(--red-dim);color:var(--red);border-left:3px solid var(--red);}
+
+  .quiz-score{
+    text-align:center;margin-top:20px;padding:20px;
+    border-radius:var(--radius);background:var(--bg-card-alt);display:none;
+  }
+  .quiz-score.show{display:block;}
+  .quiz-score .score-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:2.4rem;font-weight:700;color:var(--accent);
+  }
+  .quiz-score .score-label{font-size:0.88rem;color:var(--fg-muted);}
+
+  .roadmap-card{
+    background:var(--bg-card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:28px;margin-bottom:24px;
+    position:relative;overflow:hidden;
+  }
+  .roadmap-card::after{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--accent),var(--gold),var(--purple),var(--red));
+  }
+  .roadmap-item{
+    display:flex;align-items:flex-start;gap:16px;
+    padding:12px 0;position:relative;
+  }
+  .roadmap-item:not(:last-child){border-bottom:1px solid var(--border);}
+  .roadmap-num{
+    flex-shrink:0;width:32px;height:32px;border-radius:10px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
+  }
+  .roadmap-num--active{background:var(--accent);color:var(--bg);}
+  .roadmap-num--upcoming{background:rgba(113,125,145,0.10);color:var(--fg-muted);}
+  .roadmap-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.97rem;color:var(--fg);margin-bottom:2px;}
+  .roadmap-desc{font-size:0.88rem;color:var(--fg-muted);}
+
+  .nav-footer{display:flex;justify-content:space-between;align-items:center;margin-top:44px;}
+  .btn-next{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent);color:var(--bg);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 34px;border:none;border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow);}
+  .btn-next:active{transform:translateY(0);}
+  
+  /* Language toggle — standardized style */
+  .lang-toggle-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .lang-toggle {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px;
+    display: inline-flex;
+    gap: 6px;
+  }
+  .lang-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: transparent;
+    color: var(--fg-muted);
+    border: none;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .lang-btn:not(.active):hover {
+    color: var(--accent);
+  }
+  
+  /* language visibility */
+  .lang-en, .lang-ne {
+    transition: opacity 0.25s ease;
+  }
+  .lang-en.hidden-lang, .lang-ne.hidden-lang {
+    display: none;
+  }
+  
+  .fi{opacity:0;transform:translateY(22px);animation:fadeUp 0.55s ease forwards;}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+  
+  @media(max-width:600px){
+    .container{padding:28px 16px 60px;}
+    .card,.roadmap-card{padding:22px 18px;}
+    .nav-footer{flex-direction:column-reverse;gap:16px;align-items:stretch;}
+    .lang-toggle-wrap{justify-content:center;}
+    .btn-next{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="dot-grid"></div>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+  <div class="orb orb--3"></div>
+</div>
+
+<div class="container">
+  <!-- Language toggle button -->
+  <div class="lang-toggle-wrap">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="ne">🇳🇵 नेपाली</button>
+    </div>
+  </div>
+
+  <!-- ================= ENGLISH VERSION ================= -->
+  <div id="englishVersion" class="lang-en">
+    <!-- Badge -->
+    <div class="course-badge fi">
+      <span class="dot"></span>
+      NEPSE Beginner Course — 5 Lessons
+    </div>
+    <h1 class="fi">Lesson 1: What is <span class="accent">NEPSE</span> & How Does the Stock Market Work?</h1>
+    <p class="subtitle fi">Understand the marketplace before you invest a single rupee. No jargon, no textbook definitions — just how things actually work in Nepal's stock market.</p>
+    <div class="progress-wrap fi">
+      <div class="progress-meta"><span>Lesson 1 of 5</span><span>20%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressBarEn"></div></div>
+    </div>
+    <div class="roadmap-card fi"><h2 style="margin-bottom:18px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Your 5-Lesson Journey</h2><div class="roadmap-item"><span class="roadmap-num roadmap-num--active">1</span><div><div class="roadmap-title">What is NEPSE & How It Works</div><div class="roadmap-desc">The marketplace, brokers, SEBON, trading hours — the ground floor</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">2</span><div><div class="roadmap-title">Reading Prices, Charts & Key Indicators</div><div class="roadmap-desc">Price, volume, turnover, index, basic chart reading</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">3</span><div><div class="roadmap-title">Company Basics & Sector Analysis</div><div class="roadmap-desc">Profit, dividend, growth, financial health, NEPSE sectors</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">4</span><div><div class="roadmap-title">Demand, Supply & Market Sentiment</div><div class="roadmap-desc">Buy/sell pressure, volume signals, news impact, bull vs bear</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">5</span><div><div class="roadmap-title">Making Buy, Hold & Sell Decisions</div><div class="roadmap-desc">Putting it all together — when to enter, stay, or exit</div></div></div></div>
+
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>Simple Explanation</h2><p>Think of a <strong>vegetable market</strong>. Farmers bring vegetables, buyers come, prices are decided by demand and supply, and a market committee ensures nobody gets cheated.</p><p><strong>NEPSE (Nepal Stock Exchange)</strong> is exactly that — but instead of vegetables, people buy and sell <strong>shares</strong> (ownership parts) of companies.</p><div class="svg-center"><svg width="540" height="250" viewBox="0 0 540 250" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="15" width="235" height="220" rx="16" fill="#1a1f2b" stroke="#252a36" stroke-width="1.5"/><text x="127" y="46" text-anchor="middle" fill="#717d91" font-size="12" font-weight="700">VEGETABLE MARKET</text><rect x="28" y="68" width="88" height="52" rx="9" fill="#0b0e13" stroke="#00d4a1" stroke-width="1"/><text x="72" y="90" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">Farmer</text><text x="72" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">brings veggies</text><line x1="118" y1="94" x2="137" y2="94" stroke="#717d91" stroke-width="1" stroke-dasharray="3 3"/><polygon points="135,91 141,94 135,97" fill="#717d91"/><rect x="141" y="68" width="88" height="52" rx="9" fill="#0b0e13" stroke="#f0b840" stroke-width="1"/><text x="185" y="90" text-anchor="middle" fill="#f0b840" font-size="11" font-weight="600">Buyer</text><text x="185" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">pays money</text><rect x="47" y="145" width="160" height="42" rx="9" fill="#0b0e13" stroke="#717d91" stroke-width="1"/><text x="127" y="164" text-anchor="middle" fill="#717d91" font-size="10.5">Market Committee</text><text x="127" y="178" text-anchor="middle" fill="#717d91" font-size="9.5">watches fair trade</text><text x="260" y="130" text-anchor="middle" fill="#00d4a1" font-family="Space Grotesk,sans-serif" font-size="30" font-weight="700">=</text><rect x="290" y="15" width="240" height="220" rx="16" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.5"/><text x="410" y="46" text-anchor="middle" fill="#00d4a1" font-size="12" font-weight="700">NEPSE (STOCK MARKET)</text><rect x="305" y="68" width="100" height="52" rx="9" fill="#0b0e13" stroke="#00d4a1" stroke-width="1"/><text x="355" y="90" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">Company</text><text x="355" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">lists shares</text><line x1="407" y1="94" x2="422" y2="94" stroke="#717d91" stroke-width="1" stroke-dasharray="3 3"/><polygon points="420,91 426,94 420,97" fill="#717d91"/><rect x="427" y="68" width="90" height="52" rx="9" fill="#0b0e13" stroke="#f0b840" stroke-width="1"/><text x="472" y="90" text-anchor="middle" fill="#f0b840" font-size="11" font-weight="600">Investor</text><text x="472" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">buys shares</text><rect x="330" y="145" width="160" height="42" rx="9" fill="#0b0e13" stroke="#00d4a1" stroke-width="1"/><text x="410" y="164" text-anchor="middle" fill="#00d4a1" font-size="10.5" font-weight="600">SEBON + NEPSE</text><text x="410" y="178" text-anchor="middle" fill="#717d91" font-size="9.5">regulate &amp; monitor</text></svg></div><p>When a company like <strong>Nabil Bank</strong> or <strong>Nepal Telecom</strong> needs money, it lists its shares on NEPSE. Then anyone can buy or sell those shares through a <strong>broker</strong> (the middleman).</p><div class="svg-center"><svg width="520" height="100" viewBox="0 0 520 100"><rect x="8" y="18" width="110" height="64" rx="12" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.2"/><text x="63" y="46" text-anchor="middle" fill="#f0b840" font-size="11" font-weight="600">You</text><text x="63" y="63" text-anchor="middle" fill="#717d91" font-size="9.5">place order</text><line x1="122" y1="50" x2="148" y2="50" stroke="#717d91" stroke-width="1.2"/><polygon points="146,46 154,50 146,54" fill="#717d91"/><rect x="155" y="18" width="120" height="64" rx="12" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.2"/><text x="215" y="46" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">Broker</text><text x="215" y="63" text-anchor="middle" fill="#717d91" font-size="9.5">executes on NEPSE</text><line x1="279" y1="50" x2="305" y2="50" stroke="#717d91" stroke-width="1.2"/><polygon points="303,46 311,50 303,54" fill="#717d91"/><rect x="312" y="18" width="100" height="64" rx="12" fill="#1a1f2b" stroke="#8b7cf6" stroke-width="1.2"/><text x="362" y="46" text-anchor="middle" fill="#8b7cf6" font-size="11" font-weight="600">NEPSE</text><text x="362" y="63" text-anchor="middle" fill="#717d91" font-size="9.5">matches trade</text><line x1="416" y1="50" x2="442" y2="50" stroke="#717d91" stroke-width="1.2"/><polygon points="440,46 448,50 440,54" fill="#717d91"/><rect x="449" y="18" width="64" height="64" rx="12" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.2"/><text x="481" y="46" text-anchor="middle" fill="#f0b840" font-size="11" font-weight="600">CDS</text><text x="481" y="63" text-anchor="middle" fill="#717d91" font-size="9.5">settles</text></svg></div><div class="callout callout--accent"><p><strong>Key takeaway:</strong> NEPSE is the only legal stock exchange in Nepal. All listed share trading happens here. Open Sunday–Thursday, 11 AM – 3 PM. SEBON is the government regulator. You trade via a licensed broker.</p></div></div>
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h2>Practical Example</h2><p><strong>Everest Bank</strong> wants to open 10 new branches. They need Rs. 50 crore. Instead of taking a loan, they list shares on NEPSE.</p><p>You buy <strong>100 shares at Rs. 400 each</strong> = <strong>Rs. 40,000 invested</strong>.</p><div class="svg-center"><svg width="480" height="170" viewBox="0 0 480 170"><rect x="8" y="15" width="210" height="140" rx="14" fill="#1a1f2b" stroke="#717d91" stroke-width="1"/><text x="113" y="44" text-anchor="middle" fill="#717d91" font-size="11" font-weight="700">BUYING DAY</text><line x1="28" y1="54" x2="198" y2="54" stroke="#252a36" stroke-width="1"/><text x="113" y="78" text-anchor="middle" fill="#e4e7ec" font-size="12">100 shares x Rs. 400</text><text x="113" y="105" text-anchor="middle" fill="#717d91" font-size="11">Your investment</text><text x="113" y="130" text-anchor="middle" fill="#e4e7ec" font-size="18" font-weight="700" font-family="Space Grotesk,sans-serif">Rs. 40,000</text><line x1="224" y1="85" x2="254" y2="85" stroke="#00d4a1" stroke-width="1.5"/><polygon points="252,80 262,85 252,90" fill="#00d4a1"/><text x="243" y="72" text-anchor="middle" fill="#00d4a1" font-size="9" font-weight="600">+25%</text><rect x="268" y="15" width="210" height="140" rx="14" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.2"/><text x="373" y="44" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="700">PRICE UP DAY</text><line x1="288" y1="54" x2="458" y2="54" stroke="#252a36" stroke-width="1"/><text x="373" y="78" text-anchor="middle" fill="#e4e7ec" font-size="12">100 shares x Rs. 500</text><text x="373" y="105" text-anchor="middle" fill="#00d4a1" font-size="11">Your value now</text><text x="373" y="130" text-anchor="middle" fill="#00d4a1" font-size="18" font-weight="700">Rs. 50,000</text></svg></div><div class="callout callout--gold"><p><strong>Real number:</strong> NEPSE has 200+ listed companies. The <strong>NEPSE Index</strong> (around 2,000+ currently) tracks overall market health.</p></div></div>
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>Why It Matters</h2><ul><li><strong>You know where your money goes</strong> — Every share transaction is recorded on NEPSE.</li><li><strong>You understand timing</strong> — NEPSE is closed Fridays, Saturdays, holidays.</li><li><strong>You recognize the middleman</strong> — You MUST use a broker.</li><li><strong>You avoid scams</strong> — All legal trading goes through NEPSE.</li></ul><table><thead><tr><th>Common Myth</th><th>Reality</th></tr></thead><tbody><tr><td>I can buy shares directly from a company anytime</td><td>Only during IPO. After that, all trading goes through NEPSE via brokers</td></tr><tr><td>Stock market is just gambling</td><td>It's investment with risk. Knowledge reduces that risk</td></tr><tr><td>I need lakhs to start</td><td>You can start with the price of 1 share + small broker fee</td></tr><tr><td>NEPSE works 7 days a week</td><td>Only Sunday–Thursday, 11 AM – 3 PM</td></tr></tbody></table></div>
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>Quick Action Insight</h2><ul><li><strong>Visit nepalstock.com</strong> — NEPSE's official site.</li><li><strong>Find the NEPSE Index</strong> — market temperature.</li><li><strong>Check top gainers/losers</strong> — observe names and numbers.</li><li><strong>Notice market status</strong> — Open or Closed.</li></ul><div class="callout callout--red"><p><strong>Do NOT invest yet.</strong> You're in observation mode.</p></div></div>
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>Mini Recap</h2><ul><li>NEPSE = Nepal's only legal stock exchange.</li><li>Companies list shares to raise public money; investors buy/sell through brokers.</li><li>SEBON regulates NEPSE; CDS & Clearing handles settlement.</li><li>All trading happens through licensed brokers.</li><li>Trading hours: Sunday–Thursday, 11 AM – 3 PM.</li></ul></div>
+    <div class="card card--quiz fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><h2>Test Your Understanding</h2><p style="margin-bottom:24px;">Answer these 5 questions.</p><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">1</span><span>What is NEPSE?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>A government bank that gives loans</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>Nepal's only legal stock exchange for trading shares</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>A private company that invests in hydropower</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>An app for online banking</span></div></div><div class="quiz-feedback" id="fb1_en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">2</span><span>What does SEBON do?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'en')"><span class="opt-letter">A</span><span>Sells government company shares</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'en')"><span class="opt-letter">B</span><span>Provides loans to investors</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'en')"><span class="opt-letter">C</span><span>Operates the trading floor</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'en')"><span class="opt-letter">D</span><span>Regulates and monitors NEPSE as the government body</span></div></div><div class="quiz-feedback" id="fb2_en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">3</span><span>On which days is NEPSE open for trading?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'en')"><span class="opt-letter">A</span><span>Sunday to Thursday, 11 AM – 3 PM</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'en')"><span class="opt-letter">B</span><span>Monday to Friday, 10 AM – 4 PM</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'en')"><span class="opt-letter">C</span><span>Monday to Saturday, 9 AM – 5 PM</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'en')"><span class="opt-letter">D</span><span>All 7 days, 24 hours</span></div></div><div class="quiz-feedback" id="fb3_en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">4</span><span>How do you buy shares on NEPSE after an IPO is over?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>Directly from the company's office</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>Through a licensed broker on NEPSE</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>From any bank teller</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>From a friend who has shares</span></div></div><div class="quiz-feedback" id="fb4_en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">5</span><span>What causes share prices to move up or down on NEPSE?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'en')"><span class="opt-letter">A</span><span>The company decides the price every morning</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'en')"><span class="opt-letter">B</span><span>NEPSE sets the price based on company profits</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'en')"><span class="opt-letter">C</span><span>Demand vs supply — more buyers push price up, more sellers push it down</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'en')"><span class="opt-letter">D</span><span>SEBON announces the daily price</span></div></div><div class="quiz-feedback" id="fb5_en"></div></div><div class="quiz-score" id="quizScore_en"><div class="score-num" id="scoreNum_en">0/5</div><div class="score-label" id="scoreLabel_en">Questions answered correctly</div></div></div>
+  </div>
+
+  <!-- ================= NEPALI VERSION ================= -->
+  <div id="nepaliVersion" class="lang-ne hidden-lang">
+    <div class="course-badge fi"><span class="dot"></span>NEPSE सुरुवात कोर्स — ५ पाठ</div>
+    <h1 class="fi">पाठ १: <span class="accent">NEPSE</span> के हो र सेयर बजार कसरी चल्छ?</h1>
+    <p class="subtitle fi">एक रुपैयाँ लगानी गर्नु अघि बजार बुझ्नुहोस्। कुनै गाह्रो शब्द वा पुस्तकीय परिभाषा छैन — नेपालको सेयर बजार कसरी चल्छ भन्ने सरल कुरा मात्र।</p>
+    <div class="progress-wrap fi"><div class="progress-meta"><span>पाठ १ of ५</span><span>२०%</span></div><div class="progress-track"><div class="progress-fill" id="progressBarNe"></div></div></div>
+    <div class="roadmap-card fi"><h2 style="margin-bottom:18px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>तपाईंको ५ पाठको यात्रा</h2><div class="roadmap-item"><span class="roadmap-num roadmap-num--active">१</span><div><div class="roadmap-title">NEPSE के हो र यसले कसरी काम गर्छ</div><div class="roadmap-desc">बजार, Broker, SEBON, कारोबार समय आदि आधारभूत कुरा</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">२</span><div><div class="roadmap-title">Price, Chart र मुख्य संकेतक पढ्ने तरिका</div><div class="roadmap-desc">Price, Volume, Turnover, Index र साधारण Chart बुझ्ने</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">३</span><div><div class="roadmap-title">कम्पनीको आधारभूत कुरा र Sector विश्लेषण</div><div class="roadmap-desc">नाफा, Dividend, Growth, Financial Health र NEPSE का Sector हरू</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">४</span><div><div class="roadmap-title">Demand, Supply र Market Sentiment</div><div class="roadmap-desc">Buy/Sell दबाब, Volume संकेत, खबरको असर, Bull vs Bear</div></div></div><div class="roadmap-item"><span class="roadmap-num roadmap-num--upcoming">५</span><div><div class="roadmap-title">Buy, Hold र Sell निर्णय कसरी गर्ने</div><div class="roadmap-desc">सबै कुरा मिलाएर — कहिले प्रवेश गर्ने, कहिले रोकिने र कहिले बाहिर निस्कने</div></div></div></div>
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>सरल व्याख्या</h2><p><strong>तरकारी बजार</strong>को कुरा गरौं। किसानले तरकारी ल्याउँछन्, खरिदकर्ता आउँछन्, माग र आपूर्तिले मूल्य तय हुन्छ, र बजार समितिले कसैले ठगी नगर्ने बन्दोबस्त गर्छ।</p><p><strong>NEPSE (नेपाल स्टक एक्सचेञ्ज)</strong> पनि ठ्याक्कै त्यस्तै हो — तर तरकारीको सट्टा मानिसहरू कम्पनीको <strong>शेयर (स्वामित्वको अंश)</strong> किन्बेच गर्छन्।</p><div class="svg-center"><svg width="540" height="250" viewBox="0 0 540 250"><rect x="10" y="15" width="235" height="220" rx="16" fill="#1a1f2b" stroke="#252a36" stroke-width="1.5"/><text x="127" y="46" text-anchor="middle" fill="#717d91" font-size="12" font-weight="700">तरकारी बजार</text><rect x="28" y="68" width="88" height="52" rx="9" fill="#0b0e13" stroke="#00d4a1" stroke-width="1"/><text x="72" y="90" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">किसान</text><text x="72" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">तरकारी ल्याउँछ</text><line x1="118" y1="94" x2="137" y2="94" stroke="#717d91" stroke-width="1" stroke-dasharray="3 3"/><polygon points="135,91 141,94 135,97" fill="#717d91"/><rect x="141" y="68" width="88" height="52" rx="9" fill="#0b0e13" stroke="#f0b840" stroke-width="1"/><text x="185" y="90" text-anchor="middle" fill="#f0b840" font-size="11" font-weight="600">खरिदकर्ता</text><text x="185" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">पैसा तिर्छ</text><rect x="47" y="145" width="160" height="42" rx="9" fill="#0b0e13" stroke="#717d91" stroke-width="1"/><text x="127" y="164" text-anchor="middle" fill="#717d91" font-size="10.5">बजार समिति</text><text x="127" y="178" text-anchor="middle" fill="#717d91" font-size="9.5">नियमन गर्छ</text><text x="260" y="130" text-anchor="middle" fill="#00d4a1" font-size="30" font-weight="700">=</text><rect x="290" y="15" width="240" height="220" rx="16" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.5"/><text x="410" y="46" text-anchor="middle" fill="#00d4a1" font-size="12" font-weight="700">NEPSE (सेयर बजार)</text><rect x="305" y="68" width="100" height="52" rx="9" fill="#0b0e13" stroke="#00d4a1" stroke-width="1"/><text x="355" y="90" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">कम्पनी</text><text x="355" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">Share लिस्ट गर्छ</text><line x1="407" y1="94" x2="422" y2="94" stroke="#717d91" stroke-width="1" stroke-dasharray="3 3"/><polygon points="420,91 426,94 420,97" fill="#717d91"/><rect x="427" y="68" width="90" height="52" rx="9" fill="#0b0e13" stroke="#f0b840" stroke-width="1"/><text x="472" y="90" text-anchor="middle" fill="#f0b840" font-size="11" font-weight="600">लगानीकर्ता</text><text x="472" y="107" text-anchor="middle" fill="#717d91" font-size="9.5">Share किन्छ</text><rect x="330" y="145" width="160" height="42" rx="9" fill="#0b0e13" stroke="#00d4a1" stroke-width="1"/><text x="410" y="164" text-anchor="middle" fill="#00d4a1" font-size="10.5" font-weight="600">SEBON + NEPSE</text><text x="410" y="178" text-anchor="middle" fill="#717d91" font-size="9.5">नियमन र अनुगमन</text></svg></div><div class="callout callout--accent"><p><strong>मुख्य कुरा:</strong> NEPSE नेपालको एकमात्र कानुनी स्टक एक्सचेञ्ज हो। सूचीकृत कम्पनीको सबै शेयर कारोबार यहीँ हुन्छ। SEBON यसको सरकारी नियामक हो।</p></div></div>
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h2>व्यावहारिक उदाहरण</h2><p><strong>एभरेष्ट बैंक</strong>ले १० वटा नयाँ शाखा खोल्न चाहन्छ। उसलाई ५० करोड चाहिन्छ। ऋण लिनुको सट्टा, उसले जनतालाई आफ्नो स्वामित्वको अंश (शेयर) बेच्ने निर्णय गर्छ।</p><div class="callout callout--gold"><p><strong>वास्तविक तथ्य:</strong> NEPSE मा २०० भन्दा बढी सूचीकृत कम्पनीहरू छन्। <strong>NEPSE Index</strong> (हाल २,०००+ को हाराहारीमा) ले समग्र बजारको स्वास्थ्य देखाउँछ।</p></div></div>
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>यो किन महत्त्वपूर्ण छ</h2><ul><li><strong>तपाईंंलाई थाहा हुन्छ तपाईंंको पैसा कहाँ गइरहेको छ</strong> — शेयर किन्दा यो वास्तविक कारोबार हो, NEPSE मा रेकर्ड हुन्छ।</li><li><strong>तपाईंंलाई समय बुझ्न मद्दत गर्छ</strong> — NEPSE शुक्रबार र शनिबार बन्द हुन्छ।</li><li><strong>मध्यस्थ चिन्न सहयोग गर्छ</strong> — तपाईंंले अनिवार्य रूपमा लाइसेन्स प्राप्त Broker मार्फत जानुपर्छ।</li><li><strong>ठगीबाट बच्न सहयोग गर्छ</strong> — यदि कसैले "सीधै मबाट शेयर किन, NEPSE चाहिँदैन" भन्छ भने, त्यो ठूलो रातो झण्डा हो।</li></ul><table><thead><tr><th>तपाईंंले सोच्न सक्नुहुने कुरा</th><th>वास्तविकता के हो</th></tr></thead><tbody><tr><td>म सीधै कम्पनीबाट शेयर किन्न सक्छु</td><td>केवल IPO मा मात्र। त्यसपछि, सबै कारोबार Broker मार्फत NEPSE मा हुन्छ</td></tr><tr><td>सेयर बजार जुवा जस्तै हो</td><td>यो जोखिमसहितको लगानी हो। ज्ञानले त्यो जोखिम धेरै कम गर्छ</td></tr><tr><td>सुरु गर्न लाखौं रुपैयाँ चाहिन्छ</td><td>तपाईंंले १ वटा शेयरको Price + सानो Broker Fee बराबरले सुरु गर्न सक्नुहुन्छ</td></tr><tr><td>NEPSE हप्ताको ७ दिन चल्छ</td><td>कारोबार आइतबार–बिहिबार मात्र, ११ AM – ३ PM हुन्छ</td></tr></tbody></table></div>
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>द्रुत कार्य अन्तर्दृष्टि</h2><ul><li><strong>nepalstock.com मा जानुहोस्</strong> — NEPSE को आधिकारिक साइट।</li><li><strong>NEPSE Index नम्बर खोज्नुहोस्</strong> — बजारको तापमान।</li><li><strong>Top Gainers/Losers हेर्नुहोस्</strong> — नाम र नम्बर हेर्नुहोस्।</li><li><strong>बजारको स्थिति जाँच्नुहोस्</strong> — "Open" वा "Closed"।</li></ul><div class="callout callout--red"><p><strong>अहिले लगानी नगर्नुहोस्!</strong> तपाईंं अवलोकन मोडमा हुनुहुन्छ।</p></div></div>
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>संक्षिप्त सारांश</h2><ul><li>NEPSE = नेपालको एकमात्र कानुनी स्टक एक्सचेञ्ज।</li><li>कम्पनीहरूले जनताबाट पैसा संकलन गर्न शेयर लिस्ट गर्छन्; लगानीकर्ताहरू Broker मार्फत किन्बेच गर्छन्।</li><li>SEBON ले NEPSE लाई नियमन गर्छ; CDS & Clearing ले Settle गर्छ।</li><li>सबै कारोबार लाइसेन्स प्राप्त Broker मार्फत हुन्छ।</li><li>कारोबार समय: आइतबार–बिहिबार, ११ AM – ३ PM।</li></ul></div>
+    <div class="card card--quiz fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><h2>तपाईंंको बुझाइ जाँच्नुहोस्</h2><p style="margin-bottom:24px;">पाठ १ लक गर्न ५ वटा प्रश्न।</p><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">१</span><span>NEPSE के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>कम्पनीलाई ऋण दिने सरकारी बैंक</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>नेपालको एकमात्र कानुनी स्टक एक्सचेञ्ज जहाँ शेयर कारोबार हुन्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>हाइड्रोपावरमा लगानी गर्ने निजी कम्पनी</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>अनलाइन बैंकिङको एप</span></div></div><div class="quiz-feedback" id="fb1_ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">२</span><span>SEBON ले के गर्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'ne')"><span class="opt-letter">A</span><span>सरकारी कम्पनीको शेयर बेच्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'ne')"><span class="opt-letter">B</span><span>लगानीकर्तालाई ऋण दिन्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'ne')"><span class="opt-letter">C</span><span>कारोबार फ्लोर चलाउँछ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'ne')"><span class="opt-letter">D</span><span>सरकारी निकायको रूपमा NEPSE लाई नियमन र अनुगमन गर्छ</span></div></div><div class="quiz-feedback" id="fb2_ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">३</span><span>NEPSE कारोबारका लागि कुन दिन खुला हुन्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'ne')"><span class="opt-letter">A</span><span>आइतबारदेखि बिहिबारसम्म, ११ AM – ३ PM</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'ne')"><span class="opt-letter">B</span><span>सोमबारदेखि शुक्रबारसम्म, १० AM – ४ PM</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'ne')"><span class="opt-letter">C</span><span>सोमबारदेखि शनिबारसम्म, ९ AM – ५ PM</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'ne')"><span class="opt-letter">D</span><span>७ दिनै, २४ घण्टा</span></div></div><div class="quiz-feedback" id="fb3_ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">४</span><span>IP0 सकिएपछि NEPSE मा शेयर किन्न कसरी किन्न सकिन्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>सीधै कम्पनीको कार्यालयबाट</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>NEPSE मा लाइसेन्स प्राप्त Broker मार्फत</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>कुनै पनि बैंकको काउन्टरबाट</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>शेयर भएको साथीबाट सीधै</span></div></div><div class="quiz-feedback" id="fb4_ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">५</span><span>NEPSE मा शेयर Price माथि वा तल जाने कारण के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'ne')"><span class="opt-letter">A</span><span>कम्पनीले हरेक बिहान Price तय गर्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'ne')"><span class="opt-letter">B</span><span>NEPSE ले कम्पनीको नाफाको आधारमा Price सेट गर्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'ne')"><span class="opt-letter">C</span><span>Demand vs Supply — किन्नेहरू धेरै भए Price बढाउँछ, बेच्नेहरू धेरै भए Price घटाउँछ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'ne')"><span class="opt-letter">D</span><span>SEBON ले दैनिक Price घोषणा गर्छ</span></div></div><div class="quiz-feedback" id="fb5_ne"></div></div><div class="quiz-score" id="quizScore_ne"><div class="score-num" id="scoreNum_ne">०/५</div><div class="score-label" id="scoreLabel_ne">सही उत्तरहरू</div></div></div>
+  </div>
+
+  <!-- Navigation footer -->
+  <div class="nav-footer fi" style="justify-content: flex-end;">
+    <button class="btn-next" id="nextLessonBtn">
+      <span id="nextText">Next Lesson</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Progress bars
+  window.addEventListener('load', () => {
+    const barEn = document.getElementById('progressBarEn');
+    if(barEn) { barEn.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barEn.style.width = '20%'; }); }); }
+    const barNe = document.getElementById('progressBarNe');
+    if(barNe) { barNe.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barNe.style.width = '20%'; }); }); }
+  });
+
+  // Language switching
+  const enDiv = document.getElementById('englishVersion');
+  const neDiv = document.getElementById('nepaliVersion');
+  const langBtns = document.querySelectorAll('.lang-btn');
+  let currentLang = 'en';
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    if (lang === 'en') {
+      enDiv.classList.remove('hidden-lang');
+      neDiv.classList.add('hidden-lang');
+      if (document.getElementById('nextText')) document.getElementById('nextText').textContent = 'Next Lesson';
+    } else {
+      enDiv.classList.add('hidden-lang');
+      neDiv.classList.remove('hidden-lang');
+      if (document.getElementById('nextText')) document.getElementById('nextText').textContent = 'अर्को पाठ';
+    }
+    
+    langBtns.forEach(btn => {
+      if (btn.getAttribute('data-lang') === lang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+  });
+
+  // Initialize with English
+  setLanguage('en');
+
+  // Quiz state per language
+  let quizState = { en: { totalAnswered: 0, correctCount: 0 }, ne: { totalAnswered: 0, correctCount: 0 } };
+  const totalQuestions = 5;
+  
+  const feedbackMessages = {
+    en: {
+      1: { correct: "Correct! NEPSE is Nepal's only legal stock exchange.", wrong: "Not quite. NEPSE stands for Nepal Stock Exchange — the only legal stock exchange." },
+      2: { correct: "Correct! SEBON is the government regulator that oversees NEPSE.", wrong: "Not quite. SEBON is the government regulator that monitors NEPSE." },
+      3: { correct: "Correct! NEPSE operates Sunday through Thursday, 11 AM to 3 PM.", wrong: "Not quite. NEPSE is open Sunday to Thursday, 11 AM – 3 PM." },
+      4: { correct: "Correct! After the IPO, all share trading must go through a licensed broker.", wrong: "Not quite. After IPO, you MUST go through a licensed broker." },
+      5: { correct: "Correct! Prices move based on demand and supply.", wrong: "Not quite. Share prices move based on demand vs supply." }
+    },
+    ne: {
+      1: { correct: "सही! NEPSE नेपालको एकमात्र कानुनी स्टक एक्सचेञ्ज हो।", wrong: "अलिकति गलत। NEPSE को अर्थ Nepal Stock Exchange हो — यो नेपालको एकमात्र कानुनी स्टक एक्सचेञ्ज हो।" },
+      2: { correct: "सही! SEBON ले NEPSE लाई नियमन गर्ने सरकारी निकाय हो।", wrong: "अलिकति गलत। SEBON ले NEPSE लाई नियमन गर्छ।" },
+      3: { correct: "सही! NEPSE आइतबारदेखि बिहिबारसम्म, ११ AM – ३ PM चल्छ।", wrong: "अलिकति गलत। NEPSE आइतबार–बिहिबार ११ AM – ३ PM खुला हुन्छ।" },
+      4: { correct: "सही! IPO सकिएपछि, सबै शेयर कारोबार Broker मार्फत हुनुपर्छ।", wrong: "अलिकति गलत। IPO पछि तपाईंंले Broker प्रयोग गर्नुपर्छ।" },
+      5: { correct: "सही! Price Demand र Supply मा आधारित हुन्छ।", wrong: "अलिकति गलत। शेयर Price Demand vs Supply मा भर पर्छ।" }
+    }
+  };
+  
+  function checkAnswer(optEl, selectedIndex, correctIndex, lang) {
+    const block = optEl.closest('.quiz-block');
+    if (block.classList.contains('answered')) return;
+    const options = block.querySelectorAll('.quiz-opt');
+    const allBlocks = Array.from(document.querySelectorAll(`#${lang === 'en' ? 'englishVersion' : 'nepaliVersion'} .quiz-block`));
+    const blockIndex = allBlocks.indexOf(block) + 1;
+    const isCorrect = selectedIndex === correctIndex;
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      if (i === correctIndex) opt.classList.add('correct');
+      if (i === selectedIndex && !isCorrect) opt.classList.add('wrong');
+    });
+    const fb = document.getElementById(`fb${blockIndex}_${lang}`);
+    fb.className = `quiz-feedback show ${isCorrect ? 'quiz-feedback--correct' : 'quiz-feedback--wrong'}`;
+    fb.textContent = isCorrect ? feedbackMessages[lang][blockIndex].correct : feedbackMessages[lang][blockIndex].wrong;
+    block.classList.add('answered');
+    const state = quizState[lang];
+    state.totalAnswered++;
+    if (isCorrect) state.correctCount++;
+    if (state.totalAnswered === totalQuestions) {
+      const scoreDiv = document.getElementById(`quizScore_${lang}`);
+      const scoreNumSpan = document.getElementById(`scoreNum_${lang}`);
+      const scoreLabelSpan = document.getElementById(`scoreLabel_${lang}`);
+      scoreNumSpan.textContent = `${state.correctCount}/${totalQuestions}`;
+      scoreDiv.classList.add('show');
+      if (state.correctCount === 5) scoreLabelSpan.textContent = lang === 'en' ? 'Perfect score! You\'ve got the NEPSE basics locked in.' : 'उत्कृष्ट! तपाईंंले NEPSE को आधारभूत कुरा राम्ररी बुझ्नुभयो।';
+      else if (state.correctCount >= 3) scoreLabelSpan.textContent = lang === 'en' ? 'Good job! Review the ones you missed.' : 'राम्रो! जुन छुट्यो त्यसलाई हेर्नुहोस्।';
+      else scoreLabelSpan.textContent = lang === 'en' ? 'Re-read the lesson above and try again.' : 'माथिको पाठ फेरि पढ्नुहोस् र फेरि प्रयास गर्नुहोस्।';
+    }
+  }
+  window.checkAnswer = checkAnswer;
+
+  const nextBtn = document.getElementById('nextLessonBtn');
+  if(nextBtn) nextBtn.addEventListener('click', () => { window.location.href = '2.html'; });
+</script>
+</body>
+</html>
+
+
+{% endblock %}

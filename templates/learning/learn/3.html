@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEPSE Course — Company & Sector Analysis (EN/नेपाली)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0b0e13;
+    --bg-card: #12161e;
+    --bg-card-alt: #1a1f2b;
+    --fg: #e4e7ec;
+    --fg-dim: #c0c5ce;
+    --fg-muted: #717d91;
+    --accent: #00d4a1;
+    --accent-dim: rgba(0,212,161,0.10);
+    --accent-mid: rgba(0,212,161,0.20);
+    --accent-glow: rgba(0,212,161,0.25);
+    --gold: #f0b840;
+    --gold-dim: rgba(240,184,64,0.10);
+    --purple: #8b7cf6;
+    --purple-dim: rgba(139,124,246,0.10);
+    --red: #ff5c5c;
+    --red-dim: rgba(255,92,92,0.10);
+    --border: #1f2636;
+    --radius: 16px;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:'Karla',sans-serif;line-height:1.78;
+    min-height:100vh;overflow-x:hidden;
+  }
+
+  .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-scene .dot-grid{
+    position:absolute;inset:0;opacity:0.035;
+    background-image:radial-gradient(circle,var(--accent) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .bg-scene .orb{position:absolute;border-radius:50%;filter:blur(140px);}
+  .bg-scene .orb{display:none;}
+
+  .container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:48px 24px 90px;}
+
+  /* Language Toggle - Consistent Style */
+  .lang-toggle-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .lang-toggle {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px;
+    display: inline-flex;
+    gap: 6px;
+  }
+  .lang-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: transparent;
+    color: var(--fg-muted);
+    border: none;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .lang-btn:not(.active):hover {
+    color: var(--accent);
+  }
+
+  .course-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-dim);border:1px solid var(--accent-mid);
+    color:var(--accent);font-size:12px;font-weight:700;
+    letter-spacing:0.8px;text-transform:uppercase;
+    padding:7px 18px;border-radius:100px;margin-bottom:24px;
+  }
+  .course-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s ease infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.9rem,4.8vw,2.7rem);
+    font-weight:700;line-height:1.18;margin-bottom:14px;
+  }
+  h1 .accent{color:var(--accent);}
+  h1 .purple{color:var(--purple);}
+  .subtitle{font-size:1.02rem;color:var(--fg-muted);margin-bottom:36px;max-width:600px;}
+
+  h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.22rem;font-weight:600;margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  p{margin-bottom:13px;font-size:0.96rem;color:var(--fg-dim);}
+  strong{color:var(--fg);font-weight:600;}
+
+  .progress-wrap{margin-bottom:44px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--fg-muted);margin-bottom:8px;font-weight:600;letter-spacing:0.3px;}
+  .progress-track{height:5px;background:var(--bg-card-alt);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,var(--accent),#00e8b0);transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:30px 28px;
+    margin-bottom:24px;position:relative;overflow:hidden;
+  }
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card--explain::after{background:linear-gradient(90deg,var(--accent),transparent 70%);}
+  .card--example::after{background:linear-gradient(90deg,var(--gold),transparent 70%);}
+  .card--why::after{background:linear-gradient(90deg,var(--purple),transparent 70%);}
+  .card--action::after{background:linear-gradient(90deg,var(--red),transparent 70%);}
+  .card--recap::after{background:linear-gradient(90deg,var(--fg-muted),transparent 70%);}
+  .card--quiz::after{background:linear-gradient(90deg,var(--gold),var(--accent));}
+
+  .card-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;margin-bottom:14px;
+  }
+  .card--explain .card-icon{background:var(--accent-dim);color:var(--accent);}
+  .card--example .card-icon{background:var(--gold-dim);color:var(--gold);}
+  .card--why .card-icon{background:var(--purple-dim);color:var(--purple);}
+  .card--action .card-icon{background:var(--red-dim);color:var(--red);}
+  .card--recap .card-icon{background:rgba(113,125,145,0.10);color:var(--fg-muted);}
+  .card--quiz .card-icon{background:var(--gold-dim);color:var(--gold);}
+
+  ul{list-style:none;padding:0;margin-bottom:12px;}
+  ul li{position:relative;padding-left:22px;margin-bottom:9px;font-size:0.96rem;color:var(--fg-dim);}
+  ul li::before{content:'';position:absolute;left:3px;top:11px;width:7px;height:7px;border-radius:50%;}
+  .card--explain ul li::before{background:var(--accent);}
+  .card--example ul li::before{background:var(--gold);}
+  .card--why ul li::before{background:var(--purple);}
+  .card--action ul li::before{background:var(--red);}
+  .card--recap ul li::before{background:var(--fg-muted);width:5px;height:5px;top:12px;left:4px;}
+
+  .callout{border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+  .callout p{margin:0;font-size:0.94rem;}
+  .callout--accent{background:var(--accent-dim);border-left:3px solid var(--accent);}
+  .callout--gold{background:var(--gold-dim);border-left:3px solid var(--gold);}
+  .callout--red{background:var(--red-dim);border-left:3px solid var(--red);}
+
+  .svg-center{display:flex;justify-content:center;margin:22px 0;}
+  .svg-center svg{max-width:100%;height:auto;}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.93rem;}
+  thead th{
+    text-align:left;padding:11px 16px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-size:0.82rem;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;
+  }
+  thead th:first-child{border-radius:10px 0 0 0;}
+  thead th:last-child{border-radius:0 10px 0 0;}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--fg-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;margin:2px 2px;}
+  .tag--green{background:var(--accent-dim);color:var(--accent);}
+  .tag--red{background:var(--red-dim);color:var(--red);}
+  .tag--gold{background:var(--gold-dim);color:var(--gold);}
+  .tag--purple{background:var(--purple-dim);color:var(--purple);}
+
+  .quiz-block{margin-bottom:28px;}
+  .quiz-block:last-of-type{margin-bottom:0;}
+  .quiz-question{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.98rem;font-weight:600;color:var(--fg);
+    margin-bottom:14px;display:flex;gap:10px;
+  }
+  .quiz-qnum{
+    flex-shrink:0;width:26px;height:26px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--gold-dim);color:var(--gold);font-size:12px;font-weight:700;
+  }
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-opt{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 18px;border-radius:12px;
+    background:var(--bg-card-alt);border:1.5px solid var(--border);
+    cursor:pointer;transition:all 0.25s ease;
+    font-size:0.94rem;color:var(--fg-dim);user-select:none;
+  }
+  .quiz-opt:hover{border-color:var(--fg-muted);background:rgba(255,255,255,0.03);}
+  .quiz-opt .opt-letter{
+    flex-shrink:0;width:28px;height:28px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(113,125,145,0.10);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;
+    transition:all 0.25s ease;
+  }
+  .quiz-opt.correct{border-color:var(--accent);background:var(--accent-dim);color:var(--fg);}
+  .quiz-opt.correct .opt-letter{background:var(--accent);color:var(--bg);}
+  .quiz-opt.wrong{border-color:var(--red);background:var(--red-dim);color:var(--fg);}
+  .quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;}
+  .quiz-opt.disabled{pointer-events:none;opacity:0.6;}
+  .quiz-opt.disabled.correct{opacity:1;}
+
+  .quiz-feedback{
+    margin-top:12px;padding:12px 16px;border-radius:10px;
+    font-size:0.91rem;display:none;line-height:1.6;
+  }
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback--correct{background:var(--accent-dim);color:var(--accent);border-left:3px solid var(--accent);}
+  .quiz-feedback--wrong{background:var(--red-dim);color:var(--red);border-left:3px solid var(--red);}
+
+  .quiz-score{
+    text-align:center;margin-top:20px;padding:20px;
+    border-radius:var(--radius);background:var(--bg-card-alt);display:none;
+  }
+  .quiz-score.show{display:block;}
+  .quiz-score .score-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:2.4rem;font-weight:700;color:var(--accent);
+  }
+  .quiz-score .score-label{font-size:0.88rem;color:var(--fg-muted);}
+
+  .nav-footer{display:flex;justify-content:space-between;align-items:center;margin-top:44px;gap:16px;flex-wrap:wrap;}
+  .btn-back{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 28px;border:1px solid var(--border);border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-back:hover{border-color:var(--fg-muted);color:var(--fg);}
+  .btn-next{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent);color:var(--bg);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 34px;border:none;border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow);}
+  .btn-next:active{transform:translateY(0);}
+
+  .fi{opacity:0;transform:translateY(22px);animation:fadeUp 0.55s ease forwards;}
+  .fi:nth-child(1){animation-delay:.05s}
+  .fi:nth-child(2){animation-delay:.1s}
+  .fi:nth-child(3){animation-delay:.15s}
+  .fi:nth-child(4){animation-delay:.2s}
+  .fi:nth-child(5){animation-delay:.25s}
+  .fi:nth-child(6){animation-delay:.3s}
+  .fi:nth-child(7){animation-delay:.35s}
+  .fi:nth-child(8){animation-delay:.4s}
+  .fi:nth-child(9){animation-delay:.45s}
+  .fi:nth-child(10){animation-delay:.5s}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+  /* language visibility */
+  .lang-en, .lang-ne { transition: opacity 0.2s ease; }
+  .lang-en.hide, .lang-ne.hide { display: none; }
+
+  @media(max-width:600px){
+    .container{padding:28px 16px 60px;}
+    .card{padding:22px 18px;}
+    .nav-footer{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="dot-grid"></div>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+  <div class="orb orb--3"></div>
+</div>
+
+<div class="container">
+  <!-- Toggle button - standardized -->
+  <div class="lang-toggle-wrap">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="ne">🇳🇵 नेपाली</button>
+    </div>
+  </div>
+
+  <!-- ================= ENGLISH VERSION ================= -->
+  <div id="englishVersion" class="lang-en">
+    <div class="course-badge fi">
+      <span class="dot"></span>
+      Lesson 3 of 5
+    </div>
+    <h1 class="fi">Company Basics & <span class="purple">Sector</span> Analysis</h1>
+    <p class="subtitle fi">Not all companies are equal. Learn how to tell a strong company from a weak one, and why knowing the sector is half the battle on NEPSE.</p>
+    <div class="progress-wrap fi">
+      <div class="progress-meta"><span>Lesson 3 of 5</span><span>60%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressBarEn"></div></div>
+    </div>
+
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>Simple Explanation</h2><p>Imagine a shopping mall. There's a food court, a clothing section, an electronics zone. Each zone behaves differently — food is always busy, electronics peak during festivals.</p><p>NEPSE is like that mall. It has <strong>sectors</strong> — groups of similar companies. And just like zones in a mall, different sectors behave differently.</p><div class="svg-center"><svg width="520" height="200" viewBox="0 0 520 200"><rect x="8" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.2"/><text x="56" y="40" text-anchor="middle" fill="#f0b840" font-size="22" font-weight="700">B</text><text x="56" y="62" text-anchor="middle" fill="#f0b840" font-size="10" font-weight="600">BANKING</text><text x="56" y="82" text-anchor="middle" fill="#717d91" font-size="9">NABIL, NMB,</text><text x="56" y="96" text-anchor="middle" fill="#717d91" font-size="9">SCB, EBL...</text><rect x="18" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="18" y="115" width="60" height="6" rx="3" fill="#f0b840" opacity="0.6"/><text x="56" y="140" text-anchor="middle" fill="#717d91" font-size="8.5">High volume</text><text x="56" y="154" text-anchor="middle" fill="#717d91" font-size="8.5">Market driver</text><text x="56" y="178" text-anchor="middle" fill="#f0b840" font-size="9" font-weight="600">~40% of trades</text><rect x="114" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.2"/><text x="162" y="40" text-anchor="middle" fill="#00d4a1" font-size="22" font-weight="700">H</text><text x="162" y="62" text-anchor="middle" fill="#00d4a1" font-size="10" font-weight="600">HYDRO</text><text x="162" y="82" text-anchor="middle" fill="#717d91" font-size="9">CHCL, NHPC,</text><text x="162" y="96" text-anchor="middle" fill="#717d91" font-size="9">UPPER, API...</text><rect x="124" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="124" y="115" width="40" height="6" rx="3" fill="#00d4a1" opacity="0.6"/><text x="162" y="140" text-anchor="middle" fill="#717d91" font-size="8.5">Steady returns</text><text x="162" y="154" text-anchor="middle" fill="#717d91" font-size="8.5">Long-term play</text><text x="162" y="178" text-anchor="middle" fill="#00d4a1" font-size="9" font-weight="600">~15% of trades</text><rect x="220" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#8b7cf6" stroke-width="1.2"/><text x="268" y="40" text-anchor="middle" fill="#8b7cf6" font-size="22" font-weight="700">I</text><text x="268" y="62" text-anchor="middle" fill="#8b7cf6" font-size="10" font-weight="600">INSURANCE</text><text x="268" y="82" text-anchor="middle" fill="#717d91" font-size="9">NLIC, LICN,</text><text x="268" y="96" text-anchor="middle" fill="#717d91" font-size="9">SIC, PIC...</text><rect x="230" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="230" y="115" width="32" height="6" rx="3" fill="#8b7cf6" opacity="0.6"/><text x="268" y="140" text-anchor="middle" fill="#717d91" font-size="8.5">Cyclical</text><text x="268" y="154" text-anchor="middle" fill="#717d91" font-size="8.5">Bonus heavy</text><text x="268" y="178" text-anchor="middle" fill="#8b7cf6" font-size="9" font-weight="600">~12% of trades</text><rect x="326" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#ff5c5c" stroke-width="1.2"/><text x="374" y="40" text-anchor="middle" fill="#ff5c5c" font-size="22" font-weight="700">M</text><text x="374" y="62" text-anchor="middle" fill="#ff5c5c" font-size="10" font-weight="600">MICRO-FIN</text><text x="374" y="82" text-anchor="middle" fill="#717d91" font-size="9">CBBL, SFBBL,</text><text x="374" y="96" text-anchor="middle" fill="#717d91" font-size="9">FWLD...</text><rect x="336" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="336" y="115" width="20" height="6" rx="3" fill="#ff5c5c" opacity="0.6"/><text x="374" y="140" text-anchor="middle" fill="#717d91" font-size="8.5">High dividend</text><text x="374" y="154" text-anchor="middle" fill="#717d91" font-size="8.5">Low volume</text><text x="374" y="178" text-anchor="middle" fill="#ff5c5c" font-size="9" font-weight="600">~8% of trades</text><rect x="432" y="10" width="80" height="180" rx="12" fill="#1a1f2b" stroke="#717d91" stroke-width="1.2"/><text x="472" y="40" text-anchor="middle" fill="#717d91" font-size="22" font-weight="700">+</text><text x="472" y="62" text-anchor="middle" fill="#717d91" font-size="10" font-weight="600">OTHERS</text><text x="472" y="82" text-anchor="middle" fill="#717d91" font-size="9">Manufacturing</text><text x="472" y="96" text-anchor="middle" fill="#717d91" font-size="9">Trading, Hotels</text><text x="472" y="140" text-anchor="middle" fill="#717d91" font-size="8.5">Mixed bag</text><text x="472" y="178" text-anchor="middle" fill="#717d91" font-size="9" font-weight="600">~25% of trades</text></svg></div><p>Within each sector, you need to check 3 things to know if a company is <strong>healthy</strong>:</p><div class="svg-center"><svg width="460" height="130" viewBox="0 0 460 130"><rect x="10" y="10" width="135" height="110" rx="12" fill="#1a1f2b" stroke="#f0b840" stroke-width="1"/><text x="77" y="40" text-anchor="middle" fill="#f0b840" font-size="24" font-weight="700">P</text><text x="77" y="62" text-anchor="middle" fill="#f0b840" font-size="12" font-weight="600">PROFIT</text><text x="77" y="82" text-anchor="middle" fill="#717d91" font-size="9">Is the company</text><text x="77" y="96" text-anchor="middle" fill="#717d91" font-size="9">making money?</text><line x1="149" y1="65" x2="163" y2="65" stroke="#717d91" stroke-width="1"/><polygon points="161,62 167,65 161,68" fill="#717d91"/><rect x="170" y="10" width="135" height="110" rx="12" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1"/><text x="237" y="40" text-anchor="middle" fill="#00d4a1" font-size="24" font-weight="700">D</text><text x="237" y="62" text-anchor="middle" fill="#00d4a1" font-size="12" font-weight="600">DIVIDEND</text><text x="237" y="82" text-anchor="middle" fill="#717d91" font-size="9">Does it share</text><text x="237" y="96" text-anchor="middle" fill="#717d91" font-size="9">profit with you?</text><line x1="309" y1="65" x2="323" y2="65" stroke="#717d91" stroke-width="1"/><polygon points="321,62 327,65 321,68" fill="#717d91"/><rect x="330" y="10" width="120" height="110" rx="12" fill="#1a1f2b" stroke="#8b7cf6" stroke-width="1"/><text x="390" y="40" text-anchor="middle" fill="#8b7cf6" font-size="24" font-weight="700">G</text><text x="390" y="62" text-anchor="middle" fill="#8b7cf6" font-size="12" font-weight="600">GROWTH</text><text x="390" y="82" text-anchor="middle" fill="#717d91" font-size="9">Is profit growing</text><text x="390" y="96" text-anchor="middle" fill="#717d91" font-size="9">year after year?</text></svg></div><ul><li><strong>Profit</strong> — The money a company keeps after paying all expenses. No profit = no future.</li><li><strong>Dividend</strong> — Two types: Cash Dividend and Bonus Share.</li><li><strong>Growth</strong> — Profit increasing every year is attractive.</li></ul><div class="callout callout--accent"><p><strong>Simple rule:</strong> Profit tells you alive. Dividend generous. Growth future. You want all three.</p></div></div>
+
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h2>Practical Example</h2><p>Compare two NEPSE companies — one strong, one weak:</p><div class="svg-center"><svg width="500" height="180" viewBox="0 0 500 180"><rect x="8" y="10" width="230" height="160" rx="14" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.5"/><circle cx="40" cy="40" r="16" fill="#00d4a1" fill-opacity="0.15"/><text x="40" y="46" text-anchor="middle" fill="#00d4a1" font-size="16" font-weight="700">✓</text><text x="66" y="46" fill="#00d4a1" font-size="12" font-weight="700">STRONG COMPANY</text><text x="24" y="72" fill="#717d91" font-size="9.5">Profit:</text><text x="80" y="72" fill="#e4e7ec" font-size="10" font-weight="600">Rs. 20 Arba (+15%)</text><text x="24" y="94" fill="#717d91" font-size="9.5">Dividend:</text><text x="80" y="94" fill="#00d4a1" font-size="10" font-weight="600">30% Cash + 20% Bonus</text><text x="24" y="116" fill="#717d91" font-size="9.5">Growth:</text><text x="80" y="116" fill="#00d4a1" font-size="10" font-weight="600">Profit rising 3 years straight</text><text x="24" y="138" fill="#717d91" font-size="9.5">Sector:</text><text x="80" y="138" fill="#e4e7ec" font-size="10">Commercial Bank</text><text x="24" y="160" fill="#717d91" font-size="9.5">Verdict:</text><text x="80" y="160" fill="#00d4a1" font-size="10" font-weight="700">Healthy, generous, growing</text><rect x="262" y="10" width="230" height="160" rx="14" fill="#1a1f2b" stroke="#ff5c5c" stroke-width="1.5"/><circle cx="294" cy="40" r="16" fill="#ff5c5c" fill-opacity="0.15"/><text x="294" y="46" text-anchor="middle" fill="#ff5c5c" font-size="16" font-weight="700">✗</text><text x="320" y="46" fill="#ff5c5c" font-size="12" font-weight="700">WEAK COMPANY</text><text x="278" y="72" fill="#717d91" font-size="9.5">Profit:</text><text x="334" y="72" fill="#e4e7ec" font-size="10" font-weight="600">Rs. 2 Crore (-40%)</text><text x="278" y="94" fill="#717d91" font-size="9.5">Dividend:</text><text x="334" y="94" fill="#ff5c5c" font-size="10" font-weight="600">0% (Nothing last 2 yrs)</text><text x="278" y="116" fill="#717d91" font-size="9.5">Growth:</text><text x="334" y="116" fill="#ff5c5c" font-size="10" font-weight="600">Profit falling year after year</text><text x="278" y="138" fill="#717d91" font-size="9.5">Sector:</text><text x="334" y="138" fill="#e4e7ec" font-size="10">Manufacturing (Struggling)</text><text x="278" y="160" fill="#717d91" font-size="9.5">Verdict:</text><text x="334" y="160" fill="#ff5c5c" font-size="10" font-weight="700">Bleeding, no returns</text></svg></div><div class="callout callout--gold"><p><strong>Pro tip:</strong> On NEPSE, Banking sector drives the Index.</p></div></div>
+
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>Why It Matters</h2><ul><li>Sectors move together</li><li>Fundamentals anchor price</li><li>Dividend = real income</li><li>Bonus shares grow holdings</li></ul><table><thead><tr><th>Sector</th><th>Behavior</th><th>Best For</th></tr></thead><tbody><tr><td><span class="tag tag--gold">Banking</span></td><td>High volume, drives Index</td><td>Active traders</td></tr><tr><td><span class="tag tag--green">Hydropower</span></td><td>Steady returns</td><td>Long-term investors</td></tr><tr><td><span class="tag tag--purple">Insurance</span></td><td>Bonus-heavy</td><td>Dividend seekers</td></tr><tr><td><span class="tag tag--red">Microfinance</span></td><td>High dividend yield, low volume</td><td>Income investors</td></tr></tbody></table></div>
+
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>Quick Action Insight</h2><ul><li>Search dividend history</li><li>Check sector-wise index</li><li>Review one quarterly report</li><li>Make a watchlist</li></ul><div class="callout callout--red"><p><strong>Still observation mode!</strong> Two more lessons to go.</p></div></div>
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>Mini Recap</h2><ul><li>NEPSE has sectors (Banking, Hydro, Insurance, Microfinance)</li><li>Banking drives the NEPSE Index</li><li>3 pillars: Profit, Dividend, Growth</li><li>Cash Dividend = money to bank; Bonus Share = extra shares</li><li>Sector trend matters</li></ul></div>
+    <div class="card card--quiz fi" id="quizEn"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><h2>Test Your Understanding</h2><p>5 questions. Click an option to check.</p><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">1</span><span>Which sector typically drives the NEPSE Index the most?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>Hydropower</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>Banking</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>Manufacturing</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>Microfinance</span></div></div><div class="quiz-feedback" id="fbEn1"></div></div><div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">2</span><span>What is a "Bonus Share"?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'en')"><span class="opt-letter">A</span><span>Money sent to bank account</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'en')"><span class="opt-letter">B</span><span>Discount coupon</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'en')"><span class="opt-letter">C</span><span>Extra shares to DEMAT for free</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'en')"><span class="opt-letter">D</span><span>Employee shares</span></div></div><div class="quiz-feedback" id="fbEn2"></div></div><div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">3</span><span>Profit was Rs. 10 crore last year and Rs. 15 crore this year. What indicates?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'en')"><span class="opt-letter">A</span><span>Decline</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'en')"><span class="opt-letter">B</span><span>Stagnant</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'en')"><span class="opt-letter">C</span><span>High volume no growth</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'en')"><span class="opt-letter">D</span><span>Growing (50% profit growth)</span></div></div><div class="quiz-feedback" id="fbEn3"></div></div><div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">4</span><span>Why do sectors matter?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'en')"><span class="opt-letter">A</span><span>Stocks in same sector move together</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'en')"><span class="opt-letter">B</span><span>Same number of companies</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'en')"><span class="opt-letter">C</span><span>Sectors don't matter</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'en')"><span class="opt-letter">D</span><span>Only one stock per sector</span></div></div><div class="quiz-feedback" id="fbEn4"></div></div><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">5</span><span>What are the 3 pillars of a healthy company?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>High price, high volume</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>Profit, Dividend, Growth</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>SEBON, NEPSE, Broker</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>Open, Close, Index</span></div></div><div class="quiz-feedback" id="fbEn5"></div></div><div class="quiz-score" id="quizScoreEn"><div class="score-num" id="scoreNumEn">0/5</div><div class="score-label">Correct answers</div></div></div>
+
+    <div class="nav-footer fi"><button class="btn-back" onclick="window.location.href='2.html'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back</button><button class="btn-next" onclick="window.location.href='4.html'">Next Lesson <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+  </div>
+
+  <!-- ================= NEPALI VERSION ================= -->
+  <div id="nepaliVersion" class="lang-ne hide">
+    <div class="course-badge fi"><span class="dot"></span>पाठ ३ of ५</div>
+    <h1 class="fi">कम्पनीको आधारभूत कुरा र <span class="purple">Sector</span> विश्लेषण</h1>
+    <p class="subtitle fi">सबै कम्पनी उस्तै हुँदैनन्। बलियो र कमजोर कम्पनी कसरी छुट्याउने र Sector बुझ्नु किन आधा लडाइँ जित्नु हो सिक्नुहोस्।</p>
+    <div class="progress-wrap fi"><div class="progress-meta"><span>पाठ ३ of ५</span><span>६०%</span></div><div class="progress-track"><div class="progress-fill" id="progressBarNe"></div></div></div>
+
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>सरल व्याख्या</h2><p>शपिङ मलको कुरा गरौं। हरेक जोनको व्यवहार फरक हुन्छ। NEPSE पनि त्यस्तै मल हो। यसमा Sector (समूह) हरू छन्।</p><div class="svg-center"><svg width="520" height="200" viewBox="0 0 520 200"><rect x="8" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#f0b840"/><text x="56" y="40" fill="#f0b840" font-size="22" font-weight="700">B</text><text x="56" y="62" fill="#f0b840" font-size="10" font-weight="600">BANKING</text><text x="56" y="82" fill="#717d91" font-size="9">NABIL,NMB</text><rect x="18" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="18" y="115" width="60" height="6" rx="3" fill="#f0b840" opacity="0.6"/><text x="56" y="140" fill="#717d91" font-size="8.5">Volume धेरै</text><text x="56" y="154" fill="#717d91" font-size="8.5">बजार चलाउने</text><text x="56" y="178" fill="#f0b840" font-size="9">~४०%</text><rect x="114" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#00d4a1"/><text x="162" y="40" fill="#00d4a1" font-size="22" font-weight="700">H</text><text x="162" y="62" fill="#00d4a1" font-size="10" font-weight="600">HYDRO</text><rect x="124" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="124" y="115" width="40" height="6" rx="3" fill="#00d4a1" opacity="0.6"/><text x="162" y="140" fill="#717d91" font-size="8.5">स्थिर आम्दानी</text><text x="162" y="178" fill="#00d4a1" font-size="9">~१५%</text><rect x="220" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#8b7cf6"/><text x="268" y="40" fill="#8b7cf6" font-size="22" font-weight="700">I</text><text x="268" y="62" fill="#8b7cf6" font-size="10" font-weight="600">INSURANCE</text><rect x="230" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="230" y="115" width="32" height="6" rx="3" fill="#8b7cf6" opacity="0.6"/><text x="268" y="140" fill="#717d91" font-size="8.5">चक्रीय</text><text x="268" y="178" fill="#8b7cf6" font-size="9">~१२%</text><rect x="326" y="10" width="96" height="180" rx="12" fill="#1a1f2b" stroke="#ff5c5c"/><text x="374" y="40" fill="#ff5c5c" font-size="22" font-weight="700">M</text><text x="374" y="62" fill="#ff5c5c" font-size="10" font-weight="600">MICRO-FIN</text><rect x="336" y="115" width="76" height="6" rx="3" fill="#252a36"/><rect x="336" y="115" width="20" height="6" rx="3" fill="#ff5c5c" opacity="0.6"/><text x="374" y="140" fill="#717d91" font-size="8.5">Dividend राम्रो</text><text x="374" y="178" fill="#ff5c5c" font-size="9">~८%</text><rect x="432" y="10" width="80" height="180" rx="12" fill="#1a1f2b" stroke="#717d91"/><text x="472" y="40" fill="#717d91" font-size="22" font-weight="700">+</text><text x="472" y="62" fill="#717d91" font-size="10" font-weight="600">अन्य</text><text x="472" y="178" fill="#717d91" font-size="9">~२५%</text></svg></div><p>प्रत्येक Sector भित्र ३ वटा कुरा जाँच्नुपर्छ:</p><div class="svg-center"><svg width="460" height="130" viewBox="0 0 460 130"><rect x="10" y="10" width="135" height="110" rx="12" fill="#1a1f2b" stroke="#f0b840"/><text x="77" y="40" fill="#f0b840" font-size="24" font-weight="700">P</text><text x="77" y="62" fill="#f0b840" font-size="12" font-weight="600">PROFIT (नाफा)</text><text x="77" y="82" fill="#717d91" font-size="9">के कम्पनीले</text><text x="77" y="96" fill="#717d91" font-size="9">पैसा कमाउँछ?</text><line x1="149" y1="65" x2="163" y2="65" stroke="#717d91"/><polygon points="161,62 167,65 161,68" fill="#717d91"/><rect x="170" y="10" width="135" height="110" rx="12" fill="#1a1f2b" stroke="#00d4a1"/><text x="237" y="40" fill="#00d4a1" font-size="24" font-weight="700">D</text><text x="237" y="62" fill="#00d4a1" font-size="12" font-weight="600">DIVIDEND (लाभांश)</text><text x="237" y="82" fill="#717d91" font-size="9">के तपाईंलाई</text><text x="237" y="96" fill="#717d91" font-size="9">नाफा बाँड्छ?</text><line x1="309" y1="65" x2="323" y2="65" stroke="#717d91"/><polygon points="321,62 327,65 321,68" fill="#717d91"/><rect x="330" y="10" width="120" height="110" rx="12" fill="#1a1f2b" stroke="#8b7cf6"/><text x="390" y="40" fill="#8b7cf6" font-size="24" font-weight="700">G</text><text x="390" y="62" fill="#8b7cf6" font-size="12" font-weight="600">GROWTH (वृद्धि)</text><text x="390" y="82" fill="#717d91" font-size="9">के नाफा वर्षेनी</text><text x="390" y="96" fill="#717d91" font-size="9">बढ्दैछ?</text></svg></div><ul><li><strong>Profit (नाफा)</strong> — कम्पनीले राख्ने पैसा।</li><li><strong>Dividend (लाभांश)</strong> — Cash Dividend र Bonus Share।</li><li><strong>Growth (वृद्धि)</strong> — नाफा बढ्दै छ भने आकर्षक।</li></ul><div class="callout callout--accent"><p><strong>सरल नियम:</strong> Profit = जीवित, Dividend = उदार, Growth = भविष्य। तीनवटै चाहिन्छ।</p></div></div>
+
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h2>व्यावहारिक उदाहरण</h2><div class="svg-center"><svg width="500" height="180" viewBox="0 0 500 180"><rect x="8" y="10" width="230" height="160" rx="14" fill="#1a1f2b" stroke="#00d4a1"/><circle cx="40" cy="40" r="16" fill="#00d4a1" fill-opacity="0.15"/><text x="40" y="46" text-anchor="middle" fill="#00d4a1" font-size="16" font-weight="700">✓</text><text x="66" y="46" fill="#00d4a1" font-size="12" font-weight="700">बलियो कम्पनी</text><text x="24" y="72" fill="#717d91" font-size="9.5">नाफा:</text><text x="80" y="72" fill="#e4e7ec" font-size="10">Rs. २० अर्ब (+१५%)</text><text x="24" y="94" fill="#717d91" font-size="9.5">लाभांश:</text><text x="80" y="94" fill="#00d4a1" font-size="10">३०% Cash + २०% Bonus</text><text x="24" y="116" fill="#717d91" font-size="9.5">वृद्धि:</text><text x="80" y="116" fill="#00d4a1" font-size="10">३ वर्षदेखि बढ्दै</text><text x="24" y="138" fill="#717d91" font-size="9.5">Sector:</text><text x="80" y="138" fill="#e4e7ec" font-size="10">Commercial Bank</text><text x="24" y="160" fill="#717d91" font-size="9.5">निष्कर्ष:</text><text x="80" y="160" fill="#00d4a1" font-size="10">स्वस्थ, उदार, बढ्दै</text><rect x="262" y="10" width="230" height="160" rx="14" fill="#1a1f2b" stroke="#ff5c5c"/><circle cx="294" cy="40" r="16" fill="#ff5c5c" fill-opacity="0.15"/><text x="294" y="46" text-anchor="middle" fill="#ff5c5c" font-size="16" font-weight="700">✗</text><text x="320" y="46" fill="#ff5c5c" font-size="12" font-weight="700">कमजोर कम्पनी</text><text x="278" y="72" fill="#717d91" font-size="9.5">नाफा:</text><text x="334" y="72" fill="#e4e7ec" font-size="10">Rs. २ करोड (-४०%)</text><text x="278" y="94" fill="#717d91" font-size="9.5">लाभांश:</text><text x="334" y="94" fill="#ff5c5c" font-size="10">०% (२ वर्षदेखि)</text><text x="278" y="116" fill="#717d91" font-size="9.5">वृद्धि:</text><text x="334" y="116" fill="#ff5c5c" font-size="10">नाफा घट्दै</text><text x="278" y="138" fill="#717d91" font-size="9.5">Sector:</text><text x="334" y="138" fill="#e4e7ec" font-size="10">Manufacturing (संघर्ष)</text><text x="278" y="160" fill="#717d91" font-size="9.5">निष्कर्ष:</text><text x="334" y="160" fill="#ff5c5c" font-size="10">रक्तश्रावी, आम्दानी छैन</text></svg></div><div class="callout callout--gold"><p><strong>प्रो टिप:</strong> Banking Sector ले NEPSE Index चलाउँछ।</p></div></div>
+
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>यो किन महत्त्वपूर्ण छ</h2><ul><li>Sector एकसाथ चल्छन्</li><li>Fundamentals ले Price टिकाउँछ</li><li>Dividend वास्तविक आम्दानी</li><li>Bonus Share सम्पत्ति बढाउँछ</li></ul><table><thead><tr><th>Sector</th><th>व्यवहार</th><th>कसको लागि</th></tr></thead><tbody><tr><td><span class="tag tag--gold">Banking</span></td><td>High Volume, Index चलाउँछ</td><td>Active Traders</td></tr><tr><td><span class="tag tag--green">Hydropower</span></td><td>स्थिर आम्दानी</td><td>दीर्घकालिन</td></tr><tr><td><span class="tag tag--purple">Insurance</span></td><td>Bonus धेरै</td><td>Dividend खोज्ने</td></tr><tr><td><span class="tag tag--red">Microfinance</span></td><td>Dividend उच्च, Volume कम</td><td>आम्दानी खोज्ने</td></tr></tbody></table></div>
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>द्रुत कार्य अन्तर्दृष्टि</h2><ul><li>Dividend history खोज्नुहोस्</li><li>Sector-wise index जाँच्नुहोस्</li><li>एउटा Quarterly Report हेर्नुहोस्</li><li>Watchlist बनाउनुहोस्</li></ul><div class="callout callout--red"><p><strong>अझै अवलोकन मोडमा!</strong> अझ दुई पाठ बाँकी।</p></div></div>
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>संक्षिप्त सारांश</h2><ul><li>NEPSE का Sector: Banking, Hydro, Insurance, Microfinance</li><li>Banking Index चलाउँछ</li><li>३ आधार: Profit, Dividend, Growth</li><li>Cash Dividend = बैंकमा पैसा; Bonus Share = थप शेयर</li><li>Sector Trend महत्त्वपूर्ण</li></ul></div>
+    <div class="card card--quiz fi" id="quizNe"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div><h2>तपाईंको बुझाइ जाँच्नुहोस्</h2><p>५ प्रश्न। उत्तर छान्नुहोस्।</p><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">१</span><span>कुन Sector ले NEPSE Index लाई सबैभन्दा बढी प्रभावित पार्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>Hydropower</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>Banking</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>Manufacturing</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>Microfinance</span></div></div><div class="quiz-feedback" id="fbNe1"></div></div><div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">२</span><span>"Bonus Share" भनेको के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'ne')"><span class="opt-letter">A</span><span>बैंकमा पैसा</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'ne')"><span class="opt-letter">B</span><span>डिस्काउन्ट कुपन</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'ne')"><span class="opt-letter">C</span><span>DEMAT मा निःशुल्क शेयर</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'ne')"><span class="opt-letter">D</span><span>कर्मचारीलाई मात्र</span></div></div><div class="quiz-feedback" id="fbNe2"></div></div><div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">३</span><span>नाफा Rs. १० करोडबाट Rs. १५ करोड भयो। यसले के देखाउँछ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'ne')"><span class="opt-letter">A</span><span>घट्दै</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'ne')"><span class="opt-letter">B</span><span>स्थिर</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'ne')"><span class="opt-letter">C</span><span>Volume धेरै तर वृद्धि छैन</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'ne')"><span class="opt-letter">D</span><span>बढ्दैछ (५०% वृद्धि)</span></div></div><div class="quiz-feedback" id="fbNe3"></div></div><div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">४</span><span>Sector ले किन महत्त्व राख्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'ne')"><span class="opt-letter">A</span><span>उस्तै Sector का स्टक एकसाथ चल्छन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'ne')"><span class="opt-letter">B</span><span>उस्तै संख्यामा कम्पनी</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'ne')"><span class="opt-letter">C</span><span>Sector अर्थ राख्दैन</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'ne')"><span class="opt-letter">D</span><span>एउटा मात्र स्टक प्रति Sector</span></div></div><div class="quiz-feedback" id="fbNe4"></div></div><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">५</span><span>स्वस्थ कम्पनीका ३ आधारहरू के हुन्?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>उच्च Price, Volume</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>Profit, Dividend, Growth</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>SEBON, NEPSE, Broker</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>Open, Close, Index</span></div></div><div class="quiz-feedback" id="fbNe5"></div></div><div class="quiz-score" id="quizScoreNe"><div class="score-num" id="scoreNumNe">०/५</div><div class="score-label">सही उत्तरहरू</div></div></div>
+    <div class="nav-footer fi"><button class="btn-back" onclick="alert('पाठ २ मा जानुहोस्')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>पछाडि</button><button class="btn-next" onclick="window.location.href='4.html'">अर्को पाठ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+  </div>
+</div>
+
+<script>
+  // progress bars
+  window.addEventListener('load', () => {
+    const barEn = document.getElementById('progressBarEn');
+    const barNe = document.getElementById('progressBarNe');
+    if(barEn) { barEn.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barEn.style.width = '60%'; }); }); }
+    if(barNe) { barNe.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barNe.style.width = '60%'; }); }); }
+  });
+
+  // Quiz state per language
+  let quizState = { en: { totalAnswered: 0, correctCount: 0 }, ne: { totalAnswered: 0, correctCount: 0 } };
+  const totalQuestions = 5;
+
+  const feedbackEN = {
+    1: { correct: "Correct! Banking is the largest sector driving NEPSE Index.", wrong: "Banking sector dominates NEPSE — highest volume and impact." },
+    2: { correct: "Correct! Bonus share means extra shares to DEMAT for free.", wrong: "Bonus share = extra shares added to DEMAT." },
+    3: { correct: "Correct! 50% profit growth shows expansion.", wrong: "Going from 10cr to 15cr is growth, not decline." },
+    4: { correct: "Correct! Stocks in same sector move together.", wrong: "Sector matters because stocks move together." },
+    5: { correct: "Correct! Profit, Dividend, Growth are the 3 pillars.", wrong: "3 pillars are Profit, Dividend, Growth." }
+  };
+  const feedbackNE = {
+    1: { correct: "सही! Banking NEPSE को सबैभन्दा ठूलो Sector हो।", wrong: "Banking Sector ले NEPSE मा हावी गर्छ।" },
+    2: { correct: "सही! Bonus Share DEMAT मा निःशुल्क शेयर हो।", wrong: "Bonus Share = निःशुल्क अतिरिक्त शेयर।" },
+    3: { correct: "सही! ५०% नाफा वृद्धि विस्तारको संकेत।", wrong: "१० करोडबाट १५ करोड हुनु वृद्धि हो।" },
+    4: { correct: "सही! उस्तै Sector का स्टक एकसाथ चल्छन्।", wrong: "Sector महत्त्वपूर्ण किनभने स्टक एकसाथ चल्छन्।" },
+    5: { correct: "सही! Profit, Dividend, Growth ३ आधार हुन्।", wrong: "३ आधार: Profit, Dividend, Growth।" }
+  };
+
+  function checkAnswer(optEl, selectedIdx, correctIdx, lang) {
+    const block = optEl.closest('.quiz-block');
+    if (block.classList.contains('answered')) return;
+    const options = block.querySelectorAll('.quiz-opt');
+    const blocks = Array.from(document.querySelectorAll(lang === 'en' ? '#englishVersion .quiz-block' : '#nepaliVersion .quiz-block'));
+    const blockIndex = blocks.indexOf(block) + 1;
+    const isCorrect = selectedIdx === correctIdx;
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      if (i === correctIdx) opt.classList.add('correct');
+      if (i === selectedIdx && !isCorrect) opt.classList.add('wrong');
+    });
+    const fbId = `fb${lang === 'en' ? 'En' : 'Ne'}${blockIndex}`;
+    const fb = document.getElementById(fbId);
+    const data = lang === 'en' ? feedbackEN : feedbackNE;
+    fb.className = `quiz-feedback show ${isCorrect ? 'quiz-feedback--correct' : 'quiz-feedback--wrong'}`;
+    fb.textContent = isCorrect ? data[blockIndex].correct : data[blockIndex].wrong;
+    block.classList.add('answered');
+    quizState[lang].totalAnswered++;
+    if (isCorrect) quizState[lang].correctCount++;
+    if (quizState[lang].totalAnswered === totalQuestions) {
+      const scoreDiv = document.getElementById(`quizScore${lang === 'en' ? 'En' : 'Ne'}`);
+      const scoreNum = document.getElementById(`scoreNum${lang === 'en' ? 'En' : 'Ne'}`);
+      scoreNum.textContent = `${quizState[lang].correctCount}/${totalQuestions}`;
+      scoreDiv.classList.add('show');
+    }
+  }
+
+  // Language toggle
+  const enDiv = document.getElementById('englishVersion');
+  const neDiv = document.getElementById('nepaliVersion');
+  const langBtns = document.querySelectorAll('.lang-btn');
+
+  function setLanguage(lang) {
+    if (lang === 'en') {
+      enDiv.classList.remove('hide');
+      neDiv.classList.add('hide');
+    } else {
+      enDiv.classList.add('hide');
+      neDiv.classList.remove('hide');
+    }
+    
+    langBtns.forEach(btn => {
+      if (btn.getAttribute('data-lang') === lang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+  });
+
+  // Initialize with English
+  setLanguage('en');
+</script>
+</body>
+</html>

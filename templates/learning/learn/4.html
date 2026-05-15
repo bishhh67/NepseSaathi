@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEPSE Course — Lesson 4 of 5 (English / Nepali)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0b0e13;
+    --bg-card: #12161e;
+    --bg-card-alt: #1a1f2b;
+    --fg: #e4e7ec;
+    --fg-dim: #c0c5ce;
+    --fg-muted: #717d91;
+    --accent: #00d4a1;
+    --accent-dim: rgba(0,212,161,0.10);
+    --accent-mid: rgba(0,212,161,0.20);
+    --accent-glow: rgba(0,212,161,0.25);
+    --gold: #f0b840;
+    --gold-dim: rgba(240,184,64,0.10);
+    --purple: #8b7cf6;
+    --purple-dim: rgba(139,124,246,0.10);
+    --red: #ff5c5c;
+    --red-dim: rgba(255,92,92,0.10);
+    --border: #1f2636;
+    --radius: 16px;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:'Karla',sans-serif;line-height:1.78;
+    min-height:100vh;overflow-x:hidden;
+  }
+
+  .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-scene .dot-grid{
+    position:absolute;inset:0;opacity:0.035;
+    background-image:radial-gradient(circle,var(--accent) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .bg-scene .orb{position:absolute;border-radius:50%;filter:blur(140px);}
+  .bg-scene .orb{display:none;}
+
+  .container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:48px 24px 90px;}
+
+  /* Language Toggle Button */
+  .lang-toggle-wrap{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:24px;
+  }
+  .lang-toggle{
+    background:var(--bg-card-alt);
+    border:1px solid var(--border);
+    border-radius:100px;
+    padding:6px;
+    display:inline-flex;
+    gap:6px;
+  }
+  .lang-btn{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.85rem;
+    font-weight:600;
+    padding:8px 20px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:all 0.25s ease;
+    background:transparent;
+    color:var(--fg-muted);
+    border:none;
+  }
+  .lang-btn.active{
+    background:var(--accent);
+    color:var(--bg);
+    box-shadow:0 0 8px var(--accent-glow);
+  }
+  .lang-btn:not(.active):hover{
+    color:var(--accent);
+    border-color:var(--accent-mid);
+  }
+
+  .course-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-dim);border:1px solid var(--accent-mid);
+    color:var(--accent);font-size:12px;font-weight:700;
+    letter-spacing:0.8px;text-transform:uppercase;
+    padding:7px 18px;border-radius:100px;margin-bottom:24px;
+  }
+  .course-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s ease infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.9rem,4.8vw,2.7rem);
+    font-weight:700;line-height:1.18;margin-bottom:14px;
+  }
+  h1 .accent{color:var(--accent);}
+  h1 .red{color:var(--red);}
+  .subtitle{font-size:1.02rem;color:var(--fg-muted);margin-bottom:36px;max-width:600px;}
+
+  h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.22rem;font-weight:600;margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  p{margin-bottom:13px;font-size:0.96rem;color:var(--fg-dim);}
+  strong{color:var(--fg);font-weight:600;}
+
+  .progress-wrap{margin-bottom:44px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--fg-muted);margin-bottom:8px;font-weight:600;letter-spacing:0.3px;}
+  .progress-track{height:5px;background:var(--bg-card-alt);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,var(--accent),#00e8b0);transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:30px 28px;
+    margin-bottom:24px;position:relative;overflow:hidden;
+  }
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card--explain::after{background:linear-gradient(90deg,var(--accent),transparent 70%);}
+  .card--example::after{background:linear-gradient(90deg,var(--gold),transparent 70%);}
+  .card--why::after{background:linear-gradient(90deg,var(--purple),transparent 70%);}
+  .card--action::after{background:linear-gradient(90deg,var(--red),transparent 70%);}
+  .card--recap::after{background:linear-gradient(90deg,var(--fg-muted),transparent 70%);}
+  .card--quiz::after{background:linear-gradient(90deg,var(--gold),var(--accent));}
+
+  .card-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;margin-bottom:14px;
+  }
+  .card--explain .card-icon{background:var(--accent-dim);color:var(--accent);}
+  .card--example .card-icon{background:var(--gold-dim);color:var(--gold);}
+  .card--why .card-icon{background:var(--purple-dim);color:var(--purple);}
+  .card--action .card-icon{background:var(--red-dim);color:var(--red);}
+  .card--recap .card-icon{background:rgba(113,125,145,0.10);color:var(--fg-muted);}
+  .card--quiz .card-icon{background:var(--gold-dim);color:var(--gold);}
+
+  ul{list-style:none;padding:0;margin-bottom:12px;}
+  ul li{position:relative;padding-left:22px;margin-bottom:9px;font-size:0.96rem;color:var(--fg-dim);}
+  ul li::before{content:'';position:absolute;left:3px;top:11px;width:7px;height:7px;border-radius:50%;}
+  .card--explain ul li::before{background:var(--accent);}
+  .card--example ul li::before{background:var(--gold);}
+  .card--why ul li::before{background:var(--purple);}
+  .card--action ul li::before{background:var(--red);}
+  .card--recap ul li::before{background:var(--fg-muted);width:5px;height:5px;top:12px;left:4px;}
+
+  .callout{border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+  .callout p{margin:0;font-size:0.94rem;}
+  .callout--accent{background:var(--accent-dim);border-left:3px solid var(--accent);}
+  .callout--gold{background:var(--gold-dim);border-left:3px solid var(--gold);}
+  .callout--red{background:var(--red-dim);border-left:3px solid var(--red);}
+
+  .svg-center{display:flex;justify-content:center;margin:22px 0;}
+  .svg-center svg{max-width:100%;height:auto;}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.93rem;}
+  thead th{
+    text-align:left;padding:11px 16px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-size:0.82rem;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;
+  }
+  thead th:first-child{border-radius:10px 0 0 0;}
+  thead th:last-child{border-radius:0 10px 0 0;}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--fg-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;margin:2px 2px;}
+  .tag--green{background:var(--accent-dim);color:var(--accent);}
+  .tag--red{background:var(--red-dim);color:var(--red);}
+  .tag--gold{background:var(--gold-dim);color:var(--gold);}
+  .tag--purple{background:var(--purple-dim);color:var(--purple);}
+
+  .quiz-block{margin-bottom:28px;}
+  .quiz-block:last-of-type{margin-bottom:0;}
+  .quiz-question{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.98rem;font-weight:600;color:var(--fg);
+    margin-bottom:14px;display:flex;gap:10px;
+  }
+  .quiz-qnum{
+    flex-shrink:0;width:26px;height:26px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--gold-dim);color:var(--gold);font-size:12px;font-weight:700;
+  }
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-opt{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 18px;border-radius:12px;
+    background:var(--bg-card-alt);border:1.5px solid var(--border);
+    cursor:pointer;transition:all 0.25s ease;
+    font-size:0.94rem;color:var(--fg-dim);user-select:none;
+  }
+  .quiz-opt:hover{border-color:var(--fg-muted);background:rgba(255,255,255,0.03);}
+  .quiz-opt .opt-letter{
+    flex-shrink:0;width:28px;height:28px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(113,125,145,0.10);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;
+    transition:all 0.25s ease;
+  }
+  .quiz-opt.correct{border-color:var(--accent);background:var(--accent-dim);color:var(--fg);}
+  .quiz-opt.correct .opt-letter{background:var(--accent);color:var(--bg);}
+  .quiz-opt.wrong{border-color:var(--red);background:var(--red-dim);color:var(--fg);}
+  .quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;}
+  .quiz-opt.disabled{pointer-events:none;opacity:0.6;}
+  .quiz-opt.disabled.correct{opacity:1;}
+
+  .quiz-feedback{
+    margin-top:12px;padding:12px 16px;border-radius:10px;
+    font-size:0.91rem;display:none;line-height:1.6;
+  }
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback--correct{background:var(--accent-dim);color:var(--accent);border-left:3px solid var(--accent);}
+  .quiz-feedback--wrong{background:var(--red-dim);color:var(--red);border-left:3px solid var(--red);}
+
+  .quiz-score{
+    text-align:center;margin-top:20px;padding:20px;
+    border-radius:var(--radius);background:var(--bg-card-alt);display:none;
+  }
+  .quiz-score.show{display:block;}
+  .quiz-score .score-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:2.4rem;font-weight:700;color:var(--accent);
+  }
+  .quiz-score .score-label{font-size:0.88rem;color:var(--fg-muted);}
+
+  .nav-footer{display:flex;justify-content:space-between;align-items:center;margin-top:44px;gap:16px;flex-wrap:wrap;}
+  .btn-back{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 28px;border:1px solid var(--border);border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-back:hover{border-color:var(--fg-muted);color:var(--fg);}
+  .btn-next{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent);color:var(--bg);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 34px;border:none;border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow);}
+  .btn-next:active{transform:translateY(0);}
+
+  .fi{opacity:0;transform:translateY(22px);animation:fadeUp 0.55s ease forwards;}
+  .fi:nth-child(1){animation-delay:.05s}
+  .fi:nth-child(2){animation-delay:.1s}
+  .fi:nth-child(3){animation-delay:.15s}
+  .fi:nth-child(4){animation-delay:.2s}
+  .fi:nth-child(5){animation-delay:.25s}
+  .fi:nth-child(6){animation-delay:.3s}
+  .fi:nth-child(7){animation-delay:.35s}
+  .fi:nth-child(8){animation-delay:.4s}
+  .fi:nth-child(9){animation-delay:.45s}
+  .fi:nth-child(10){animation-delay:.5s}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+  .lang-hide{display:none;}
+
+  @media(max-width:600px){
+    .container{padding:28px 16px 60px;}
+    .card{padding:22px 18px;}
+    .nav-footer{justify-content:center;}
+    .lang-toggle-wrap{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="dot-grid"></div>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+</div>
+
+<div class="container">
+
+  <!-- Language Toggle Button -->
+  <div class="lang-toggle-wrap fi">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="ne">🇳🇵 नेपाली</button>
+    </div>
+  </div>
+
+  <!-- ========== ENGLISH VERSION ========== -->
+  <div id="lang-en" class="lang-content">
+    <div class="course-badge fi">
+      <span class="dot"></span>
+      Lesson 4 of 5
+    </div>
+
+    <h1 class="fi">Demand, Supply & the <span class="red">Emotion</span> Behind the Market</h1>
+    <p class="subtitle fi">Prices don't move on their own — people move them. Learn to read the invisible tug-of-war between buyers and sellers, and how news changes everything.</p>
+
+    <div class="progress-wrap fi">
+      <div class="progress-meta">
+        <span>Lesson 4 of 5</span>
+        <span>80%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBarEn"></div>
+      </div>
+    </div>
+
+    <div class="card card--explain fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+      <h2>Simple Explanation</h2>
+      <p>Think of the <strong>Dashain goat market</strong>. A week before Dashain, everyone wants a goat — demand is crazy, so prices shoot up. The day after Dashain, nobody wants one — sellers are desperate, prices crash.</p>
+      <p>NEPSE works exactly the same way. It's a constant tug-of-war between <strong>Buyers (Demand)</strong> and <strong>Sellers (Supply)</strong>.</p>
+      <div class="svg-center">
+        <svg width="500" height="160" viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" style="font-family:'Karla',sans-serif;">
+          <line x1="40" y1="80" x2="460" y2="80" stroke="#717d91" stroke-width="3" stroke-dasharray="6 4"/>
+          <rect x="238" y="40" width="24" height="40" rx="4" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.5"/>
+          <text x="250" y="66" text-anchor="middle" fill="#f0b840" font-size="12" font-weight="700">P</text><text x="250" y="30" text-anchor="middle" fill="#717d91" font-size="9">PRICE</text>
+          <circle cx="60" cy="80" r="30" fill="#00d4a1" fill-opacity="0.1" stroke="#00d4a1" stroke-width="1.5"/>
+          <text x="60" y="76" text-anchor="middle" fill="#00d4a1" font-size="10" font-weight="700">BUY</text><text x="60" y="90" text-anchor="middle" fill="#00d4a1" font-size="9">DEMAND</text>
+          <line x1="92" y1="80" x2="236" y2="80" stroke="#00d4a1" stroke-width="2"/><polygon points="230,75 240,80 230,85" fill="#00d4a1"/>
+          <text x="60" y="125" text-anchor="middle" fill="#717d91" font-size="9">More buyers =</text><text x="60" y="140" text-anchor="middle" fill="#00d4a1" font-size="10" font-weight="600">Price UP</text>
+          <circle cx="440" cy="80" r="30" fill="#ff5c5c" fill-opacity="0.1" stroke="#ff5c5c" stroke-width="1.5"/>
+          <text x="440" y="76" text-anchor="middle" fill="#ff5c5c" font-size="10" font-weight="700">SELL</text><text x="440" y="90" text-anchor="middle" fill="#ff5c5c" font-size="9">SUPPLY</text>
+          <line x1="408" y1="80" x2="264" y2="80" stroke="#ff5c5c" stroke-width="2"/><polygon points="270,75 260,80 270,85" fill="#ff5c5c"/>
+          <text x="440" y="125" text-anchor="middle" fill="#717d91" font-size="9">More sellers =</text><text x="440" y="140" text-anchor="middle" fill="#ff5c5c" font-size="10" font-weight="600">Price DOWN</text>
+        </svg>
+      </div>
+      <p>Now, what makes people want to buy or sell? <strong>Sentiment</strong> — the overall mood or emotion of the market.</p>
+      <div class="svg-center">
+        <svg width="480" height="130" viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="220" height="110" rx="14" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.5"/>
+          <text x="120" y="40" text-anchor="middle" fill="#00d4a1" font-size="14" font-weight="700">BULL MARKET</text><text x="120" y="62" text-anchor="middle" fill="#717d91" font-size="10">Optimistic, confident, greedy</text><text x="120" y="80" text-anchor="middle" fill="#e4e7ec" font-size="10">Everyone wants to BUY</text><text x="120" y="100" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">Prices rising steadily</text>
+          <rect x="250" y="10" width="220" height="110" rx="14" fill="#1a1f2b" stroke="#ff5c5c" stroke-width="1.5"/>
+          <text x="360" y="40" text-anchor="middle" fill="#ff5c5c" font-size="14" font-weight="700">BEAR MARKET</text><text x="360" y="62" text-anchor="middle" fill="#717d91" font-size="10">Pessimistic, fearful, cautious</text><text x="360" y="80" text-anchor="middle" fill="#e4e7ec" font-size="10">Everyone wants to SELL</text><text x="360" y="100" text-anchor="middle" fill="#ff5c5c" font-size="11" font-weight="600">Prices falling steadily</text>
+        </svg>
+      </div>
+      <p>And what flips the mood? <strong>News.</strong></p>
+      <ul><li><strong>Good news</strong> (company announces 30% bonus, NRB reduces interest rate) → Sentiment turns bullish → Buyers rush in → Demand beats supply → Price goes up.</li><li><strong>Bad news</strong> (company reports loss, NRB tightens loan policy) → Sentiment turns bearish → Sellers panic → Supply beats demand → Price goes down.</li></ul>
+      <div class="callout callout--accent"><p><strong>Key concept:</strong> In the short term, the market is an emotion machine. Facts matter, but feelings matter more. Learn to read the mood, not just the numbers.</p></div>
+    </div>
+
+    <div class="card card--example fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <h2>Practical Example</h2>
+      <p>On NEPSE, when demand or supply becomes extreme, prices hit a <strong>circuit</strong> — a daily limit set by NEPSE to prevent wild crashes or artificial pumps.</p>
+      <p>Let's see how news and sentiment hit real NEPSE stocks:</p>
+      <table><thead><tr><th>Event</th><th>Sentiment</th><th>Market Reaction</th></tr></thead><tbody><tr><td>Nabil Bank announces 25% cash + 20% bonus dividend</td><td><span class="tag tag--green">Very Bullish</span></td><td>Massive buy orders, price hits Upper Circuit (+10%), very few sellers</td></tr><tr><td>NRB increases interest rate by 2%</td><td><span class="tag tag--red">Bearish</span></td><td>Investors pull money out of stocks for bank deposits, Index drops, heavy selling</td></tr><tr><td>Chilime Hydropower finishes construction 6 months early</td><td><span class="tag tag--green">Bullish</span></td><td>Future profit expected to rise, buyers accumulate, steady price increase</td></tr><tr><td>Rumors of a microfinance fraud</td><td><span class="tag tag--red">Very Bearish</span></td><td>Panic selling, all microfinance stocks drop, prices hit Lower Circuit (-10%)</td></tr></tbody></table>
+      <div class="svg-center">
+        <svg width="460" height="130" viewBox="0 0 460 130">
+          <rect x="10" y="10" width="210" height="110" rx="12" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1"/>
+          <text x="115" y="36" text-anchor="middle" fill="#00d4a1" font-size="12" font-weight="700">UPPER CIRCUIT</text><line x1="30" y1="46" x2="200" y2="46" stroke="#252a36" stroke-width="1"/><text x="115" y="66" text-anchor="middle" fill="#e4e7ec" font-size="10">Only BUYERS, no sellers</text><text x="115" y="84" text-anchor="middle" fill="#00d4a1" font-size="11" font-weight="600">Price frozen at +max</text><text x="115" y="105" text-anchor="middle" fill="#717d91" font-size="9">(Usually +10% for stocks)</text>
+          <rect x="240" y="10" width="210" height="110" rx="12" fill="#1a1f2b" stroke="#ff5c5c" stroke-width="1"/>
+          <text x="345" y="36" text-anchor="middle" fill="#ff5c5c" font-size="12" font-weight="700">LOWER CIRCUIT</text><line x1="260" y1="46" x2="430" y2="46" stroke="#252a36" stroke-width="1"/><text x="345" y="66" text-anchor="middle" fill="#e4e7ec" font-size="10">Only SELLERS, no buyers</text><text x="345" y="84" text-anchor="middle" fill="#ff5c5c" font-size="11" font-weight="600">Price frozen at -max</text><text x="345" y="105" text-anchor="middle" fill="#717d91" font-size="9">(Usually -10% for stocks)</text>
+        </svg>
+      </div>
+      <div class="callout callout--gold"><p><strong>Pro tip:</strong> When a stock hits Upper Circuit, it looks exciting but you often CAN'T buy — there are thousands of buy orders ahead of you and no one selling. When a stock hits Lower Circuit, you CAN'T sell — no one is buying. Circuit breakers protect you, but also trap you temporarily.</p></div>
+    </div>
+
+    <div class="card card--why fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <h2>Why It Matters</h2>
+      <p>Understanding sentiment and supply/demand is what separates beginners from smart investors:</p>
+      <ul><li><strong>You don't chase hype blindly</strong> — When everyone is greedy (bull market peak), that's often the most dangerous time to buy. "When even your chai-wala is giving stock tips, it's time to be cautious."</li><li><strong>You don't panic-sell in fear</strong> — When everyone is selling in panic (bear market bottom), strong companies are available at discount prices. Fear creates opportunities.</li><li><strong>You read the order book</strong> — Your broker app shows the "Buy Queue" and "Sell Queue." More buy orders at higher prices = demand. More sell orders at lower prices = supply. This is the real-time pulse.</li><li><strong>You filter news correctly</strong> — Not all news matters. NRB policy changes affect everything. A single company's dividend only affects that stock. Learn to separate signal from noise.</li></ul>
+      <table><thead><tr><th>Signal</th><th>What It Means</th><th>Your Move</th></tr></thead><tbody><tr><td>Stock hits Upper Circuit with huge buy volume</td><td>Extreme demand, very bullish</td><td><span class="tag tag--green">Strong — but hard to buy</span></td></tr><tr><td>Stock hits Lower Circuit with huge sell volume</td><td>Extreme supply, very bearish</td><td><span class="tag tag--red">Avoid — don't catch a falling knife</span></td></tr><tr><td>Good news but price doesn't move much</td><td>News already "priced in" (expected)</td><td><span class="tag tag--gold">Neutral — opportunity may be gone</span></td></tr><tr><td>Bad news but price stops falling</td><td>Selling exhausted, bottom may be near</td><td><span class="tag tag--purple">Watch — potential reversal coming</span></td></tr></tbody></table>
+    </div>
+
+    <div class="card card--action fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <h2>Quick Action Insight</h2>
+      <p>Let's read the real-time market emotion today:</p>
+      <ul><li><strong>Open the Order Book</strong> — In your broker app or TMS, search any stock and look at the "Market Depth" or "Order Book." See the list of buyers on the left and sellers on the right. Which side has more orders? That's the current pressure.</li><li><strong>Check circuit stocks</strong> — On nepalstock.com, find the "Circuit Breaker" or "Gainers/Losers" section. How many stocks hit Upper Circuit today? How many hit Lower? This tells you if the market is in a greedy or fearful mood.</li><li><strong>Read ONE piece of NEPSE news</strong> — Search "NEPSE news today" and read one article. Ask yourself: "Is this good news or bad news? Which sector will it affect? Will it change demand or supply?"</li></ul>
+      <div class="callout callout--red"><p><strong>One more lesson to go!</strong> Next lesson is the most important — when to actually buy, hold, and sell. Almost there.</p></div>
+    </div>
+
+    <div class="card card--recap fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
+      <h2>Mini Recap</h2>
+      <ul><li>Price moves based on Demand (buyers) vs Supply (sellers) — like the Dashain goat market</li><li>Bull market = optimism, rising prices; Bear market = fear, falling prices</li><li>News drives sentiment — good news attracts buyers, bad news triggers sellers</li><li>Circuit breakers freeze prices at daily limits (+10% / -10%) when one side overwhelms the other</li><li>The order book (buy/sell queue) shows real-time demand and supply pressure</li></ul>
+    </div>
+
+    <div class="card card--quiz fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+      <h2>Test Your Understanding</h2>
+      <p style="margin-bottom:24px;">5 questions to lock in Lesson 4. Click an option to check.</p>
+      <div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">1</span><span>What happens when there are more buyers than sellers for a stock?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'en')"><span class="opt-letter">A</span><span>Demand exceeds supply, so the price goes up</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'en')"><span class="opt-letter">B</span><span>Supply exceeds demand, so the price goes down</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'en')"><span class="opt-letter">C</span><span>The price stays the same</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'en')"><span class="opt-letter">D</span><span>NEPSE cancels the trades</span></div></div><div class="quiz-feedback" id="fb1-en"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">2</span><span>What does a "Bull Market" mean?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'en')"><span class="opt-letter">A</span><span>A market where only livestock companies are traded</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'en')"><span class="opt-letter">B</span><span>A pessimistic market with falling prices</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'en')"><span class="opt-letter">C</span><span>An optimistic market with generally rising prices</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'en')"><span class="opt-letter">D</span><span>A market closed for holidays</span></div></div><div class="quiz-feedback" id="fb2-en"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">3</span><span>What is an "Upper Circuit" on NEPSE?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>When a stock's price drops to its daily minimum limit</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>When huge demand pushes the price up to its daily maximum limit and it gets frozen</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>When the NEPSE Index crosses 3000 points</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>When a company gives a very high dividend</span></div></div><div class="quiz-feedback" id="fb3-en"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">4</span><span>If NRB (Nepal Rastra Bank) increases interest rates significantly, what is the most likely impact on NEPSE?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'en')"><span class="opt-letter">A</span><span>Investors will borrow more to buy stocks, market will rise</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'en')"><span class="opt-letter">B</span><span>It will have no effect on the stock market</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'en')"><span class="opt-letter">C</span><span>Banking stocks will crash immediately, but others will rise</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'en')"><span class="opt-letter">D</span><span>Money may flow from stocks to bank deposits, causing bearish sentiment and price drops</span></div></div><div class="quiz-feedback" id="fb4-en"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">5</span><span>Where can you see the real-time demand and supply pressure for a specific stock?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'en')"><span class="opt-letter">A</span><span>In the Order Book / Market Depth (buy queue vs sell queue)</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'en')"><span class="opt-letter">B</span><span>In the company's annual report</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'en')"><span class="opt-letter">C</span><span>On SEBON's homepage</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'en')"><span class="opt-letter">D</span><span>By checking the NEPSE Index</span></div></div><div class="quiz-feedback" id="fb5-en"></div></div>
+      <div class="quiz-score" id="quizScore-en"><div class="score-num" id="scoreNum-en">0/5</div><div class="score-label" id="scoreLabel-en">Questions answered correctly</div></div>
+    </div>
+  </div>
+
+  <!-- ========== NEPALI VERSION ========== -->
+  <div id="lang-ne" class="lang-content lang-hide">
+    <div class="course-badge fi">
+      <span class="dot"></span>
+      पाठ ४ of ५
+    </div>
+
+    <h1 class="fi">Demand, Supply र बजार पछाडिको <span class="red">भावना</span></h1>
+    <p class="subtitle fi">Price आफैं चल्दैन — मानिसले चलाउँछ। किन्ने र बेच्नेबीचको अदृश्य रस्सीखेलालाई बुझ्नुहोस्, र खबरले सबै कसरी बदल्छ भन्ने सिक्नुहोस्।</p>
+
+    <div class="progress-wrap fi">
+      <div class="progress-meta">
+        <span>पाठ ४ of ५</span>
+        <span>८०%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBarNe"></div>
+      </div>
+    </div>
+
+    <div class="card card--explain fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+      <h2>सरल व्याख्या</h2>
+      <p><strong>दशैंको खसी बजार</strong>को कुरा गरौं। दशैंअघि सबैलाई खसी चाहिन्छ — Demand (माग) पागल हुन्छ, तसर्थ Price आकाश छुन्छ। दशैंपछि कसैलाई खसी चाहिँदैन — बेच्नेहरू बाध्य हुन्छन्, Price खस्छ।</p>
+      <p>NEPSE पनि ठ्याक्कै त्यस्तै चल्छ। यो <strong>किन्नेहरू (Demand)</strong> र <strong>बेच्नेहरू (Supply)</strong> बीचको निरन्तर रस्सीखेला हो।</p>
+      <div class="svg-center"><svg width="500" height="160" viewBox="0 0 500 160"><line x1="40" y1="80" x2="460" y2="80" stroke="#717d91" stroke-width="3" stroke-dasharray="6 4"/><rect x="238" y="40" width="24" height="40" rx="4" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.5"/><text x="250" y="66" fill="#f0b840" font-size="12" text-anchor="middle" font-weight="700">P</text><text x="250" y="30" fill="#717d91" font-size="9" text-anchor="middle">PRICE</text><circle cx="60" cy="80" r="30" fill="#00d4a1" fill-opacity="0.1" stroke="#00d4a1" stroke-width="1.5"/><text x="60" y="76" fill="#00d4a1" font-size="10" text-anchor="middle" font-weight="700">BUY</text><text x="60" y="90" fill="#00d4a1" font-size="9" text-anchor="middle">DEMAND</text><line x1="92" y1="80" x2="236" y2="80" stroke="#00d4a1" stroke-width="2"/><polygon points="230,75 240,80 230,85" fill="#00d4a1"/><text x="60" y="125" fill="#717d91" font-size="9" text-anchor="middle">किन्नेहरू धेरै =</text><text x="60" y="140" fill="#00d4a1" font-size="10" text-anchor="middle" font-weight="600">Price बढ्छ</text><circle cx="440" cy="80" r="30" fill="#ff5c5c" fill-opacity="0.1" stroke="#ff5c5c" stroke-width="1.5"/><text x="440" y="76" fill="#ff5c5c" font-size="10" text-anchor="middle" font-weight="700">SELL</text><text x="440" y="90" fill="#ff5c5c" font-size="9" text-anchor="middle">SUPPLY</text><line x1="408" y1="80" x2="264" y2="80" stroke="#ff5c5c" stroke-width="2"/><polygon points="270,75 260,80 270,85" fill="#ff5c5c"/><text x="440" y="125" fill="#717d91" font-size="9" text-anchor="middle">बेच्नेहरू धेरै =</text><text x="440" y="140" fill="#ff5c5c" font-size="10" text-anchor="middle" font-weight="600">Price घट्छ</text></svg></div>
+      <p>अब, मानिसलाई किन्न वा बेच्न प्रेरित गर्ने के हो? <strong>Sentiment (बजारको मुड/भावना)</strong> — बजारको समग्र मनस्थिति।</p>
+      <div class="svg-center"><svg width="480" height="130" viewBox="0 0 480 130"><rect x="10" y="10" width="220" height="110" rx="14" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.5"/><text x="120" y="40" fill="#00d4a1" font-size="14" text-anchor="middle" font-weight="700">BULL MARKET</text><text x="120" y="62" fill="#717d91" font-size="10" text-anchor="middle">आशावादी, आत्मविश्वासी, लोभी</text><text x="120" y="80" fill="#e4e7ec" font-size="10" text-anchor="middle">सबैले किन्न चाहन्छन्</text><text x="120" y="100" fill="#00d4a1" font-size="11" text-anchor="middle" font-weight="600">Price निरन्तर बढ्दै</text><rect x="250" y="10" width="220" height="110" rx="14" fill="#1a1f2b" stroke="#ff5c5c" stroke-width="1.5"/><text x="360" y="40" fill="#ff5c5c" font-size="14" text-anchor="middle" font-weight="700">BEAR MARKET</text><text x="360" y="62" fill="#717d91" font-size="10" text-anchor="middle">निराशावादी, भयानक, सावधान</text><text x="360" y="80" fill="#e4e7ec" font-size="10" text-anchor="middle">सबैले बेच्न चाहन्छन्</text><text x="360" y="100" fill="#ff5c5c" font-size="11" text-anchor="middle" font-weight="600">Price निरन्तर घट्दै</text></svg></div>
+      <p>अनि यो मुड के ले उल्टाउँछ? <strong>खबर (News)।</strong></p>
+      <ul><li><strong>राम्रो खबर</strong> (कम्पनीले ३०% Bonus अनाउन्स गर्यो, NRB ले ब्याजदर घटायो) → Sentiment Bullish हुन्छ → किन्नेहरू हतार गर्छन् → Demand ले Supply हराउँछ → Price बढ्छ।</li><li><strong>नराम्रो खबर</strong> (कम्पनीले नोक्सान देखायो, NRB ले ऋण नीति कस्यो) → Sentiment Bearish हुन्छ → बेच्नेहरू आत्तिन्छन् → Supply ले Demand हराउँछ → Price घट्छ।</li></ul>
+      <div class="callout callout--accent"><p><strong>मुख्य कुरा:</strong> छोटो समयमा, बजार भावनाको मेसिन हो। तथ्यले महत्त्व राख्छ, तर भावनाले बढी महत्त्व राख्छ। संख्या मात्र होइन, बजारको मुड पनि पढ्न सिक्नुहोस्।</p></div>
+    </div>
+
+    <div class="card card--example fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <h2>व्यावहारिक उदाहरण</h2>
+      <p>NEPSE मा जब Demand वा Supply चरम हुन्छ, Price ले <strong>Circuit</strong> छुन्छ — NEPSE ले जंगी घटउ增 वा कृत्रिम पम्पबाट बचाउन दैनिक सीमा (Limit) तोकेको हुन्छ।</p>
+      <p>आउनुहोस् हेरौं खबर र Sentiment ले कसरी वास्तविक NEPSE स्टकहरूलाई असर गर्छ:</p>
+      <table><thead><tr><th>घटना</th><th>Sentiment</th><th>बजारको प्रतिक्रिया</th></tr></thead><tbody><tr><td>नबिल बैंकले २५% Cash + २०% Bonus Dividend अनाउन्स गर्यो</td><td><span class="tag tag--green">Very Bullish</span></td><td>खप्तै Buy Order, Upper Circuit (+१०%) हिट, बेच्नेहरू निकै कम</td></tr><tr><td>NRB ले ब्याजदर २% बढायो</td><td><span class="tag tag--red">Bearish</span></td><td>लगानीकर्ताले पैसा बैंक डिपोजिटमा सार्छन्, Index खस्छ, भारी बिक्री</td></tr><tr><td>चिलिमे हाइड्रोले निर्माण ६ महिना अघि सक्यो</td><td><span class="tag tag--green">Bullish</span></td><td>भविष्य नाफा बढ्ने अपेक्षा, किन्नेहरू जम्मा, स्थिर Price वृद्धि</td></tr><tr><td>माइक्रोफाइनान्स ठगीको अफवाह</td><td><span class="tag tag--red">Very Bearish</span></td><td>आतंक बिक्री (Panic Sell), सबै Microfinance स्टक खस्छन्, Lower Circuit (-१०%)</td></tr></tbody></table>
+      <div class="svg-center"><svg width="460" height="130" viewBox="0 0 460 130"><rect x="10" y="10" width="210" height="110" rx="12" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1"/><text x="115" y="36" fill="#00d4a1" font-size="12" text-anchor="middle" font-weight="700">UPPER CIRCUIT</text><line x1="30" y1="46" x2="200" y2="46" stroke="#252a36" stroke-width="1"/><text x="115" y="66" fill="#e4e7ec" font-size="10" text-anchor="middle">केवल किन्नेहरू, बेच्नेहरू छैनन्</text><text x="115" y="84" fill="#00d4a1" font-size="11" text-anchor="middle" font-weight="600">Price अधिकतम सीमामा फ्रिज</text><text x="115" y="105" fill="#717d91" font-size="9" text-anchor="middle">(सामान्यतया +१०%)</text><rect x="240" y="10" width="210" height="110" rx="12" fill="#1a1f2b" stroke="#ff5c5c" stroke-width="1"/><text x="345" y="36" fill="#ff5c5c" font-size="12" text-anchor="middle" font-weight="700">LOWER CIRCUIT</text><line x1="260" y1="46" x2="430" y2="46" stroke="#252a36" stroke-width="1"/><text x="345" y="66" fill="#e4e7ec" font-size="10" text-anchor="middle">केवल बेच्नेहरू, किन्नेहरू छैनन्</text><text x="345" y="84" fill="#ff5c5c" font-size="11" text-anchor="middle" font-weight="600">Price न्यूनतम सीमामा फ्रिज</text><text x="345" y="105" fill="#717d91" font-size="9" text-anchor="middle">(सामान्यतया -१०%)</text></svg></div>
+      <div class="callout callout--gold"><p><strong>प्रो टिप:</strong> जब कुनै स्टक Upper Circuit हिट गर्छ, यो उत्साहजनक देखिन्छ तर तपाईंंले प्रायः किन्न सक्नुहुन्न — तपाईंंभन्दा अगाडि हजारौं Buy Order हुन्छन् र कोही बेच्दैनन्। जब स्टक Lower Circuit हिट गर्छ, तपाईंंले बेच्न सक्नुहुन्न — कोही किन्दैन। Circuit Breaker ले तपाईंंलाई बचाउँछ, तर अस्थायी रूपमा फसाउँछ पनि।</p></div>
+    </div>
+
+    <div class="card card--why fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <h2>यो किन महत्त्वपूर्ण छ</h2>
+      <p>Sentiment र Demand/Supply बुझ्नु नै सुरुवातकर्ता र बुद्धिमान लगानीकर्ताबीचको भिन्नता हो:</p>
+      <ul><li><strong>तपाईंं हतारमा हाइप पछ्याउनुहुन्न</strong> — जब सबैलोभी हुन्छन् (Bull Market Peak), त्यो किन्ने सबैभन्दा खतरनाक समय हुन्छ। "जब तपाईंंको चिया पसलेले पनि स्टक सुझाव दिन्छ, तब सावधान हुने समय हो।"</li><li><strong>तपाईंं आतंकमा बेच्नुहुन्न</strong> — जब सबै आत्तिएर बेच्छन् (Bear Market Bottom), बलियो कम्पनी छुटको मूल्यमा उपलब्ध हुन्छन्। भयले अवसर सिर्जना गर्छ।</li><li><strong>तपाईंं Order Book पढ्न सक्नुहुन्छ</strong> — तपाईंंको Broker एपमा "Buy Queue" र "Sell Queue" देखिन्छ। उच्च Price मा बढी Buy Order = Demand। न्यून Price मा बढी Sell Order = Supply। यो वास्तविक समयको पल्स (Pulse) हो।</li><li><strong>तपाईंं खबर ठीकसँग छान्न सक्नुहुन्छ</strong> — सबै खबर महत्त्वपूर्ण हुँदैनन्। NRB नीति परिवर्तनले सबैलाई असर गर्छ। एउटा कम्पनीको Dividend ले त्यही स्टकलाई मात्र असर गर्छ। आवाजबाट संकेत छुट्याउन सिक्नुहोस्।</li></ul>
+      <table><thead><tr><th>संकेत</th><th>यसको अर्थ</th><th>तपाईंंको चाल</th></tr></thead><tbody><tr><td>स्टक ठूलो Volume सँग Upper Circuit हिट गर्छ</td><td>चरम Demand, धेरै Bullish</td><td><span class="tag tag--green">बलियो — तर किन्न गाह्रो</span></td></tr><tr><td>स्टक ठूलो Volume सँग Lower Circuit हिट गर्छ</td><td>चरम Supply, धेरै Bearish</td><td><span class="tag tag--red">टाढा बस्नुहोस् — खस्दै गरेको तरवार नसमात्नुहोस्</span></td></tr><tr><td>राम्रो खबर तर Price बढ्दैन</td><td>खबर पहिल्यै "Price In" (अपेक्षित) भइसक्यो</td><td><span class="tag tag--gold">तटस्थ — अवसर गएको हुन सक्छ</span></td></tr><tr><td>नराम्रो खबर तर Price घट्न बन्द हुन्छ</td><td>बिक्री थकित, तल सीमित हुन सक्छ</td><td><span class="tag tag--purple">हेर्नुहोस् — Reversal आउन सक्छ</span></td></tr></tbody></table>
+    </div>
+
+    <div class="card card--action fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <h2>द्रुत कार्य अन्तर्दृष्टि</h2>
+      <p>आजै वास्तविक समयको बजार भावना पढ्नुहोस्:</p>
+      <ul><li><strong>Order Book खोल्नुहोस्</strong> — Broker एप वा TMS मा कुनै पनि स्टक खोज्नुहोस् र "Market Depth" वा "Order Book" हेर्नुहोस्। बायाँतिर किन्नेहरू र दायाँतिर बेच्नेहरूको सूची देख्नुहुनेछ। कुन छेत्रमा बढी Order छ? त्यो हालको दबाब हो।</li><li><strong>Circuit स्टक जाँच्नुहोस्</strong> — nepalstock.com मा "Circuit Breaker" वा "Gainers/Losers" खण्ड खोज्नुहोस्। आज कतिवटा स्टक Upper Circuit मा छन्? कतिवटा Lower मा? यसले बजार लोभी मुडमा छ कि डराएको मुडमा भन्ने बताउँछ।</li><li><strong>एउटा NEPSE खबर पढ्नुहोस्</strong> — "NEPSE news today" खोज्नुहोस् र एउटा लेख पढ्नुहोस्। आफैंलाई सोध्नुहोस्: "के यो राम्रो खबर हो वा नराम्रो? कुन Sector लाई असर गर्छ? के यसले Demand वा Supply बदल्छ?"</li></ul>
+      <div class="callout callout--red"><p><strong>अझै एउटा पाठ बाँकी छ!</strong> अर्को पाठ सबैभन्दा महत्त्वपूर्ण छ — कहिले वास्तवमै किन्ने, होल्ड गर्ने र बेच्ने। लगभग तयार हुनुहोस्।</p></div>
+    </div>
+
+    <div class="card card--recap fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
+      <h2>संक्षिप्त सारांश</h2>
+      <ul><li>Price Demand (किन्नेहरू) vs Supply (बेच्नेहरू) मा आधारित हुन्छ — दशैंको खसी बजार जस्तै</li><li>Bull Market = आशावाद, Price बढ्दै; Bear Market = भय, Price घट्दै</li><li>खबरले Sentiment चलाउँछ — राम्रो खबरले किन्नेहरू तान्छ, नराम्रो खबरले बेच्नेहरू जगाउँछ</li><li>Circuit Breaker ले एकतर्फी चरमता हुँदा दैनिक सीमा (+१०% / -१०%) मा Price फ्रिज गर्छ</li><li>Order Book (Buy/Sell Queue) ले वास्तविक समयको Demand र Supply दबाब देखाउँछ</li></ul>
+    </div>
+
+    <div class="card card--quiz fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+      <h2>तपाईंंको बुझाइ जाँच्नुहोस्</h2>
+      <p style="margin-bottom:24px;">पाठ ४ लक गर्न ५ वटा प्रश्न। उत्तर जाँच्न कुनै एउटा विकल्पमा क्लिक गर्नुहोस्।</p>
+      <div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">१</span><span>जब किन्नेहरू बेच्नेहरू भन्दा धेरै हुन्छन् भने के हुन्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'ne')"><span class="opt-letter">A</span><span>Demand ले Supply लाई नाघ्छ, त्यसैले Price बढ्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'ne')"><span class="opt-letter">B</span><span>Supply ले Demand लाई नाघ्छ, त्यसैले Price घट्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'ne')"><span class="opt-letter">C</span><span>Price उस्तै रहन्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'ne')"><span class="opt-letter">D</span><span>NEPSE ले कारोबार रद्द गर्छ</span></div></div><div class="quiz-feedback" id="fb1-ne"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">२</span><span>"Bull Market" को अर्थ के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'ne')"><span class="opt-letter">A</span><span>केवल पशुपालन कम्पनीको कारोबार हुने बजार</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'ne')"><span class="opt-letter">B</span><span>निराशावादी बजार जहाँ Price घट्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'ne')"><span class="opt-letter">C</span><span>आशावादी बजार जहाँ सामान्यतया Price बढ्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'ne')"><span class="opt-letter">D</span><span>बजार बिदाको लागि बन्द छ</span></div></div><div class="quiz-feedback" id="fb2-ne"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">३</span><span>NEPSE मा "Upper Circuit" भनेको के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>जब स्टकको Price दैनिक न्यूनतम सीमामा खस्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>जब भारी Demand ले Price लाई दैनिक अधिकतम सीमामा पुर्याउँछ र फ्रिज हुन्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>जब NEPSE Index ३००० अंक पार गर्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>जब कम्पनीले धेरै Dividend दिन्छ</span></div></div><div class="quiz-feedback" id="fb3-ne"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">४</span><span>यदि NRB (नेपाल राष्ट्र बैंक) ले ब्याजदर उल्लेख्य रूपमा बढाउँछ भने, NEPSE मा कस्तो असर पर्न सक्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'ne')"><span class="opt-letter">A</span><span>लगानीकर्ताले ऋण लिएर स्टक किन्नेछन्, बजार बढ्नेछ</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'ne')"><span class="opt-letter">B</span><span>यसको स्टक बजारमा कुनै असर हुँदैन</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'ne')"><span class="opt-letter">C</span><span>Banking स्टक तुरुन्तै खस्छन्, तर अरू बढ्छन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'ne')"><span class="opt-letter">D</span><span>पैसा बैंक डिपोजिटतिर जान सक्छ, Bearish Sentiment र Price घट्न सक्छ</span></div></div><div class="quiz-feedback" id="fb4-ne"></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+      <div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">५</span><span>कुनै विशेष स्टकको वास्तविक समयको Demand र Supply दबाब कहाँ देख्न सकिन्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'ne')"><span class="opt-letter">A</span><span>Order Book / Market Depth (Buy र Sell Queue) मा</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'ne')"><span class="opt-letter">B</span><span>कम्पनीको वार्षिक प्रतिवेदनमा</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'ne')"><span class="opt-letter">C</span><span>SEBON को Homepage मा</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'ne')"><span class="opt-letter">D</span><span>NEPSE Index जाँचेर</span></div></div><div class="quiz-feedback" id="fb5-ne"></div></div>
+      <div class="quiz-score" id="quizScore-ne"><div class="score-num" id="scoreNum-ne">०/५</div><div class="score-label" id="scoreLabel-ne">सही उत्तरहरू</div></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-footer fi">
+    <button class="btn-back" id="backBtn" onclick="window.location.href='3.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <span id="backText">Back</span>
+    </button>
+    <button class="btn-next" id="nextBtn" onclick="window.location.href='5.html'">
+      <span id="nextText">Final Lesson</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Progress bars
+  window.addEventListener('load', () => {
+    const barEn = document.getElementById('progressBarEn');
+    const barNe = document.getElementById('progressBarNe');
+    if(barEn) { barEn.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barEn.style.width = '80%'; }); }); }
+    if(barNe) { barNe.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barNe.style.width = '80%'; }); }); }
+  });
+
+  // Quiz state per language
+  let quizState = {
+    en: { totalAnswered: 0, correctCount: 0, totalQuestions: 5, answeredBlocks: new Set() },
+    ne: { totalAnswered: 0, correctCount: 0, totalQuestions: 5, answeredBlocks: new Set() }
+  };
+
+  const feedbackData = {
+    en: {
+      1: { correct: "Correct! When buyers outnumber sellers, demand pushes the price up until sellers are willing to sell at higher prices.", wrong: "Not quite. More buyers than sellers means demand exceeds supply — this pushes the price UP as buyers compete to buy available shares." },
+      2: { correct: "Correct! A Bull Market is characterized by optimism, confidence, and rising prices. Investors are buying aggressively.", wrong: "Not quite. A Bull Market means optimism and rising prices. Falling prices and pessimism describe a Bear Market." },
+      3: { correct: "Correct! Upper Circuit happens when massive demand pushes the price to the maximum allowed daily increase, and it gets frozen because there are only buyers left.", wrong: "Not quite. Upper Circuit is when huge buying demand pushes the price to its daily maximum limit and trading freezes at that price because no one wants to sell." },
+      4: { correct: "Correct! When NRB raises interest rates, bank deposits become more attractive and loans become expensive. Money tends to shift from risky stocks to safe deposits, causing market selling pressure.", wrong: "Not quite. Higher interest rates make bank deposits more attractive and loans expensive. This usually pulls money away from the stock market, leading to bearish sentiment and falling prices." },
+      5: { correct: "Correct! The Order Book (also called Market Depth) shows the real-time list of buy and sell orders, revealing exactly where the demand and supply pressure is.", wrong: "Not quite. The Order Book or Market Depth in your broker app/TMS shows the real-time list of buyers and sellers — that's where you see actual demand and supply pressure." }
+    },
+    ne: {
+      1: { correct: "सही! जब किन्नेहरू बेच्नेहरू भन्दा बढी हुन्छन्, Demand ले Price लाई माथि धकेल्छ जबसम्म बेच्नेहरू बढी Price मा बेच्न तयार हुन्छन्।", wrong: "अलिकति गलत। किन्नेहरू बेच्नेहरू भन्दा धेरै भएमा Demand ले Supply लाई नाघ्छ — यसले Price लाई माथि धकेल्छ किनभने किन्नेहरूले उपलब्ध शेयरको लागि प्रतिस्पर्धा गर्छन्।" },
+      2: { correct: "सही! Bull Market मा आशावाद र विश्वास हुन्छ र Price सामान्यतया बढ्ने क्रममा हुन्छन्। लगानीकर्ताहरू उत्साहपूर्वक किन्छन्।", wrong: "अलिकति गलत। Bull Market को अर्थ आशावाद र बढ्दो Price हो। घट्दो Price र निराशावादले Bear Market जनाउँछ।" },
+      3: { correct: "सही! Upper Circuit तब हुन्छ जब भारी Demand ले Price लाई दैनिक अधिकतम सीमामा पुर्याउँछ र त्यहाँ केवल किन्नेहरू मात्र भएकोले यो फ्रिज हुन्छ।", wrong: "अलिकति गलत। Upper Circuit तब हुन्छ जब भारी किन्ने Demand ले Price लाई दैनिक अधिकतम सीमामा पुर्याउँछ र कोही बेच्न चाहँदैनन् भने त्यो Price मा कारोबार फ्रिज हुन्छ।" },
+      4: { correct: "सही! जब NRB ले ब्याजदर बढाउँछ, बैंक डिपोजित बढी आकर्षक हुन्छ र ऋण महँगो हुन्छ। यसले सामान्यतया स्टक बजारबाट पैसा बैंकतिर सार्छ, जसले गर्दा बिक्री दबाब र Price घट्छ।", wrong: "अलिकति गलत। उच्च ब्याजदरले बैंक डिपोजितलाई बढी आकर्षक बनाउँछ र ऋण महँगो बनाउँछ। यसले सामान्यतया स्टक बजारबाट पैसा तान्छ, जसले गर्दा Bearish Sentiment र घट्दो Price हुन्छ।" },
+      5: { correct: "सही! Order Book (वा Market Depth) ले किन्ने र बेच्ने Order को वास्तविक समयको सूची देखाउँछ, जसले Demand र Supply को वास्तविक दबाब स्पष्ट देखाउँछ।", wrong: "अलिकति गलत। Order Book वा Market Depth ले तपाईंंको Broker एप/TMS मा किन्ने र बेच्नेहरूको वास्तविक-समय सूची देखाउँछ — त्यहीँ तपाईंंले वास्तविक Demand र Supply दबाव देख्न सक्नुहुन्छ।" }
+    }
+  };
+
+  function checkAnswer(optEl, selectedIndex, correctIndex, lang) {
+    const block = optEl.closest('.quiz-block');
+    const blockId = Array.from(document.querySelectorAll(`#lang-${lang} .quiz-block`)).indexOf(block);
+    if (quizState[lang].answeredBlocks.has(blockId)) return;
+
+    const options = block.querySelectorAll('.quiz-opt');
+    const isCorrect = selectedIndex === correctIndex;
+
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      if (i === correctIndex) opt.classList.add('correct');
+      if (i === selectedIndex && !isCorrect) opt.classList.add('wrong');
+    });
+
+    const fb = document.getElementById(`fb${blockId+1}-${lang}`);
+    fb.className = 'quiz-feedback show ' + (isCorrect ? 'quiz-feedback--correct' : 'quiz-feedback--wrong');
+    fb.textContent = isCorrect ? feedbackData[lang][blockId+1].correct : feedbackData[lang][blockId+1].wrong;
+
+    quizState[lang].answeredBlocks.add(blockId);
+    quizState[lang].totalAnswered++;
+    if (isCorrect) quizState[lang].correctCount++;
+
+    if (quizState[lang].totalAnswered === quizState[lang].totalQuestions) {
+      const scoreEl = document.getElementById(`quizScore-${lang}`);
+      document.getElementById(`scoreNum-${lang}`).textContent = quizState[lang].correctCount + '/' + quizState[lang].totalQuestions;
+      scoreEl.classList.add('show');
+      const labelEl = document.getElementById(`scoreLabel-${lang}`);
+      if (quizState[lang].correctCount === 5) labelEl.textContent = lang === 'en' ? 'Perfect! You understand market psychology like a seasoned investor.' : 'उत्कृष्ट! तपाईंंले बजारको मनोविज्ञान अनुभवी लगानीकर्ता जस्तै बुझ्नुभयो।';
+      else if (quizState[lang].correctCount >= 3) labelEl.textContent = lang === 'en' ? 'Good instincts! Review the circuit and NRB impact concepts.' : 'राम्रो! Circuit र NRB असरको अवधारणा फेरि हेर्नुहोस्।';
+      else labelEl.textContent = lang === 'en' ? 'Re-read the lesson — understanding sentiment is key to surviving the market!' : 'पाठ फेरि पढ्नुहोस् — Sentiment बुझ्नु बजारमा बच्नको लागि निकै महत्त्वपूर्ण छ!';
+    }
+  }
+
+  // Language switching
+  const langEn = document.getElementById('lang-en');
+  const langNe = document.getElementById('lang-ne');
+  const langBtns = document.querySelectorAll('.lang-btn');
+
+  function setLanguage(lang) {
+    if (lang === 'en') {
+      langEn.classList.remove('lang-hide');
+      langNe.classList.add('lang-hide');
+      document.documentElement.lang = 'en';
+      document.title = 'NEPSE Course — Lesson 4 of 5 (English / Nepali)';
+      document.getElementById('backText').textContent = 'Back';
+      document.getElementById('nextText').textContent = 'Final Lesson';
+      document.getElementById('backBtn').setAttribute('onclick', "alert('Go back to Lesson 3')");
+      document.getElementById('nextBtn').setAttribute('onclick', "alert('Type NEXT to continue to Lesson 5 — the final lesson!')");
+    } else {
+      langEn.classList.add('lang-hide');
+      langNe.classList.remove('lang-hide');
+      document.documentElement.lang = 'ne';
+      document.title = 'NEPSE कोर्स — पाठ ४ (अंग्रेजी / नेपाली)';
+      document.getElementById('backText').textContent = 'पछाडि';
+      document.getElementById('nextText').textContent = 'अन्तिम पाठ';
+      document.getElementById('backBtn').setAttribute('onclick', "alert('पाठ ३ मा जानुहोस्')");
+      document.getElementById('nextBtn').setAttribute('onclick', "alert('अन्तिम पाठ ५ को लागि NEXT टाइप गर्नुहोस्!')");
+    }
+    langBtns.forEach(btn => {
+      if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+  }
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+  });
+
+  // Initialize with English
+  setLanguage('en');
+</script>
+
+</body>
+</html>

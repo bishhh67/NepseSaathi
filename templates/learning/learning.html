@@ -1,1022 +1,495 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Learn NEPSE | NEPSE Sathi{% endblock %}
+{% block title %}Learn NEPSE — Master Stock Market Investing{% endblock %}
 
 {% block extra_head %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-base:       #050d1a;
-    --bg-surface:    #081426;
-    --bg-card:       #0b1c35;
-    --bg-elevated:   #0e2442;
-    --border-subtle: rgba(0,200,255,0.08);
-    --border-accent: rgba(0,200,255,0.22);
-    --cyan:          #00c8ff;
-    --cyan-dim:      #00a0cc;
-    --green:         #00e676;
-    --green-bg:      rgba(0,230,118,0.10);
-    --yellow:        #ffd740;
-    --yellow-bg:     rgba(255,215,64,0.10);
-    --red:           #ff5252;
-    --red-bg:        rgba(255,82,82,0.10);
-    --white:         #e8f4ff;
-    --text-sec:      #9ab8d4;
-    --text-muted:    #4a6a8a;
-    --font-display:  'Syne', sans-serif;
-    --font-body:     'DM Sans', sans-serif;
-    --font-mono:     'JetBrains Mono', monospace;
+    --navy: #0F172A;
+    --navy-light: #1E293B;
+    --slate: #475569;
+    --slate-light: #94A3B8;
+    --gold: #C9A84C;
+    --gold-light: #FDF6E3;
+    --emerald: #10B981;
+    --emerald-bg: #ECFDF5;
+    --red: #EF4444;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg-base);
-    color: var(--white);
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.7;
-    overflow-x: hidden;
+  
+  .level-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(0,200,255,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,200,255,0.02) 1px, transparent 1px);
-    background-size: 48px 48px;
+  
+  .level-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   }
-
-  .page { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 0 20px 80px; }
-
-  /* Hero */
-  .hero { padding: 60px 0 48px; }
-  .hero-tag {
-    display: inline-flex; align-items: center; gap: 7px;
-    border: 1px solid rgba(0,200,255,0.2); border-radius: 100px;
-    padding: 5px 14px; margin-bottom: 20px;
-    font-family: var(--font-mono); font-size: 11px;
-    color: var(--cyan); letter-spacing: 0.08em; text-transform: uppercase;
+  
+  .level-card.selected {
+    border-color: var(--gold);
+    background: var(--gold-light);
+    box-shadow: 0 4px 12px rgba(201,168,76,0.15);
   }
-  .hero-tag span { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); display: inline-block; animation: blink 2s infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-  .hero h1 {
-    font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 2.8rem);
-    font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px;
-    background: linear-gradient(135deg, #e8f4ff 40%, #00c8ff);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  
+  .lesson-accordion {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
   }
-  .hero p { font-size: 1rem; color: var(--text-sec); max-width: 460px; }
-
-  /* Section labels */
-  .slabel { font-family: var(--font-mono); font-size: 10px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 6px; }
-  .stitle { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
-  .ssub { font-size: 13px; color: var(--text-sec); margin-bottom: 22px; }
-
-  /* Level selector */
-  .sel-wrap { margin-bottom: 44px; }
-  .sel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  @media(max-width:480px){ .sel-grid { grid-template-columns: 1fr; } }
-
-  .sel-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px; padding: 16px 18px;
-    cursor: pointer; transition: border-color 0.16s, background 0.16s;
-    user-select: none; position: relative;
+  
+  .lesson-header {
+    background: var(--surface);
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s ease;
   }
-  .sel-card:hover { border-color: var(--border-accent); background: rgba(0,200,255,0.03); }
-  .sel-card.selected { border-color: var(--cyan); background: rgba(0,200,255,0.06); }
-  .sc-num { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); display: block; margin-bottom: 6px; }
-  .sc-emoji { font-size: 20px; display: block; margin-bottom: 8px; }
-  .sc-title { font-size: 13.5px; font-weight: 500; color: var(--white); line-height: 1.4; }
-  .sc-diff { display: inline-block; margin-top: 10px; font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; border-radius: 100px; }
-  .db { background: var(--green-bg); color: var(--green); }
-  .di { background: var(--yellow-bg); color: var(--yellow); }
-  .da { background: var(--red-bg); color: var(--red); }
-  .sc-tick {
-    position: absolute; top: 12px; right: 12px;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--cyan); color: #050d1a;
-    font-size: 10px; font-weight: 700;
-    display: none; align-items: center; justify-content: center;
+  
+  .lesson-header:hover {
+    background: #F8FAFC;
   }
-  .sel-card.selected .sc-tick { display: flex; }
-
-  /* Suggestion box */
-  .sug-box {
-    display: none;
-    background: var(--bg-card); border: 1px solid rgba(0,200,255,0.25);
-    border-radius: 12px; padding: 22px 24px;
+  
+  .lesson-header.active {
+    background: var(--gold-light);
+    border-bottom: 1px solid var(--gold);
   }
-  .sug-box.show { display: block; }
-  .sug-eyebrow { font-family: var(--font-mono); font-size: 10px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 7px; }
-  .sug-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 7px; }
-  .sug-desc { font-size: 13.5px; color: var(--text-sec); margin-bottom: 16px; line-height: 1.6; }
-  .btn-go {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--cyan); color: #050d1a;
-    font-family: var(--font-display); font-weight: 700; font-size: 13px;
-    padding: 9px 20px; border-radius: 100px;
-    border: none; cursor: pointer; text-decoration: none;
-    transition: opacity 0.16s, transform 0.16s;
+  
+  .lesson-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .btn-go:hover { opacity: 0.85; transform: translateY(-1px); }
-
-  hr.div { border: none; border-top: 1px solid var(--border-subtle); margin: 0 0 44px; }
-
-  /* Level blocks */
-  .level-block { margin-bottom: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-subtle); transition: border-color 0.16s; }
-  .level-block.suggested { border-color: rgba(0,230,118,0.3); }
-
-  .level-header {
-    display: flex; align-items: center; gap: 14px;
-    background: var(--bg-card); padding: 18px 20px;
-    cursor: pointer; user-select: none;
-    transition: background 0.16s;
+  
+  .lesson-number {
+    width: 32px;
+    height: 32px;
+    background: var(--gold-light);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 0.9rem;
   }
-  .level-header:hover { background: rgba(0,200,255,0.03); }
-  .level-block.open .level-header { background: rgba(0,200,255,0.04); border-bottom: 1px solid var(--border-subtle); }
-
-  .lh-emoji { font-size: 22px; flex-shrink: 0; }
-  .lh-info { flex: 1; min-width: 0; }
-  .lh-num { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.07em; display: block; margin-bottom: 2px; }
-  .lh-info h3 { font-family: var(--font-display); font-size: 0.97rem; font-weight: 700; color: var(--white); }
-  .lh-info p { font-size: 12.5px; color: var(--text-sec); margin-top: 2px; }
-  .lh-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .sug-badge {
-    font-family: var(--font-mono); font-size: 10px; color: var(--green);
-    background: var(--green-bg); border: 1px solid rgba(0,230,118,0.2);
-    padding: 2px 9px; border-radius: 100px; white-space: nowrap; display: none;
+  
+  .lesson-header.active .lesson-number {
+    background: var(--gold);
+    color: white;
   }
-  .level-block.suggested .sug-badge { display: inline-block; }
-  .chevron { color: var(--text-muted); font-size: 16px; transition: transform 0.25s; line-height: 1; display: inline-block; }
-  .level-block.open .chevron { transform: rotate(180deg); }
-
-  /* Level body */
-  .level-body { display: none; background: var(--bg-surface); }
-  .level-block.open .level-body { display: block; }
-
-  /* Lessons */
-  .lesson { border-bottom: 1px solid var(--border-subtle); }
-  .lesson:last-child { border-bottom: none; }
-
-  .lesson-hdr {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 20px; cursor: pointer;
-    user-select: none; transition: background 0.14s;
+  
+  .lesson-icon {
+    font-size: 1.3rem;
   }
-  .lesson-hdr:hover { background: rgba(255,255,255,0.03); }
-  .lesson.open .lesson-hdr { background: rgba(0,200,255,0.04); }
-
-  .l-num {
-    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
-    background: var(--bg-elevated); border: 1px solid var(--border-subtle);
-    border-radius: 4px; padding: 3px 7px; flex-shrink: 0;
-    min-width: 34px; text-align: center;
+  
+  .lesson-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
   }
-  .l-title { font-size: 14px; font-weight: 600; color: var(--white); flex: 1; line-height: 1.4; }
-  .l-arr { color: var(--text-muted); font-size: 14px; flex-shrink: 0; transition: transform 0.18s, color 0.18s; }
-  .lesson.open .l-arr { transform: rotate(90deg); color: var(--cyan); }
-
-  /* Lesson content */
-  .lesson-body { display: none; padding: 4px 20px 20px 68px; }
-  .lesson.open .lesson-body { display: block; }
-  @media(max-width:520px){ .lesson-body { padding-left: 20px; } }
-
-  .lp { font-size: 13.5px; color: var(--white); line-height: 1.75; margin-bottom: 10px; }
-  .lp:last-child { margin-bottom: 0; }
-  .lp em { color: var(--text-sec); font-style: italic; }
-
-  .lpoints { margin: 8px 0; }
-  .lpoint {
-    display: flex; gap: 10px; align-items: baseline;
-    padding: 5px 0; font-size: 13.5px; color: var(--white); line-height: 1.6;
-    border-bottom: 1px solid rgba(0,200,255,0.04);
+  
+  .lesson-content.show {
+    max-height: 800px;
+    transition: max-height 0.6s ease-in;
   }
-  .lpoint:last-child { border-bottom: none; }
-  .lpoint::before { content: '—'; color: var(--cyan); flex-shrink: 0; font-size: 12px; }
-
-  .lexample {
-    margin-top: 12px;
-    background: rgba(0,200,255,0.05);
-    border-left: 2px solid rgba(0,200,255,0.4);
-    border-radius: 0 6px 6px 0;
-    padding: 10px 14px;
-    font-size: 13px; color: var(--text-sec); line-height: 1.65;
+  
+  .lesson-inner {
+    padding: 24px;
+    border-top: 1px solid var(--border);
   }
-  .lexample strong { color: var(--white); }
-
-  .lnote { margin-top: 10px; font-size: 12.5px; color: var(--text-muted); font-style: italic; }
+  
+  .start-lesson-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-top: 16px;
+  }
+  
+  .start-lesson-btn:hover {
+    background: #B8960C;
+    transform: translateX(4px);
+  }
+  
+  .recommendation-badge {
+    background: var(--emerald-bg);
+    color: var(--emerald);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .level-tag {
+    background: var(--navy-light);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  
+  @media (max-width: 768px) {
+    .level-card { padding: 16px; }
+    .lesson-header { padding: 16px; }
+    .lesson-title { font-size: 0.95rem; }
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page">
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="hero-tag"><span></span> NEPSE Learning Path</div>
-    <h1>Learn NEPSE,<br>Step by Step</h1>
-    <p>Tell us where you are — we'll point you to the right starting level and walk you through everything.</p>
+<div style="max-width: 1000px; margin: 0 auto; padding: 120px 24px 60px;">
+  
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 48px;">
+    <span style="background: var(--gold-light); color: var(--gold); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Structured Learning Path</span>
+    <h1 style="font-size: 2.2rem; font-weight: 700; color: var(--navy); margin-top: 16px; margin-bottom: 12px;">Master NEPSE Investing</h1>
+    <p style="color: var(--slate); font-size: 1rem; max-width: 600px; margin: 0 auto;">From absolute beginner to advanced trader — follow our structured curriculum designed for Nepali investors</p>
   </div>
 
-  <!-- Step 1 -->
-  <div class="sel-wrap">
-    <span class="slabel">→ Step 01</span>
-    <div class="stitle">Where are you right now?</div>
-    <p class="ssub">Pick the option that best describes your current knowledge.</p>
-
-    <div class="sel-grid">
-      <div class="sel-card" data-n="0" onclick="choose(0)">
-        <div class="sc-tick">✓</div>
-        <span class="sc-num">LEVEL 00</span>
-        <span class="sc-emoji">🌍</span>
-        <div class="sc-title">I have never heard of the stock market or how it works</div>
-        <span class="sc-diff db">Beginner</span>
+  <!-- Level Selection Section -->
+  <div style="margin-bottom: 48px;">
+    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--navy); margin-bottom: 20px;">📊 What's your current level?</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      
+      <!-- Beginner Level -->
+      <div class="level-card" data-level="beginner" onclick="selectLevel('beginner')">
+        <div style="font-size: 2rem; margin-bottom: 12px;">🌱</div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Beginner</h3>
+        <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 12px;">New to stock market — never invested before</p>
+        <div class="level-tag">Start from Lesson 1</div>
       </div>
-      <div class="sel-card" data-n="1" onclick="choose(1)">
-        <div class="sc-tick">✓</div>
-        <span class="sc-num">LEVEL 01</span>
-        <span class="sc-emoji">🚀</span>
-        <div class="sc-title">I know what stocks are but haven't opened any account yet</div>
-        <span class="sc-diff db">Beginner</span>
+      
+      <!-- Intermediate Level -->
+      <div class="level-card" data-level="intermediate" onclick="selectLevel('intermediate')">
+        <div style="font-size: 2rem; margin-bottom: 12px;">📈</div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Intermediate</h3>
+        <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 12px;">Knows basics, wants technical & fundamental analysis</p>
+        <div class="level-tag">Start from Lesson 3</div>
       </div>
-      <div class="sel-card" data-n="2" onclick="choose(2)">
-        <div class="sc-tick">✓</div>
-        <span class="sc-num">LEVEL 02</span>
-        <span class="sc-emoji">🏗️</span>
-        <div class="sc-title">I have a DEMAT account and have applied for IPOs</div>
-        <span class="sc-diff db">Beginner</span>
+      
+      <!-- Advanced Level -->
+      <div class="level-card" data-level="advanced" onclick="selectLevel('advanced')">
+        <div style="font-size: 2rem; margin-bottom: 12px;">🎯</div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Advanced</h3>
+        <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 12px;">Experienced trader seeking advanced strategies</p>
+        <div class="level-tag">Start from Lesson 4-5</div>
       </div>
-      <div class="sel-card" data-n="3" onclick="choose(3)">
-        <div class="sc-tick">✓</div>
-        <span class="sc-num">LEVEL 03</span>
-        <span class="sc-emoji">📈</span>
-        <div class="sc-title">I buy and sell shares but don't understand the data well</div>
-        <span class="sc-diff di">Intermediate</span>
-      </div>
-      <div class="sel-card" data-n="4" onclick="choose(4)">
-        <div class="sc-tick">✓</div>
-        <span class="sc-num">LEVEL 04</span>
-        <span class="sc-emoji">🔬</span>
-        <div class="sc-title">I trade regularly and want to analyse companies properly</div>
-        <span class="sc-diff di">Intermediate</span>
-      </div>
-      <div class="sel-card" data-n="5" onclick="choose(5)">
-        <div class="sc-tick">✓</div>
-        <span class="sc-num">LEVEL 05+</span>
-        <span class="sc-emoji">🎯</span>
-        <div class="sc-title">I understand fundamentals and charts — want advanced strategy</div>
-        <span class="sc-diff da">Advanced</span>
-      </div>
-    </div>
-
-    <div class="sug-box" id="sugBox">
-      <div class="sug-eyebrow">★ Recommended for you</div>
-      <div class="sug-title" id="sugTitle"></div>
-      <div class="sug-desc" id="sugDesc"></div>
-      <a href="#" class="btn-go" id="sugBtn">Go to this level →</a>
+      
     </div>
   </div>
 
-  <hr class="div">
-
-  <!-- Step 2: Curriculum -->
-  <span class="slabel">→ Step 02</span>
-  <div class="stitle" style="margin-bottom:4px;">Full Curriculum</div>
-  <p class="ssub" style="margin-bottom:26px;">Click a level to expand. Click a lesson to read its content.</p>
-
-  <!-- ══ LEVEL 00 ══ -->
-  <div class="level-block" id="lvl-0">
-    <div class="level-header" onclick="toggleLevel('lvl-0')">
-      <span class="lh-emoji">🌍</span>
-      <div class="lh-info">
-        <span class="lh-num">LEVEL 00 · BEGINNER</span>
-        <h3>Stock Market Foundations</h3>
-        <p>How money, companies, and the stock market connect.</p>
+  <!-- Personalized Recommendation Section (shows after level selection) -->
+  <div id="recommendation-section" style="display: none; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border-radius: 20px; padding: 32px; margin-bottom: 48px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="recommendation-badge" style="background: rgba(255,255,255,0.15); color: var(--gold);">
+          <span>🎓</span> Personalized Learning Path
+        </div>
+        <h3 id="recommendation-title" style="font-size: 1.3rem; font-weight: 700; color: white; margin-top: 12px; margin-bottom: 8px;">Recommended Starting Point</h3>
+        <p id="recommendation-text" style="color: rgba(255,255,255,0.8); font-size: 0.95rem;"></p>
       </div>
-      <div class="lh-right">
-        <span class="sug-badge">★ Start here</span>
-        <span class="chevron">⌄</span>
-      </div>
-    </div>
-    <div class="level-body">
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">01</span>
-          <span class="l-title">💰 Money, Savings & Investment</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Before understanding stocks, you must understand how money works. People earn money through jobs or business. This money is either spent, saved, or invested.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Spending</strong> — using money for daily needs</span></div>
-            <div class="lpoint"><span><strong>Saving</strong> — keeping money in the bank</span></div>
-            <div class="lpoint"><span><strong>Investing</strong> — using money to create more money in the future</span></div>
-          </div>
-          <p class="lp" style="margin-top:10px;">Savings grow slowly. Investments have the potential to grow faster but come with risk.</p>
-          <div class="lexample"><strong>Example:</strong> If Ramesh from Kathmandu keeps NPR 10,000 in a bank, it grows slowly. But if he invests it in a company, its value may increase based on company performance.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">02</span>
-          <span class="l-title">🏢 What is a Company?</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">A company is an organization that produces goods or services to earn profit. For example:</p>
-          <div class="lpoints">
-            <div class="lpoint"><span>A bank like <strong>NIC Asia Bank</strong> provides financial services</span></div>
-            <div class="lpoint"><span>A <strong>hydropower company</strong> produces electricity</span></div>
-            <div class="lpoint"><span>A <strong>cement company</strong> produces construction materials</span></div>
-          </div>
-          <p class="lp" style="margin-top:10px;">Companies need money to operate and grow. This money comes from owners or investors.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">03</span>
-          <span class="l-title">👥 Ownership in Simple Terms</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Ownership means having a share of something. If you own a shop completely, you get all the profit. If 10 people own it together, profit is shared among them. Companies also work the same way.</p>
-          <p class="lp">Instead of one owner, many people can own small parts of a company. These small ownership parts are called <strong>shares</strong>.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">04</span>
-          <span class="l-title">📦 What is a Share?</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">A share represents a small unit of ownership in a company. If a company is divided into 10,000 shares and you own 100, you own a small portion of that company. This means:</p>
-          <div class="lpoints">
-            <div class="lpoint"><span>You indirectly own part of its assets</span></div>
-            <div class="lpoint"><span>You share its profits and losses</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If Sita buys shares of a bank, she becomes a partial owner of that bank, even though she does not manage it.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">05</span>
-          <span class="l-title">📈 Why Companies Give Shares</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Companies do not always have enough money to grow. Instead of borrowing everything from banks, they can sell shares to the public. This helps them:</p>
-          <div class="lpoints">
-            <div class="lpoint"><span>Raise money for expansion</span></div>
-            <div class="lpoint"><span>Reduce loan dependency</span></div>
-            <div class="lpoint"><span>Grow faster</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> A hydropower company in Nepal may need NPR 100 crore for a new project. Instead of taking a big loan, it allows the public to invest by buying shares.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">06</span>
-          <span class="l-title">🌐 What is a Stock Market?</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">A stock market is a system where people buy and sell ownership (shares) of companies. It is not a physical place for most people today — it works digitally.</p>
-          <p class="lp">Think of it as a marketplace where company ownership is traded. People who believe a company will grow buy its shares. People who want to exit sell their shares.</p>
-          <p class="lp">Stock markets exist to connect two groups:</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Companies</strong> — need money to grow</span></div>
-            <div class="lpoint"><span><strong>Investors</strong> — want to grow their money</span></div>
-          </div>
-          <p class="lp" style="margin-top:10px;">This system helps the overall economy grow.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">07</span>
-          <span class="l-title">📊 Why Stock Prices Exist</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Share prices are not fixed. They change based on:</p>
-          <div class="lpoints">
-            <div class="lpoint"><span>Demand — how many people want to buy</span></div>
-            <div class="lpoint"><span>Supply — how many people want to sell</span></div>
-            <div class="lpoint"><span>Future expectations of the company</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If people believe a hydropower company will earn more profit next year, more people will try to buy its shares, increasing its price.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">08</span>
-          <span class="l-title">📉 Profit, Loss & Risk</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Investing in companies is not guaranteed profit.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span>If a company performs well → share price increases → investors gain profit</span></div>
-            <div class="lpoint"><span>If a company performs poorly → share price may fall → investors may lose money</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If a cement company's sales drop due to low construction demand, its share price may also decrease.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">09</span>
-          <span class="l-title">🇳🇵 Nepali Context</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">In Nepal, many sectors depend on the stock market:</p>
-          <div class="lpoints">
-            <div class="lpoint"><span>Hydropower companies build national electricity projects</span></div>
-            <div class="lpoint"><span>Banks support financial growth</span></div>
-            <div class="lpoint"><span>Insurance companies provide risk protection</span></div>
-          </div>
-          <p class="lp" style="margin-top:10px;">When Nepali people invest in companies, they indirectly participate in national development.</p>
-        </div>
-      </div>
-
+      <a id="recommendation-link" href="#" class="start-lesson-btn" style="background: var(--gold); color: var(--navy); margin-top: 0;">
+        Start Learning Now →
+      </a>
     </div>
   </div>
 
-  <!-- ══ LEVEL 01 ══ -->
-  <div class="level-block" id="lvl-1">
-    <div class="level-header" onclick="toggleLevel('lvl-1')">
-      <span class="lh-emoji">🚀</span>
-      <div class="lh-info">
-        <span class="lh-num">LEVEL 01 · BEGINNER</span>
-        <h3>Getting Started with NEPSE</h3>
-        <p>PAN, DEMAT, MeroShare, broker account and your first trade.</p>
+  <!-- Lessons Accordion Section -->
+  <div style="margin-top: 32px;">
+    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--navy); margin-bottom: 20px;">📚 Curriculum — 5 Core Lessons</h2>
+    
+    <!-- Lesson 1 -->
+    <div class="lesson-accordion" id="lesson1">
+      <div class="lesson-header" onclick="toggleLesson(1)">
+        <div class="lesson-title">
+          <span class="lesson-number">1</span>
+          <span class="lesson-icon">🏦</span>
+          <span>Introduction to NEPSE & Stock Market Basics</span>
+        </div>
+        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
       </div>
-      <div class="lh-right">
-        <span class="sug-badge">★ Start here</span>
-        <span class="chevron">⌄</span>
+      <div class="lesson-content">
+        <div class="lesson-inner">
+          <!-- ============================================= -->
+          <!-- PLACE YOUR LESSON 1 CONTENT HERE              -->
+          <!-- You can include: text, images, videos, etc.   -->
+          <!-- Or link to your existing lesson1.html file:   -->
+          <!-- ============================================= -->
+          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
+            <strong>Lesson 1 Overview:</strong> Understanding what NEPSE is, how the stock market works, basic terminology, and getting started with investing in Nepal.
+          </p>
+       
+          <!-- Option 3: Link to your lesson file -->
+          <a href="{% url 'lesson1' %}" class="start-lesson-btn">📖 Read Full Lesson 1 </a>
+        </div>
       </div>
     </div>
-    <div class="level-body">
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">01</span>
-          <span class="l-title">🪪 PAN Card</span>
-          <span class="l-arr">›</span>
+    
+    <!-- Lesson 2 -->
+    <div class="lesson-accordion" id="lesson2">
+      <div class="lesson-header" onclick="toggleLesson(2)">
+        <div class="lesson-title">
+          <span class="lesson-number">2</span>
+          <span class="lesson-icon">📊</span>
+          <span>How to Open a Demat Account & Start Trading</span>
         </div>
-        <div class="lesson-body">
-          <p class="lp">A PAN (Permanent Account Number) is required for opening a DEMAT and broker account in Nepal. It acts as your financial identity for tax and investment purposes.</p>
-          <p class="lp">You can obtain it through the Inland Revenue Department or your bank.</p>
+        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+      <div class="lesson-content">
+        <div class="lesson-inner">
+        
+          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
+            <strong>Lesson 2 Overview:</strong> Step-by-step guide to opening a Demat account, choosing a broker, and placing your first trade on NEPSE.
+          </p>
+          <a href="{% url 'lesson2' %}" class="start-lesson-btn">📖 Read Full Lesson 2 →</a>
         </div>
       </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">02</span>
-          <span class="l-title">🏦 Bank Account Linking</span>
-          <span class="l-arr">›</span>
+    </div>
+    
+    <!-- Lesson 3 -->
+    <div class="lesson-accordion" id="lesson3">
+      <div class="lesson-header" onclick="toggleLesson(3)">
+        <div class="lesson-title">
+          <span class="lesson-number">3</span>
+          <span class="lesson-icon">🔍</span>
+          <span>Fundamental Analysis — Evaluating Companies</span>
         </div>
-        <div class="lesson-body">
-          <p class="lp">An active bank account is necessary for stock market transactions. It is used for IPO fund blocking, dividend payments, refunds, and settlement payments.</p>
-          <p class="lp">Make sure your account details match your other investment accounts.</p>
+        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+      <div class="lesson-content">
+        <div class="lesson-inner">
+          <!-- ============================================= -->
+          <!-- PLACE YOUR LESSON 3 CONTENT HERE              -->
+          <!-- ============================================= -->
+          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
+            <strong>Lesson 3 Overview:</strong> Learn to read financial statements, calculate PE ratio, EPS, ROI, and identify undervalued stocks in Nepal.
+          </p>
+          <a href="{% url 'lesson3' %}" class="start-lesson-btn">📖 Read Full Lesson 3 →</a>
         </div>
       </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">03</span>
-          <span class="l-title">💾 DEMAT Account</span>
-          <span class="l-arr">›</span>
+    </div>
+    
+    <!-- Lesson 4 -->
+    <div class="lesson-accordion" id="lesson4">
+      <div class="lesson-header" onclick="toggleLesson(4)">
+        <div class="lesson-title">
+          <span class="lesson-number">4</span>
+          <span class="lesson-icon">📈</span>
+          <span>Technical Analysis — Charts & Indicators</span>
         </div>
-        <div class="lesson-body">
-          <p class="lp">A DEMAT account stores your shares electronically. Instead of physical certificates, all shares in Nepal are now held digitally.</p>
-          <p class="lp">This account is mandatory for buying, selling, and receiving shares.</p>
+        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+      <div class="lesson-content">
+        <div class="lesson-inner">
+          <!-- ============================================= -->
+          <!-- PLACE YOUR LESSON 4 CONTENT HERE              -->
+          <!-- ============================================= -->
+          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
+            <strong>Lesson 4 Overview:</strong> Master candlestick patterns, support/resistance, RSI, MACD, and other technical indicators used in NEPSE trading.
+          </p>
+          <a href="{% url 'lesson4' %}" class="start-lesson-btn">📖 Read Full Lesson 4 →</a>
         </div>
       </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">04</span>
-          <span class="l-title">🔢 BOID Number</span>
-          <span class="l-arr">›</span>
+    </div>
+    
+    <!-- Lesson 5 -->
+    <div class="lesson-accordion" id="lesson5">
+      <div class="lesson-header" onclick="toggleLesson(5)">
+        <div class="lesson-title">
+          <span class="lesson-number">5</span>
+          <span class="lesson-icon">🎯</span>
+          <span>Advanced Strategies — IPOs, Sector Rotation & Risk Management</span>
         </div>
-        <div class="lesson-body">
-          <p class="lp">A BOID is a 16-digit identification number linked to your DEMAT account. It is required when applying for IPOs and receiving shares.</p>
-          <p class="lp">Always double-check your BOID while submitting applications.</p>
+        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+      <div class="lesson-content">
+        <div class="lesson-inner">
+          <!-- ============================================= -->
+          <!-- PLACE YOUR LESSON 5 CONTENT HERE              -->
+          <!-- ============================================= -->
+          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
+            <strong>Lesson 5 Overview:</strong> Advanced topics including IPO analysis, sector rotation strategies, portfolio diversification, and risk management.
+          </p>
+          <a href="{% url 'lesson5' %}" class="start-lesson-btn">📖 Read Full Lesson 5 →</a>
         </div>
       </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">05</span>
-          <span class="l-title">📱 MeroShare</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">MeroShare is Nepal's online investor portal. It allows users to apply for IPOs, view portfolios, approve EDIS, and manage share-related activities.</p>
-          <p class="lp">It is one of the most frequently used platforms for NEPSE investors.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">06</span>
-          <span class="l-title">🔑 CRN Number</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">A CRN (C-ASBA Registration Number) is issued by your bank after registering for IPO applications. It links your bank account to the IPO system and allows funds to be blocked during applications.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">07</span>
-          <span class="l-title">👤 Broker Account</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">A broker account allows you to trade shares in the secondary market. Since investors cannot trade directly on NEPSE, all buying and selling must happen through licensed brokers.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">08</span>
-          <span class="l-title">💻 TMS Login</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">TMS (Trade Management System) is the online trading portal provided by brokers. It is used to place buy and sell orders, track trades, and monitor market activity in real time.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">09</span>
-          <span class="l-title">📨 Applying for IPO</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">IPO applications are submitted through MeroShare using your CRN and BOID. The application amount is blocked in your bank account until allotment results are announced.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">10</span>
-          <span class="l-title">💸 Buying Shares</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">To buy shares, log into TMS, select a company, enter the quantity and price, and place your order. If a seller matches your price, the trade is executed.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">11</span>
-          <span class="l-title">🔄 Selling Shares</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Selling shares is done through TMS by placing a sell order. Once matched, the shares are transferred to the buyer and payment is credited after settlement.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">12</span>
-          <span class="l-title">✅ EDIS Process</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">After selling shares, you must approve the transaction through EDIS in MeroShare. Without this approval, the share transfer may fail or be delayed.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">13</span>
-          <span class="l-title">📅 Settlement Cycle</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">NEPSE generally follows a T+2 settlement system. This means shares and payment are usually transferred within two working days after the trade.</p>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">14</span>
-          <span class="l-title">📊 Portfolio Tracking</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Portfolio tracking helps you monitor your investments, profits, losses, and diversification. Regular review helps you make smarter investment decisions.</p>
-        </div>
-      </div>
-
+    </div>
+    
+  </div>
+  
+  <!-- Progress Tracker (Optional) -->
+  <div style="margin-top: 48px; padding: 24px; background: #F8FAFC; border-radius: 16px; text-align: center;">
+    <span style="font-size: 2rem;">📖</span>
+    <h3 style="font-size: 1rem; font-weight: 600; color: var(--navy); margin-top: 8px;">Track Your Progress</h3>
+    <p style="font-size: 0.85rem; color: var(--slate); margin-top: 4px;">Complete lessons and mark them as done to track your learning journey</p>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap;">
+      <span id="progress-text" style="font-size: 0.8rem; color: var(--slate-light);">0 of 5 lessons completed</span>
     </div>
   </div>
-
-  <!-- ══ LEVEL 02 ══ -->
-  <div class="level-block" id="lvl-2">
-    <div class="level-header" onclick="toggleLevel('lvl-2')">
-      <span class="lh-emoji">🏗️</span>
-      <div class="lh-info">
-        <span class="lh-num">LEVEL 02 · BEGINNER</span>
-        <h3>NEPSE Core Concepts</h3>
-        <p>Types of shares, market data, trading mechanics, and market structure.</p>
-      </div>
-      <div class="lh-right">
-        <span class="sug-badge">★ Start here</span>
-        <span class="chevron">⌄</span>
-      </div>
-    </div>
-    <div class="level-body">
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">01</span>
-          <span class="l-title">📦 Types of Shares & Company Offerings</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Before understanding IPO, FPO, or bonus shares, you must first understand what types of shares exist in the market. Companies issue shares in different ways depending on their needs and stage of growth.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Ordinary Shares (Public Shares)</strong> — most common shares in NEPSE; investors become part-owners and can trade freely in the market</span></div>
-            <div class="lpoint"><span><strong>Promoter Shares</strong> — held by founders or major stakeholders; usually have restrictions on selling (lock-in period)</span></div>
-            <div class="lpoint"><span><strong>IPO (Initial Public Offering)</strong> — when a company first sells its shares to the public; the entry point of a company into the stock market</span></div>
-            <div class="lpoint"><span><strong>FPO (Further Public Offering)</strong> — when a company that is already listed issues additional shares to raise more capital</span></div>
-            <div class="lpoint"><span><strong>Bonus Shares</strong> — free additional shares given to existing shareholders from company profits</span></div>
-            <div class="lpoint"><span><strong>Right Shares</strong> — offered only to existing shareholders at a discounted price, allowing them to increase ownership before new investors enter</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If Hari owns 100 shares and the company announces a 10% bonus, he receives 10 extra shares without paying anything. A hydropower company launching an IPO allows people like Sita or Ramesh to apply through MeroShare to become early investors.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">02</span>
-          <span class="l-title">📊 Market Price & Trading Data</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Once shares are in the market, their prices constantly change. Price is not fixed — it constantly changes based on demand, supply, and investor behavior.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Open Price</strong> — the first price at which a share trades when the market opens</span></div>
-            <div class="lpoint"><span><strong>LTP (Last Traded Price)</strong> — the most recent price at which a share was bought or sold; keeps changing throughout the trading day</span></div>
-            <div class="lpoint"><span><strong>CMP (Current Market Price)</strong> — real-time market price based on ongoing trades; LTP and CMP are often very close</span></div>
-            <div class="lpoint"><span><strong>High & Low Price</strong> — highest and lowest price during the day; shows volatility of a stock</span></div>
-            <div class="lpoint"><span><strong>Volume</strong> — how many shares were traded in a day; high volume means strong interest in that stock</span></div>
-            <div class="lpoint"><span><strong>Turnover</strong> — total money traded in a stock or market during a day</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If NIC Asia Bank opens at NPR 700, that is its opening price. If many investors trade large quantities of Shivam Cement shares, turnover increases.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">03</span>
-          <span class="l-title">⚖️ Market Mechanism — How Trading Actually Happens</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">The market is basically a negotiation system between buyers and sellers.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Bid Price</strong> — the highest price a buyer is willing to pay</span></div>
-            <div class="lpoint"><span><strong>Ask Price</strong> — the lowest price a seller is willing to accept</span></div>
-            <div class="lpoint"><span><strong>Spread</strong> — the difference between bid and ask price; smaller spread = more active and liquid stock</span></div>
-            <div class="lpoint"><span><strong>Order Queue</strong> — all pending buy and sell orders waiting to be executed</span></div>
-            <div class="lpoint"><span><strong>Market Depth</strong> — a real-time view of all buy and sell orders at different price levels; shows market demand and supply strength</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If many buyers are waiting at NPR 500 for a stock, it shows strong buying pressure.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">04</span>
-          <span class="l-title">🏛️ Market Structure & Indices</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Indices help you understand the overall market direction, not just individual stocks.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Market Capitalization</strong> — total value of a company in the market = Share Price × Total Shares; larger companies like banks have higher market cap</span></div>
-            <div class="lpoint"><span><strong>Free Float</strong> — shares available for public trading, excluding locked promoter shares</span></div>
-            <div class="lpoint"><span><strong>NEPSE Index</strong> — overall indicator of market performance; if it rises, most stocks are generally performing well</span></div>
-            <div class="lpoint"><span><strong>Sector Indices</strong> — Banking Index, Hydropower Index, Finance Index; each sector moves differently based on economic conditions</span></div>
-            <div class="lpoint"><span><strong>Circuit Breaker</strong> — a safety mechanism that temporarily stops trading when prices move too fast; prevents panic buying or selling</span></div>
-            <div class="lpoint"><span><strong>Upper & Lower Circuit</strong> — maximum allowed price increase or drop in a single day</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">05</span>
-          <span class="l-title">🧠 Market Behavior — Why Prices Move</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">Markets are not just numbers — they are driven by human behavior.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Supply and Demand</strong> — if more people want to buy a stock than sell it, the price increases</span></div>
-            <div class="lpoint"><span><strong>News Impact</strong> — positive news increases demand; negative news increases selling pressure</span></div>
-            <div class="lpoint"><span><strong>Investor Sentiment</strong> — Fear → selling pressure; Excitement → buying pressure. Sometimes prices move based on emotions, not logic</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If a hydro project gets government approval, its shares may rise quickly.</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ LEVEL 04 ══ -->
-  <div class="level-block" id="lvl-4">
-    <div class="level-header" onclick="toggleLevel('lvl-4')">
-      <span class="lh-emoji">🔬</span>
-      <div class="lh-info">
-        <span class="lh-num">LEVEL 04 · INTERMEDIATE</span>
-        <h3>Fundamental Analysis</h3>
-        <p>Evaluate the true financial health of a company before investing.</p>
-      </div>
-      <div class="lh-right">
-        <span class="sug-badge">★ Start here</span>
-        <span class="chevron">⌄</span>
-      </div>
-    </div>
-    <div class="level-body">
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">01</span>
-          <span class="l-title">📊 Financial Performance — Core Profitability Metrics</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">This group tells whether a company is making money and how efficiently it is doing so. EPS, PE, ROE, and ROA together answer: <em>"Is this company actually profitable and efficient?"</em></p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>EPS (Earnings Per Share)</strong> — how much profit a company earns per share; if EPS is high, the company is generally profitable</span></div>
-            <div class="lpoint"><span><strong>PE Ratio (Price to Earnings)</strong> — how much investors pay for 1 rupee of earnings; High PE = high expectations (growth stock); Low PE = undervalued or slow growth</span></div>
-            <div class="lpoint"><span><strong>ROE (Return on Equity)</strong> — how efficiently a company uses shareholder money to generate profit; higher ROE = better efficiency</span></div>
-            <div class="lpoint"><span><strong>ROA (Return on Assets)</strong> — how well a company uses its assets to generate profit; useful for banks and capital-heavy companies</span></div>
-          </div>
-          <p class="lp" style="margin-top:10px;">PE is directly connected to EPS. If EPS increases but price stays the same, PE decreases — the stock becomes relatively cheaper.</p>
-          <div class="lexample"><strong>Example:</strong> If a bank earns strong profit and EPS increases, investor confidence rises. If two banks earn the same profit but one uses less capital, it has higher ROE.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">02</span>
-          <span class="l-title">💰 Financial Strength — Stability & Safety</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">This group shows whether the company is financially stable or risky — answering: <em>"Is this company financially safe?"</em></p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Book Value</strong> — real accounting value of a company per share; if market price is much higher, investors are paying a premium for future growth</span></div>
-            <div class="lpoint"><span><strong>Debt Ratio</strong> — how much debt a company has compared to its assets; High debt = higher risk; Low debt = safer company</span></div>
-            <div class="lpoint"><span><strong>Net Profit Margin</strong> — how much profit remains after expenses; higher margin = better cost control</span></div>
-            <div class="lpoint"><span><strong>Cash Flow</strong> — actual money movement in and out of a company; a company can show profit but still fail if cash flow is weak</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> Hydropower companies often use loans, so the debt ratio matters a lot when evaluating them.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">03</span>
-          <span class="l-title">📈 Growth & Future Potential</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">This group answers: <em>"Will this company grow in the future?"</em></p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Revenue Growth</strong> — shows whether company sales are increasing year by year</span></div>
-            <div class="lpoint"><span><strong>Profit Growth</strong> — shows whether net profit is increasing consistently</span></div>
-            <div class="lpoint"><span><strong>Dividend History</strong> — shows how regularly the company shares profit with investors</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">04</span>
-          <span class="l-title">🏢 Ownership & Structure</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">This is very important in Nepal's market.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Promoter Holding</strong> — how much ownership is held by founders; high promoter confidence usually means strong long-term belief in the company</span></div>
-            <div class="lpoint"><span><strong>Institutional Holding</strong> — shares owned by banks, funds, or big institutions; high institutional interest often signals strong fundamentals</span></div>
-            <div class="lpoint"><span><strong>Management Quality</strong> — although not numeric, good leadership strongly affects company performance</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">05</span>
-          <span class="l-title">✅ A Strong Company — Putting It All Together</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">A strong company usually has all of the following. Fundamental analysis is about: <em>"Is this company worth owning for the long term?"</em></p>
-          <div class="lpoints">
-            <div class="lpoint"><span>Good EPS</span></div>
-            <div class="lpoint"><span>Reasonable PE</span></div>
-            <div class="lpoint"><span>High ROE</span></div>
-            <div class="lpoint"><span>Low debt</span></div>
-            <div class="lpoint"><span>Strong cash flow</span></div>
-            <div class="lpoint"><span>Stable revenue growth</span></div>
-            <div class="lpoint"><span>Healthy promoter holding</span></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══ LEVEL 05 ══ -->
-  <div class="level-block" id="lvl-5">
-    <div class="level-header" onclick="toggleLevel('lvl-5')">
-      <span class="lh-emoji">🕯️</span>
-      <div class="lh-info">
-        <span class="lh-num">LEVEL 05 · INTERMEDIATE</span>
-        <h3>Technical Analysis</h3>
-        <p>Use price charts and indicators to decide when to buy or sell.</p>
-      </div>
-      <div class="lh-right">
-        <span class="sug-badge">★ Start here</span>
-        <span class="chevron">⌄</span>
-      </div>
-    </div>
-    <div class="level-body">
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">01</span>
-          <span class="l-title">📊 Price Structure — Candlestick & Timeframes</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">This forms the base of all chart analysis.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Candlestick</strong> — shows price movement of a stock in a specific time period; it shows Open price, Close price, High, and Low</span></div>
-            <div class="lpoint"><span><strong>Timeframes</strong> — charts can be viewed in 1 day, 1 week, 1 month; short timeframe = trading; long timeframe = investing</span></div>
-            <div class="lpoint"><span><strong>Trend</strong> — Uptrend (price rising), Downtrend (price falling), Sideways (no clear movement)</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If NIC Asia Bank opens low but closes high, it shows buying strength.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">02</span>
-          <span class="l-title">📉 Support & Resistance</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Support</strong> — a price level where buying is strong and price stops falling</span></div>
-            <div class="lpoint"><span><strong>Resistance</strong> — a price level where selling is strong and price stops rising</span></div>
-            <div class="lpoint"><span><strong>Breakout</strong> — when price crosses resistance or support, it often moves strongly in that direction</span></div>
-          </div>
-          <div class="lexample"><strong>Example:</strong> If a stock breaks resistance at NPR 500, it may move higher quickly.</div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">03</span>
-          <span class="l-title">📊 Indicators — Mathematical Tools</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <p class="lp">These are tools used to analyze momentum and strength.</p>
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Moving Average (MA)</strong> — shows average price over time; helps identify trend direction and smooths price fluctuations</span></div>
-            <div class="lpoint"><span><strong>RSI (Relative Strength Index)</strong> — shows whether a stock is overbought or oversold; above 70 = overbought; below 30 = oversold</span></div>
-            <div class="lpoint"><span><strong>MACD</strong> — shows momentum and trend change signals; used to identify buying or selling opportunities</span></div>
-            <div class="lpoint"><span><strong>Bollinger Bands</strong> — shows volatility and price range; price touching upper band = possible overbought condition; lower band = possible oversold condition</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">04</span>
-          <span class="l-title">📊 Volume Analysis — Market Strength</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Volume</strong> — number of shares traded; High volume + rising price = strong trend; High volume + falling price = strong selling</span></div>
-            <div class="lpoint"><span><strong>VWAP (Volume Weighted Average Price)</strong> — shows the fair average price based on trading activity; helps identify whether price is above or below fair value</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lesson">
-        <div class="lesson-hdr" onclick="toggleLesson(this)">
-          <span class="l-num">05</span>
-          <span class="l-title">🧩 Chart Patterns — Market Behavior</span>
-          <span class="l-arr">›</span>
-        </div>
-        <div class="lesson-body">
-          <div class="lpoints">
-            <div class="lpoint"><span><strong>Double Top / Bottom</strong> — shows possible reversal of trend</span></div>
-            <div class="lpoint"><span><strong>Head and Shoulders</strong> — indicates trend reversal from bullish to bearish</span></div>
-            <div class="lpoint"><span><strong>Triangle Pattern</strong> — shows consolidation before breakout</span></div>
-          </div>
-          <p class="lp" style="margin-top:12px;">Technical analysis answers: <em>"When should I enter or exit a stock?"</em> It is based on price, volume, patterns, and market psychology.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
+  
 </div>
 
 <script>
-const SUGG = {
-  0: { title:'Start with Level 00 — Stock Market Foundations', desc:'You\'ll understand what money, companies, shares, and the stock market actually are — before touching any account or trade. This is the right place to begin.', target:'lvl-0' },
-  1: { title:'Start with Level 01 — Getting Started with NEPSE', desc:'You understand what stocks are. Now set up your PAN card, DEMAT account, MeroShare, CRN, and broker account so you can actually start investing.', target:'lvl-1' },
-  2: { title:'Move to Level 02 — NEPSE Core Concepts', desc:'You\'re set up. Now understand IPOs, FPOs, bonus shares, circuit breakers, and how market data like LTP, volume, and turnover actually works.', target:'lvl-2' },
-  3: { title:'Move to Level 04 — Fundamental Analysis', desc:'You can trade. Now learn to choose the right companies by understanding EPS, PE ratio, ROE, debt levels, and cash flow before buying.', target:'lvl-4' },
-  4: { title:'Focus on Level 05 — Technical Analysis', desc:'You know which companies to pick. Now learn when to enter and exit using candlesticks, support and resistance, RSI, MACD, and chart patterns.', target:'lvl-5' },
-  5: { title:'Review All Levels — Deepen Your Foundation', desc:'You\'re advanced. Go through all levels to fill in any gaps. Pay close attention to Fundamental and Technical Analysis for a more complete picture.', target:'lvl-4' }
-};
-
-var activeChoice = null;
-
-function choose(n) {
-  if (activeChoice === n) {
-    activeChoice = null;
-    document.querySelectorAll('.sel-card').forEach(function(c){ c.classList.remove('selected'); });
-    document.getElementById('sugBox').classList.remove('show');
-    document.querySelectorAll('.level-block').forEach(function(b){ b.classList.remove('suggested'); });
-    return;
-  }
-  activeChoice = n;
-  document.querySelectorAll('.sel-card').forEach(function(c){ c.classList.remove('selected'); });
-  document.querySelector('[data-n="'+n+'"]').classList.add('selected');
-
-  var s = SUGG[n];
-  document.getElementById('sugTitle').textContent = s.title;
-  document.getElementById('sugDesc').textContent = s.desc;
-  var btn = document.getElementById('sugBtn');
-  btn.href = '#' + s.target;
-  btn.onclick = function(e) {
-    e.preventDefault();
-    var tgt = document.getElementById(s.target);
-    if (tgt) {
-      if (!tgt.classList.contains('open')) tgt.classList.add('open');
-      setTimeout(function(){ tgt.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
+  // Track open lesson (only one open at a time)
+  let currentOpenLesson = null;
+  
+  // Toggle lesson function
+  function toggleLesson(lessonNumber) {
+    const lessonContent = document.querySelector(`#lesson${lessonNumber} .lesson-content`);
+    const lessonHeader = document.querySelector(`#lesson${lessonNumber} .lesson-header`);
+    const chevron = document.querySelector(`#lesson${lessonNumber} .chevron`);
+    
+    // If clicking the already open lesson, close it
+    if (currentOpenLesson === lessonNumber) {
+      lessonContent.classList.remove('show');
+      lessonHeader.classList.remove('active');
+      if (chevron) chevron.style.transform = 'rotate(0deg)';
+      currentOpenLesson = null;
+    } else {
+      // Close previously open lesson
+      if (currentOpenLesson !== null) {
+        const prevContent = document.querySelector(`#lesson${currentOpenLesson} .lesson-content`);
+        const prevHeader = document.querySelector(`#lesson${currentOpenLesson} .lesson-header`);
+        const prevChevron = document.querySelector(`#lesson${currentOpenLesson} .chevron`);
+        if (prevContent) prevContent.classList.remove('show');
+        if (prevHeader) prevHeader.classList.remove('active');
+        if (prevChevron) prevChevron.style.transform = 'rotate(0deg)';
+      }
+      
+      // Open new lesson
+      lessonContent.classList.add('show');
+      lessonHeader.classList.add('active');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      currentOpenLesson = lessonNumber;
     }
-  };
-
-  document.getElementById('sugBox').classList.add('show');
-  document.querySelectorAll('.level-block').forEach(function(b){ b.classList.remove('suggested'); });
-  var tgt2 = document.getElementById(s.target);
-  if (tgt2) tgt2.classList.add('suggested');
-
-  setTimeout(function(){
-    document.getElementById('sugBox').scrollIntoView({ behavior:'smooth', block:'nearest' });
-  }, 40);
-}
-
-function toggleLevel(id) {
-  var b = document.getElementById(id);
-  if (b) b.classList.toggle('open');
-}
-
-function toggleLesson(hdr) {
-  var lesson = hdr.parentElement;
-  var parent = lesson.parentElement;
-  var wasOpen = lesson.classList.contains('open');
-  // close all siblings
-  parent.querySelectorAll('.lesson').forEach(function(l){ l.classList.remove('open'); });
-  // open this one if it was closed
-  if (!wasOpen) lesson.classList.add('open');
-}
+  }
+  
+  // Level selection function
+  let selectedLevel = null;
+  
+  function selectLevel(level) {
+    selectedLevel = level;
+    
+    // Update UI - remove selected class from all level cards
+    document.querySelectorAll('.level-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    
+    // Add selected class to clicked card
+    const selectedCard = document.querySelector(`.level-card[data-level="${level}"]`);
+    selectedCard.classList.add('selected');
+    
+    // Show recommendation section
+    const recommendationSection = document.getElementById('recommendation-section');
+    recommendationSection.style.display = 'block';
+    
+    // Update recommendation based on level
+    const recommendationTitle = document.getElementById('recommendation-title');
+    const recommendationText = document.getElementById('recommendation-text');
+    const recommendationLink = document.getElementById('recommendation-link');
+    
+    if (level === 'beginner') {
+      recommendationTitle.textContent = '🌱 Start from the Beginning';
+      recommendationText.textContent = 'As a beginner, we recommend starting with Lesson 1 to build a strong foundation. No prior knowledge required — we\'ll guide you step by step.';
+      recommendationLink.href = '#lesson1';
+      
+      // Auto scroll to lesson 1
+      setTimeout(() => {
+        document.getElementById('lesson1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        toggleLesson(1);
+      }, 300);
+      
+    } else if (level === 'intermediate') {
+      recommendationTitle.textContent = '📊 Jump to Lesson 3';
+      recommendationText.textContent = 'You already know the basics. Start with Lesson 3 to master fundamental and technical analysis, then move to advanced strategies.';
+      recommendationLink.href = '#lesson3';
+      
+      setTimeout(() => {
+        document.getElementById('lesson3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        toggleLesson(3);
+      }, 300);
+      
+    } else if (level === 'advanced') {
+      recommendationTitle.textContent = '🎯 Start with Lessons 4 & 5';
+      recommendationText.textContent = 'Experienced trader? Dive directly into technical analysis (Lesson 4) and advanced strategies (Lesson 5) to sharpen your edge.';
+      recommendationLink.href = '#lesson4';
+      
+      setTimeout(() => {
+        document.getElementById('lesson4').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        toggleLesson(4);
+      }, 300);
+    }
+  }
+  
+  // Optional: Track completed lessons (stores in localStorage)
+  function markLessonComplete(lessonNum) {
+    let completed = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+    if (!completed.includes(lessonNum)) {
+      completed.push(lessonNum);
+      localStorage.setItem('completedLessons', JSON.stringify(completed));
+      updateProgress();
+    }
+  }
+  
+  function updateProgress() {
+    const completed = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+    const progressText = document.getElementById('progress-text');
+    if (progressText) {
+      progressText.textContent = `${completed.length} of 5 lessons completed`;
+    }
+  }
+  
+  // Load progress on page load
+  updateProgress();
+  
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
 </script>
+
 {% endblock %}

@@ -6,7 +6,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import logging
-
+from django.http import Http404
 logger = logging.getLogger(__name__)
 
 # ============================================
@@ -275,3 +275,15 @@ def home(request):
 
 def learning(request):
     return render(request, 'learning/learning.html')
+
+
+
+def lesson_detail(request, lesson_number):
+    """View for individual lessons (1.html, 2.html, etc.)"""
+    # Template path: learning/learn/1.html, learning/learn/2.html, etc.
+    template = f'learning/learn/{lesson_number}.html'
+    
+    try:
+        return render(request, template, {'lesson_number': lesson_number})
+    except:
+        raise Http404(f"Lesson {lesson_number} not found")

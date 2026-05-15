@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEPSE Course — Lesson 2 of 5 (English / नेपाली)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0b0e13;
+    --bg-card: #12161e;
+    --bg-card-alt: #1a1f2b;
+    --fg: #e4e7ec;
+    --fg-dim: #c0c5ce;
+    --fg-muted: #717d91;
+    --accent: #00d4a1;
+    --accent-dim: rgba(0,212,161,0.10);
+    --accent-mid: rgba(0,212,161,0.20);
+    --accent-glow: rgba(0,212,161,0.25);
+    --gold: #f0b840;
+    --gold-dim: rgba(240,184,64,0.10);
+    --purple: #8b7cf6;
+    --purple-dim: rgba(139,124,246,0.10);
+    --red: #ff5c5c;
+    --red-dim: rgba(255,92,92,0.10);
+    --border: #1f2636;
+    --radius: 16px;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:'Karla',sans-serif;line-height:1.78;
+    min-height:100vh;overflow-x:hidden;
+  }
+
+  .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-scene .dot-grid{
+    position:absolute;inset:0;opacity:0.035;
+    background-image:radial-gradient(circle,var(--accent) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .bg-scene .orb{position:absolute;border-radius:50%;filter:blur(140px);}
+  .bg-scene .orb{display:none;}
+
+  .container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:48px 24px 90px;}
+
+  /* Language Toggle - Consistent Style */
+  .lang-toggle-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .lang-toggle {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px;
+    display: inline-flex;
+    gap: 6px;
+  }
+  .lang-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: transparent;
+    color: var(--fg-muted);
+    border: none;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .lang-btn:not(.active):hover {
+    color: var(--accent);
+  }
+
+  .course-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-dim);border:1px solid var(--accent-mid);
+    color:var(--accent);font-size:12px;font-weight:700;
+    letter-spacing:0.8px;text-transform:uppercase;
+    padding:7px 18px;border-radius:100px;margin-bottom:24px;
+  }
+  .course-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s ease infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.9rem,4.8vw,2.7rem);
+    font-weight:700;line-height:1.18;margin-bottom:14px;
+  }
+  h1 .accent{color:var(--accent);}
+  h1 .gold{color:var(--gold);}
+  .subtitle{font-size:1.02rem;color:var(--fg-muted);margin-bottom:36px;max-width:600px;}
+
+  h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.22rem;font-weight:600;margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  p{margin-bottom:13px;font-size:0.96rem;color:var(--fg-dim);}
+  strong{color:var(--fg);font-weight:600;}
+
+  .progress-wrap{margin-bottom:44px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--fg-muted);margin-bottom:8px;font-weight:600;letter-spacing:0.3px;}
+  .progress-track{height:5px;background:var(--bg-card-alt);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,var(--accent),#00e8b0);transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:30px 28px;
+    margin-bottom:24px;position:relative;overflow:hidden;
+  }
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card--explain::after{background:linear-gradient(90deg,var(--accent),transparent 70%);}
+  .card--example::after{background:linear-gradient(90deg,var(--gold),transparent 70%);}
+  .card--why::after{background:linear-gradient(90deg,var(--purple),transparent 70%);}
+  .card--action::after{background:linear-gradient(90deg,var(--red),transparent 70%);}
+  .card--recap::after{background:linear-gradient(90deg,var(--fg-muted),transparent 70%);}
+  .card--quiz::after{background:linear-gradient(90deg,var(--gold),var(--accent));}
+
+  .card-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;margin-bottom:14px;
+  }
+  .card--explain .card-icon{background:var(--accent-dim);color:var(--accent);}
+  .card--example .card-icon{background:var(--gold-dim);color:var(--gold);}
+  .card--why .card-icon{background:var(--purple-dim);color:var(--purple);}
+  .card--action .card-icon{background:var(--red-dim);color:var(--red);}
+  .card--recap .card-icon{background:rgba(113,125,145,0.10);color:var(--fg-muted);}
+  .card--quiz .card-icon{background:var(--gold-dim);color:var(--gold);}
+
+  ul{list-style:none;padding:0;margin-bottom:12px;}
+  ul li{position:relative;padding-left:22px;margin-bottom:9px;font-size:0.96rem;color:var(--fg-dim);}
+  ul li::before{content:'';position:absolute;left:3px;top:11px;width:7px;height:7px;border-radius:50%;}
+  .card--explain ul li::before{background:var(--accent);}
+  .card--example ul li::before{background:var(--gold);}
+  .card--why ul li::before{background:var(--purple);}
+  .card--action ul li::before{background:var(--red);}
+  .card--recap ul li::before{background:var(--fg-muted);width:5px;height:5px;top:12px;left:4px;}
+
+  .callout{border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+  .callout p{margin:0;font-size:0.94rem;}
+  .callout--accent{background:var(--accent-dim);border-left:3px solid var(--accent);}
+  .callout--gold{background:var(--gold-dim);border-left:3px solid var(--gold);}
+  .callout--red{background:var(--red-dim);border-left:3px solid var(--red);}
+
+  .svg-center{display:flex;justify-content:center;margin:22px 0;}
+  .svg-center svg{max-width:100%;height:auto;}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.93rem;}
+  thead th{
+    text-align:left;padding:11px 16px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-size:0.82rem;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;
+  }
+  thead th:first-child{border-radius:10px 0 0 0;}
+  thead th:last-child{border-radius:0 10px 0 0;}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--fg-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;margin:2px 2px;}
+  .tag--green{background:var(--accent-dim);color:var(--accent);}
+  .tag--red{background:var(--red-dim);color:var(--red);}
+  .tag--gold{background:var(--gold-dim);color:var(--gold);}
+
+  .quiz-block{margin-bottom:28px;}
+  .quiz-block:last-of-type{margin-bottom:0;}
+  .quiz-question{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.98rem;font-weight:600;color:var(--fg);
+    margin-bottom:14px;display:flex;gap:10px;
+  }
+  .quiz-qnum{
+    flex-shrink:0;width:26px;height:26px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--gold-dim);color:var(--gold);font-size:12px;font-weight:700;
+  }
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-opt{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 18px;border-radius:12px;
+    background:var(--bg-card-alt);border:1.5px solid var(--border);
+    cursor:pointer;transition:all 0.25s ease;
+    font-size:0.94rem;color:var(--fg-dim);user-select:none;
+  }
+  .quiz-opt:hover{border-color:var(--fg-muted);background:rgba(255,255,255,0.03);}
+  .quiz-opt .opt-letter{
+    flex-shrink:0;width:28px;height:28px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(113,125,145,0.10);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;
+    transition:all 0.25s ease;
+  }
+  .quiz-opt.correct{border-color:var(--accent);background:var(--accent-dim);color:var(--fg);}
+  .quiz-opt.correct .opt-letter{background:var(--accent);color:var(--bg);}
+  .quiz-opt.wrong{border-color:var(--red);background:var(--red-dim);color:var(--fg);}
+  .quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;}
+  .quiz-opt.disabled{pointer-events:none;opacity:0.6;}
+  .quiz-opt.disabled.correct{opacity:1;}
+
+  .quiz-feedback{
+    margin-top:12px;padding:12px 16px;border-radius:10px;
+    font-size:0.91rem;display:none;line-height:1.6;
+  }
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback--correct{background:var(--accent-dim);color:var(--accent);border-left:3px solid var(--accent);}
+  .quiz-feedback--wrong{background:var(--red-dim);color:var(--red);border-left:3px solid var(--red);}
+
+  .quiz-score{
+    text-align:center;margin-top:20px;padding:20px;
+    border-radius:var(--radius);background:var(--bg-card-alt);display:none;
+  }
+  .quiz-score.show{display:block;}
+  .quiz-score .score-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:2.4rem;font-weight:700;color:var(--accent);
+  }
+  .quiz-score .score-label{font-size:0.88rem;color:var(--fg-muted);}
+
+  .nav-footer{display:flex;justify-content:space-between;align-items:center;margin-top:44px;gap:16px;flex-wrap:wrap;}
+  .btn-back{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 28px;border:1px solid var(--border);border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-back:hover{border-color:var(--fg-muted);color:var(--fg);}
+  .btn-next{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent);color:var(--bg);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 34px;border:none;border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow);}
+  .btn-next:active{transform:translateY(0);}
+
+  .fi{opacity:0;transform:translateY(22px);animation:fadeUp 0.55s ease forwards;}
+  .fi:nth-child(1){animation-delay:.05s}
+  .fi:nth-child(2){animation-delay:.1s}
+  .fi:nth-child(3){animation-delay:.15s}
+  .fi:nth-child(4){animation-delay:.2s}
+  .fi:nth-child(5){animation-delay:.25s}
+  .fi:nth-child(6){animation-delay:.3s}
+  .fi:nth-child(7){animation-delay:.35s}
+  .fi:nth-child(8){animation-delay:.4s}
+  .fi:nth-child(9){animation-delay:.45s}
+  .fi:nth-child(10){animation-delay:.5s}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+  @media(max-width:600px){
+    .container{padding:28px 16px 60px;}
+    .card{padding:22px 18px;}
+    .nav-footer{justify-content:center;}
+  }
+
+  /* language groups */
+  .lang-group { display: block; }
+  .lang-hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="dot-grid"></div>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+  <div class="orb orb--3"></div>
+</div>
+
+<div class="container">
+  <div class="lang-toggle-wrap fi">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="ne">🇳🇵 नेपाली</button>
+    </div>
+  </div>
+
+  <!-- ========== ENGLISH VERSION GROUP ========== -->
+  <div id="version-en" class="lang-group">
+    <!-- Badge -->
+    <div class="course-badge fi">
+      <span class="dot"></span>
+      Lesson 2 of 5
+    </div>
+
+    <h1 class="fi">Reading <span class="gold">Prices</span>, Charts & the Numbers That Matter</h1>
+    <p class="subtitle fi">The stock market speaks in numbers. This lesson teaches you how to read them — what each number means, what to ignore, and what actually signals an opportunity.</p>
+
+    <div class="progress-wrap fi">
+      <div class="progress-meta"><span>Lesson 2 of 5</span><span>40%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressBarEn"></div></div>
+    </div>
+
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>Simple Explanation</h2><p>When you open the NEPSE site or your broker app, you see a flood of numbers. Most beginners get overwhelmed. But you only need to understand <strong>4 key numbers</strong> to start:</p><div class="svg-center"><svg width="520" height="200" viewBox="0 0 520 200"><rect x="8" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.2"/><rect x="28" y="30" width="76" height="36" rx="8" fill="#f0b840" fill-opacity="0.1"/><text x="66" y="54" text-anchor="middle" fill="#f0b840" font-size="20" font-weight="700">Rs.</text><text x="66" y="88" text-anchor="middle" fill="#f0b840" font-size="13" font-weight="700">PRICE</text><text x="66" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">What you pay</text><text x="66" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">per 1 share</text><line x1="28" y1="140" x2="106" y2="140" stroke="#252a36"/><text x="66" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">E.g: NABIL</text><text x="66" y="176" text-anchor="middle" fill="#f0b840" font-size="12" font-weight="600">Rs. 480</text><rect x="138" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#00d4a1"/><rect x="158" y="30" width="76" height="36" rx="8" fill="#00d4a1" fill-opacity="0.1"/><text x="196" y="54" text-anchor="middle" fill="#00d4a1" font-size="18" font-weight="700">#</text><text x="196" y="88" text-anchor="middle" fill="#00d4a1" font-size="13" font-weight="700">VOLUME</text><text x="196" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">How many</text><text x="196" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">shares traded</text><line x1="158" y1="140" x2="234" y2="140" stroke="#252a36"/><text x="196" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">E.g: NABIL</text><text x="196" y="176" text-anchor="middle" fill="#00d4a1" font-size="12" font-weight="600">12,500 shares</text><rect x="268" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#8b7cf6"/><rect x="288" y="30" width="76" height="36" rx="8" fill="#8b7cf6" fill-opacity="0.1"/><text x="326" y="54" text-anchor="middle" fill="#8b7cf6" font-size="18" font-weight="700">Rs</text><text x="326" y="88" text-anchor="middle" fill="#8b7cf6" font-size="13" font-weight="700">TURNOVER</text><text x="326" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">Total money</text><text x="326" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">traded today</text><line x1="288" y1="140" x2="364" y2="140" stroke="#252a36"/><text x="326" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">E.g: NABIL</text><text x="326" y="176" text-anchor="middle" fill="#8b7cf6" font-size="12" font-weight="600">Rs. 60 Lakh</text><rect x="398" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#ff5c5c"/><rect x="418" y="30" width="76" height="36" rx="8" fill="#ff5c5c" fill-opacity="0.1"/><text x="456" y="54" text-anchor="middle" fill="#ff5c5c" font-size="18" font-weight="700">idx</text><text x="456" y="88" text-anchor="middle" fill="#ff5c5c" font-size="13" font-weight="700">INDEX</text><text x="456" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">Overall market</text><text x="456" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">temperature</text><line x1="418" y1="140" x2="494" y2="140" stroke="#252a36"/><text x="456" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">E.g: NEPSE</text><text x="456" y="176" text-anchor="middle" fill="#ff5c5c" font-size="12" font-weight="600">2,145.30</text></svg></div><ul><li><strong>Price</strong> — The cost of 1 share right now. Like the price tag on a product. If Nabil Bank shows Rs. 480, you pay Rs. 480 for 1 share.</li><li><strong>Volume</strong> — How many shares were bought + sold today. High volume = lots of interest. Low volume = few people care.</li><li><strong>Turnover</strong> — Total rupees exchanged today. Volume x Average Price = Turnover. It tells you how much actual money moved.</li><li><strong>NEPSE Index</strong> — A single number that shows the overall market direction. Going up = most stocks rising. Going down = most stocks falling.</li></ul><div class="callout callout--accent"><p><strong>Think of it like a hospital:</strong> Price is the patient's temperature. Volume is how many visitors came. Turnover is the total bill. Index is the hospital's overall health score.</p></div></div>
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2>Practical Example</h2><p>Let's look at a realistic NEPSE trading day for <strong>Nepal Telecom (NTC)</strong>:</p><table><thead><tr><th>Indicator</th><th>Value</th><th>What It Tells You</th></tr></thead><tbody><tr><td>Open Price</td><td>Rs. 880</td><td>First trade price of the day</td></tr><tr><td>Close Price</td><td>Rs. 905 <span class="tag tag--green">+2.8%</span></td><td>Final trade price — went up from open</td></tr><tr><td>High / Low</td><td>Rs. 920 / Rs. 875</td><td>Range the price swung within today</td></tr><tr><td>Volume</td><td>45,000 shares</td><td>Decent trading activity</td></tr><tr><td>Turnover</td><td>Rs. 4.05 Crore</td><td>Big money moved — strong interest</td></tr><tr><td>NEPSE Index</td><td>2,145 → 2,168 <span class="tag tag--green">+1.1%</span></td><td>Overall market also went up today</td></tr></tbody></table><p>Now see this — same day, a different stock: <strong>Chilime Hydropower</strong></p><table><thead><tr><th>Indicator</th><th>Value</th><th>What It Tells You</th></tr></thead><tbody><tr><td>Open Price</td><td>Rs. 580</td><td>Started here</td></tr><tr><td>Close Price</td><td>Rs. 565 <span class="tag tag--red">-2.6%</span></td><td>Fell from open — selling pressure</td></tr><tr><td>Volume</td><td>3,200 shares</td><td>Very few trades — low interest</td></tr><tr><td>Turnover</td><td>Rs. 18 Lakh</td><td>Small money moved — weak activity</td></tr></tbody></table><div class="callout callout--gold"><p><strong>The golden rule:</strong> Price moving UP with HIGH volume = genuine strength. Price moving UP with LOW volume = suspicious, might reverse. Always check volume alongside price.</p></div></div>
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>Why It Matters</h2><ul><li><strong>Price without volume is misleading</strong> — A stock can go up 5% on just 10 shares traded. That's not real demand. That's an illusion.</li><li><strong>Volume confirms the move</strong> — Price going up + volume going up = real buyers stepping in. This is trustworthy.</li><li><strong>Turnover tells you the money size</strong> — 10,000 shares of NTC at Rs. 900 = Rs. 90 lakh turnover. 10,000 shares of a Rs. 50 micro-finance = Rs. 5 lakh. Same volume, very different money.</li><li><strong>Index gives you the big picture</strong> — If NEPSE Index is down 50 points but your stock is up, your stock is swimming against the current. Be cautious.</li></ul><table><thead><tr><th>Scenario</th><th>What It Means</th><th>Action</th></tr></thead><tbody><tr><td>Price UP + Volume UP</td><td>Strong buying interest</td><td><span class="tag tag--green">Bullish — can consider buying</span></td></tr><tr><td>Price UP + Volume DOWN</td><td>Fake move, few traders</td><td><span class="tag tag--gold">Caution — might reverse</span></td></tr><tr><td>Price DOWN + Volume UP</td><td>Strong selling pressure</td><td><span class="tag tag--red">Bearish — avoid or sell</span></td></tr><tr><td>Price DOWN + Volume DOWN</td><td>Quiet correction, low interest</td><td><span class="tag tag--gold">Wait and watch</span></td></tr></tbody></table></div>
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>Quick Action Insight</h2><ul><li><strong>Pick any 3 stocks</strong> — For each, find: today's Open, Close, High, Low, Volume, and Turnover. Write them down.</li><li><strong>Check the Index</strong> — Note the NEPSE Index value. Is it up or down from yesterday? By how many points?</li><li><strong>Find the volume-price combo</strong> — Look for one stock that went UP with HIGH volume. And one that went UP with LOW volume. Notice the difference.</li><li><strong>Check "Top Turnover"</strong> — The NEPSE homepage shows stocks with highest turnover. These are where the big money is flowing today. Just observe the names.</li></ul><div class="callout callout--red"><p><strong>Still no investing!</strong> You're learning to read the dashboard before driving the car. One more lesson to go before you start analyzing companies.</p></div></div>
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>Mini Recap</h2><ul><li>Price = cost of 1 share; Open/Close/High/Low show the day's range</li><li>Volume = number of shares traded; high volume confirms the price move is real</li><li>Turnover = total money traded; reveals where big money is flowing</li><li>NEPSE Index = overall market temperature; up = most stocks rising, down = most falling</li><li>Always read Price + Volume together — price alone tells half the story</li></ul></div>
+    <div class="card card--quiz fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18l6-6-6-6"/></svg></div><h2>Test Your Understanding</h2><p style="margin-bottom:24px;">5 questions to lock in Lesson 2. Click an option to check.</p><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">1</span><span>What does "Volume" mean in the stock market?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>The price of one share</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>The total number of shares traded in a day</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>The total rupees exchanged</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>The NEPSE Index value</span></div></div><div class="quiz-feedback" id="fb1-en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">2</span><span>A stock's price goes up 5% but volume is very low. What does this likely mean?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'en')"><span class="opt-letter">A</span><span>Very strong buying, safe to invest</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'en')"><span class="opt-letter">B</span><span>The company just announced great profits</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'en')"><span class="opt-letter">C</span><span>The move is weak and might reverse — not enough real buyers</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'en')"><span class="opt-letter">D</span><span>Volume doesn't matter, only price matters</span></div></div><div class="quiz-feedback" id="fb2-en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">3</span><span>What is the difference between Volume and Turnover?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'en')"><span class="opt-letter">A</span><span>They are the same thing</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'en')"><span class="opt-letter">B</span><span>Volume is in rupees, turnover is number of shares</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'en')"><span class="opt-letter">C</span><span>Turnover is only for the Index, not individual stocks</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'en')"><span class="opt-letter">D</span><span>Volume = number of shares traded; Turnover = total rupees traded</span></div></div><div class="quiz-feedback" id="fb3-en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">4</span><span>If NEPSE Index drops 50 points, what does that tell you?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'en')"><span class="opt-letter">A</span><span>Most stocks in the market are falling today</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'en')"><span class="opt-letter">B</span><span>Only banking stocks are affected</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'en')"><span class="opt-letter">C</span><span>The market is closed for the day</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'en')"><span class="opt-letter">D</span><span>50 companies went bankrupt</span></div></div><div class="quiz-feedback" id="fb4-en"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">5</span><span>Which combination is the most trustworthy signal for a price increase?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>Price up + Volume down</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>Price up + Volume up</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>Price down + Volume up</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>Turnover down + Index up</span></div></div><div class="quiz-feedback" id="fb5-en"></div></div><div class="quiz-score" id="quizScore-en"><div class="score-num" id="scoreNum-en">0/5</div><div class="score-label" id="scoreLabel-en">Questions answered correctly</div></div></div>
+    <div class="nav-footer fi"><button class="btn-back" onclick="window.location.href='1.html'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back</button><button class="btn-next" onclick="window.location.href='3.html'">Next Lesson <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+  </div>
+
+  <!-- ========== NEPALI VERSION GROUP ========== -->
+  <div id="version-ne" class="lang-group lang-hidden">
+    <div class="course-badge fi"><span class="dot"></span>पाठ २ of ५</div>
+    <h1 class="fi"><span class="gold">Price</span>, Chart र मुख्य संकेतक पढ्ने तरिका</h1>
+    <p class="subtitle fi">सेयर बजार संख्यामा बोल्छ। यो पाठले ती संख्या कसरी पढ्ने सिकाउँछ — कुन संख्याको के अर्थ छ, के बेवास्ता गर्ने, र के वास्तवमै अवसरको संकेत दिन्छ।</p>
+    <div class="progress-wrap fi"><div class="progress-meta"><span>पाठ २ of ५</span><span>४०%</span></div><div class="progress-track"><div class="progress-fill" id="progressBarNe"></div></div></div>
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>सरल व्याख्या</h2><p>जब तपाईंं NEPSE साइट वा Broker को एप खोल्नुहुन्छ, तपाईंंले संख्याको बाढी देख्नुहुन्छ। सुरुवातकर्ताहरू अलमलिन सक्छन्। तर सुरु गर्न <strong>४ वटा मुख्य संख्या</strong> मात्र बुझ्नुपर्छ:</p><div class="svg-center"><svg width="520" height="200" viewBox="0 0 520 200"><rect x="8" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#f0b840"/><rect x="28" y="30" width="76" height="36" rx="8" fill="#f0b840" fill-opacity="0.1"/><text x="66" y="54" text-anchor="middle" fill="#f0b840" font-size="20">Rs.</text><text x="66" y="88" text-anchor="middle" fill="#f0b840" font-size="13">PRICE</text><text x="66" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">१ शेयरको</text><text x="66" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">भाउ</text><line x1="28" y1="140" x2="106" y2="140" stroke="#252a36"/><text x="66" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">उदा: NABIL</text><text x="66" y="176" text-anchor="middle" fill="#f0b840" font-size="12">Rs. ४८०</text><rect x="138" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#00d4a1"/><rect x="158" y="30" width="76" height="36" rx="8" fill="#00d4a1" fill-opacity="0.1"/><text x="196" y="54" text-anchor="middle" fill="#00d4a1" font-size="18">#</text><text x="196" y="88" text-anchor="middle" fill="#00d4a1" font-size="13">VOLUME</text><text x="196" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">कति शेयर</text><text x="196" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">कारोबार भयो</text><line x1="158" y1="140" x2="234" y2="140" stroke="#252a36"/><text x="196" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">उदा: NABIL</text><text x="196" y="176" text-anchor="middle" fill="#00d4a1" font-size="12">१२,५०० शेयर</text><rect x="268" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#8b7cf6"/><rect x="288" y="30" width="76" height="36" rx="8" fill="#8b7cf6" fill-opacity="0.1"/><text x="326" y="54" text-anchor="middle" fill="#8b7cf6" font-size="18">Rs</text><text x="326" y="88" text-anchor="middle" fill="#8b7cf6" font-size="13">TURNOVER</text><text x="326" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">आज कति</text><text x="326" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">पैसा कारोबार भयो</text><line x1="288" y1="140" x2="364" y2="140" stroke="#252a36"/><text x="326" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">उदा: NABIL</text><text x="326" y="176" text-anchor="middle" fill="#8b7cf6" font-size="12">Rs. ६० लाख</text><rect x="398" y="10" width="118" height="180" rx="14" fill="#1a1f2b" stroke="#ff5c5c"/><rect x="418" y="30" width="76" height="36" rx="8" fill="#ff5c5c" fill-opacity="0.1"/><text x="456" y="54" text-anchor="middle" fill="#ff5c5c" font-size="18">Idx</text><text x="456" y="88" text-anchor="middle" fill="#ff5c5c" font-size="13">INDEX</text><text x="456" y="110" text-anchor="middle" fill="#717d91" font-size="9.5">समग्र बजारको</text><text x="456" y="125" text-anchor="middle" fill="#717d91" font-size="9.5">स्वास्थ्य</text><line x1="418" y1="140" x2="494" y2="140" stroke="#252a36"/><text x="456" y="160" text-anchor="middle" fill="#e4e7ec" font-size="9">उदा: NEPSE</text><text x="456" y="176" text-anchor="middle" fill="#ff5c5c" font-size="12">२,१४५.३०</text></svg></div><ul><li><strong>Price (मूल्य)</strong> — अहिले १ वटा शेयरको भाउ।</li><li><strong>Volume (भोल्युम)</strong> — आज कति वटा शेयर किनबेच भयो।</li><li><strong>Turnover (टर्नओभर)</strong> — आज कुल कति रुपैयाँको कारोबार भयो।</li><li><strong>NEPSE Index (सूचकांक)</strong> — एउटा नम्बर जसले समग्र बजारको दिशा देखाउँछ।</li></ul><div class="callout callout--accent"><p><strong>अस्पतालको उदाहरणले बुझ्नुहोस्:</strong> Price भनेको बिरामीको ज्वरो हो। Volume भनेको कति आगन्तुक आए भन्ने हो। Turnover भनेको कुल बिल हो। Index भनेको अस्पतालको समग्र स्वास्थ्य स्कोर हो।</p></div></div>
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2>व्यावहारिक उदाहरण</h2><p>आउनुहोस् <strong>नेपाल टेलिकम (NTC)</strong> को एउटा वास्तविक NEPSE कारोबार दिन हेरौं:</p><table><thead><tr><th>संकेतक</th><th>मान</th><th>यसले के भन्छ</th></tr></thead><tbody><tr><td>Open Price</td><td>Rs. ८८०</td><td>दिनको पहिलो कारोबार Price</td></tr><tr><td>Close Price</td><td>Rs. ९०५ <span class="tag tag--green">+२.८%</span></td><td>अन्तिम कारोबार Price — Open भन्दा बढ्यो</td></tr><tr><td>High / Low</td><td>Rs. ९२० / Rs. ८७५</td><td>आज Price यति तलमाथि हानियो</td></tr><tr><td>Volume</td><td>४५,००० शेयर</td><td>राम्रो कारोबार गतिविधि</td></tr><tr><td>Turnover</td><td>Rs. ४.०५ करोड</td><td>ठूलो पैसा चल्यो — बलियो चासो</td></tr><tr><td>NEPSE Index</td><td>२,१४५ → २,१६८ <span class="tag tag--green">+१.१%</span></td><td>समग्र बजार पनि आज बढ्यो</td></tr></tbody></table><p>अब हेर्नुहोस् — उही दिन, अर्को स्टक: <strong>चिलिमे हाइड्रोपावर</strong></p><table><thead><tr><th>संकेतक</th><th>मान</th><th>यसले के भन्छ</th></tr></thead><tbody><tr><td>Open Price</td><td>Rs. ५८०</td><td>यहाँबाट सुरु भयो</td></tr><tr><td>Close Price</td><td>Rs. ५६५ <span class="tag tag--red">-२.६%</span></td><td>Open बाट खस्यो — बेच्ने दबाब</td></tr><tr><td>Volume</td><td>३,२०० शेयर</td><td>धेरै थोरै कारोबार — कम चासो</td></tr><tr><td>Turnover</td><td>Rs. १८ लाख</td><td>सानो पैसा चल्यो — कमजोर गतिविधि</td></tr></tbody></table><div class="callout callout--gold"><p><strong>सुनौलो नियम:</strong> Price बढ्दैछ + HIGH Volume = वास्तविक शक्ति। Price बढ्दैछ + LOW Volume = शंकास्पद, उल्टिन सक्छ। सधैं Price सँगै Volume जाँच्नुहोस्।</p></div></div>
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>यो किन महत्त्वपूर्ण छ</h2><ul><li><strong>Volume विनाको Price भ्रामक हुन्छ</strong> — एउटा स्टक केवल १० शेयर कारोबार भएर ५% बढ्न सक्छ। त्यो वास्तविक माग होइन।</li><li><strong>Volume ले चाल पुष्टि गर्छ</strong> — Price बढ्दैछ + Volume बढ्दैछ = वास्तविक किन्नेहरू आएका छन्।</li><li><strong>Turnover ले पैसाको आकार बताउँछ</strong> — NTC को १०,००० शेयर Rs. ९०० मा = Rs. ९० लाख Turnover। Rs. ५० को माइक्रोफाइनान्सको १०,००० शेयर = Rs. ५ लाख।</li><li><strong>Index ले ठूलो तस्वीर दिन्छ</strong> — यदि NEPSE Index ५० अंक घटिरहेको छ तर तपाईंंको स्टक बढिरहेको छ भने, सावधान हुनुहोस्।</li></ul><table><thead><tr><th>अवस्था</th><th>यसको अर्थ</th><th>के गर्ने</th></tr></thead><tbody><tr><td>Price बढ्यो + Volume बढ्यो</td><td>बलियो किन्ने इच्छा</td><td><span class="tag tag--green">Bullish — किन्न सकिन्छ</span></td></tr><tr><td>Price बढ्यो + Volume घट्यो</td><td>झूटो चाल</td><td><span class="tag tag--gold">सावधान — उल्टिन सक्छ</span></td></tr><tr><td>Price घट्यो + Volume बढ्यो</td><td>बलियो बेच्ने दबाब</td><td><span class="tag tag--red">Bearish — टाढा बस्नुहोस्</span></td></tr><tr><td>Price घट्यो + Volume घट्यो</td><td>सामान्य सुधार</td><td><span class="tag tag--gold">प्रतीक्षा गर्नुहोस्</span></td></tr></tbody></table></div>
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>द्रुत कार्य अन्तर्दृष्टि</h2><ul><li><strong>जुनसुकै ३ वटा स्टक छान्नुहोस्</strong> — प्रत्येकको लागि: आजको Open, Close, High, Low, Volume, र Turnover खोज्नुहोस्।</li><li><strong>Index जाँच्नुहोस्</strong> — NEPSE Index को मान नोट गर्नुहोस्।</li><li><strong>Volume-Price को मिश्रण खोज्नुहोस्</strong> — उच्च Volume संग बढेको र कम Volume संग बढेको फरक हेर्नुहोस्।</li><li><strong>"Top Turnover" हेर्नुहोस्</strong> — ठूलो पैसा कहाँ गइरहेको छ हेर्नुहोस्।</li></ul><div class="callout callout--red"><p><strong>अहिले पनि लगानी गर्ने होइन!</strong> तपाईंं गाडी चलाउनु अघि ड्यासबोर्ड पढ्न सिक्दै हुनुहुन्छ।</p></div></div>
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>संक्षिप्त सारांश</h2><ul><li>Price = १ शेयरको भाउ; Open/Close/High/Low ले दिनभरको दायरा देखाउँछ</li><li>Volume = कारोबार भएको शेयरको संख्या; High Volume ले Price चाल वास्तविक हो भन्ने पुष्टि गर्छ</li><li>Turnover = कारोबार भएको कुल रकम</li><li>NEPSE Index = समग्र बजारको तापमान</li><li>सधैं Price + Volume सँगै पढ्नुहोस्</li></ul></div>
+    <div class="card card--quiz fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18l6-6-6-6"/></svg></div><h2>तपाईंंको बुझाइ जाँच्नुहोस्</h2><p style="margin-bottom:24px;">पाठ २ लक गर्न ५ वटा प्रश्न।</p><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">१</span><span>सेयर बजारमा "Volume" को अर्थ के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>एउटा शेयरको Price</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>एक दिनमा कारोबार भएको शेयरको कुल संख्या</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>कुल रुपैयाँ कारोबार भएको रकम</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>NEPSE Index को मान</span></div></div><div class="quiz-feedback" id="fb1-ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">२</span><span>एउटा स्टकको Price ५% बढ्यो तर Volume धेरै कम छ। यसको सम्भावित अर्थ के हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'ne')"><span class="opt-letter">A</span><span>धेरै बलियो किन्ने इच्छा</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'ne')"><span class="opt-letter">B</span><span>कम्पनीले ठूलो नाफा अनाउन्स गरेको छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'ne')"><span class="opt-letter">C</span><span>चाल कमजोर छ र उल्टिन सक्छ — पर्याप्त वास्तविक किन्नेहरू छैनन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'ne')"><span class="opt-letter">D</span><span>Volume ले केही अर्थ राख्दैन, केवल Price मात्र महत्त्वपूर्ण छ</span></div></div><div class="quiz-feedback" id="fb2-ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">३</span><span>Volume र Turnover बीच के भिन्नता छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'ne')"><span class="opt-letter">A</span><span>दुवै एउटै कुरा हुन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'ne')"><span class="opt-letter">B</span><span>Volume रुपैयाँमा हुन्छ, Turnover शेयर संख्यामा</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'ne')"><span class="opt-letter">C</span><span>Turnover Index को लागि मात्र हुन्छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'ne')"><span class="opt-letter">D</span><span>Volume = कारोबार भएको शेयर संख्या; Turnover = कुल रकम</span></div></div><div class="quiz-feedback" id="fb3-ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">४</span><span>यदि NEPSE Index ५० अंकले घट्यो भने, यसले के भन्छ?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'ne')"><span class="opt-letter">A</span><span>बजारका धेरैजसो स्टक आज घटिरहेका छन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'ne')"><span class="opt-letter">B</span><span>केवल बैंकिङ स्टक प्रभावित भएका छन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'ne')"><span class="opt-letter">C</span><span>बजार आजको लागि बन्द छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'ne')"><span class="opt-letter">D</span><span>५० वटा कम्पनी डामाडोल भए</span></div></div><div class="quiz-feedback" id="fb4-ne"></div></div><hr style="border:none;border-top:1px solid var(--border);margin:24px 0;"><div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">५</span><span>Price बढ्ने सबैभन्दा भरपर्दो संकेत कुन हो?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>Price बढ्यो + Volume घट्यो</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>Price बढ्यो + Volume बढ्यो</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>Price घट्यो + Volume बढ्यो</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>Turnover घट्यो + Index बढ्यो</span></div></div><div class="quiz-feedback" id="fb5-ne"></div></div><div class="quiz-score" id="quizScore-ne"><div class="score-num" id="scoreNum-ne">०/५</div><div class="score-label" id="scoreLabel-ne">सही उत्तरहरू</div></div></div>
+    <div class="nav-footer fi"><button class="btn-back" onclick="alert('पाठ १ मा जानुहोस्')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>पछाडि</button><button class="btn-next" onclick="window.location.href='3.html'">अर्को पाठ <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+  </div>
+</div>
+
+<script>
+  // progress bars for both
+  window.addEventListener('load', () => {
+    const barEn = document.getElementById('progressBarEn');
+    const barNe = document.getElementById('progressBarNe');
+    if (barEn) { barEn.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barEn.style.width = '40%'; }); }); }
+    if (barNe) { barNe.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barNe.style.width = '40%'; }); }); }
+  });
+
+  let quizState = { en: { answered: 0, correct: 0, total: 5 }, ne: { answered: 0, correct: 0, total: 5 } };
+  const feedbacks = {
+    en: { 1: { correct: "Correct! Volume is total shares traded.", wrong: "Volume = number of shares traded." }, 2: { correct: "Correct! Low volume rise is suspicious.", wrong: "Price up with low volume is weak." }, 3: { correct: "Correct! Volume counts shares, Turnover counts rupees.", wrong: "Not quite." }, 4: { correct: "Correct! Index drop means most stocks falling.", wrong: "Index shows overall market direction." }, 5: { correct: "Correct! Price up + Volume up is strongest signal.", wrong: "That's not the most trustworthy." } },
+    ne: { 1: { correct: "सही! Volume = कारोबार भएको शेयर संख्या।", wrong: "Volume = शेयर संख्या, रकम होइन।" }, 2: { correct: "सही! Low Volume मा Price बढ्नु शंकास्पद।", wrong: "Low Volume मा Price बढ्नु कमजोर चाल हो।" }, 3: { correct: "सही! Volume = शेयर संख्या, Turnover = रकम।", wrong: "फरक छ: Volume शेयर गणना, Turnover रकम।" }, 4: { correct: "सही! Index घट्यो = धेरै स्टक घटे।", wrong: "Index ले समग्र बजार देखाउँछ।" }, 5: { correct: "सही! Price UP + Volume UP सबैभन्दा राम्रो संकेत।", wrong: "पुन: प्रयास गर्नुहोस्।" } }
+  };
+
+  window.checkAnswer = function(optEl, selectedIdx, correctIdx, lang) {
+    const block = optEl.closest('.quiz-block');
+    if (block.classList.contains('answered')) return;
+    const options = block.querySelectorAll('.quiz-opt');
+    const blockIdx = parseInt(block.querySelector('.quiz-qnum').innerText);
+    const isCorrect = selectedIdx === correctIdx;
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      if (i === correctIdx) opt.classList.add('correct');
+      if (i === selectedIdx && !isCorrect) opt.classList.add('wrong');
+    });
+    const fbDiv = document.getElementById(`fb${blockIdx}-${lang}`);
+    fbDiv.className = `quiz-feedback show ${isCorrect ? 'quiz-feedback--correct' : 'quiz-feedback--wrong'}`;
+    fbDiv.textContent = isCorrect ? feedbacks[lang][blockIdx].correct : feedbacks[lang][blockIdx].wrong;
+    block.classList.add('answered');
+    quizState[lang].answered++;
+    if (isCorrect) quizState[lang].correct++;
+    if (quizState[lang].answered === quizState[lang].total) {
+      const scoreDiv = document.getElementById(`quizScore-${lang}`);
+      const scoreNum = document.getElementById(`scoreNum-${lang}`);
+      const scoreLabel = document.getElementById(`scoreLabel-${lang}`);
+      scoreNum.textContent = `${quizState[lang].correct}/${quizState[lang].total}`;
+      scoreDiv.classList.add('show');
+      if (quizState[lang].correct === 5) scoreLabel.textContent = lang === 'en' ? 'Perfect score! You can read market numbers like a pro.' : 'उत्कृष्ट! तपाईंं बजारका संख्याहरू प्रो जस्तै पढ्न सक्नुहुन्छ।';
+      else if (quizState[lang].correct >= 3) scoreLabel.textContent = lang === 'en' ? 'Good job! Review the ones you missed.' : 'राम्रो! जुन छुट्यो त्यसलाई हेर्नुहोस्।';
+      else scoreLabel.textContent = lang === 'en' ? 'Re-read the lesson, especially the Price+Volume section.' : 'पाठ फेरि पढ्नुहोस्, Price+Volume खण्ड।';
+    }
+  };
+
+  // Language toggle
+  const enDiv = document.getElementById('version-en');
+  const neDiv = document.getElementById('version-ne');
+  const langBtns = document.querySelectorAll('.lang-btn');
+
+  function setLanguage(lang) {
+    if (lang === 'en') {
+      enDiv.classList.remove('lang-hidden');
+      neDiv.classList.add('lang-hidden');
+    } else {
+      enDiv.classList.add('lang-hidden');
+      neDiv.classList.remove('lang-hidden');
+    }
+    
+    langBtns.forEach(btn => {
+      if (btn.getAttribute('data-lang') === lang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+  });
+
+  // Initialize with English
+  setLanguage('en');
+</script>
+</body>
+</html>

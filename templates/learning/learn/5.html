@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEPSE Course — Buy, Hold & Sell Decisions (English / नेपाली)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0b0e13;
+    --bg-card: #12161e;
+    --bg-card-alt: #1a1f2b;
+    --fg: #e4e7ec;
+    --fg-dim: #c0c5ce;
+    --fg-muted: #717d91;
+    --accent: #00d4a1;
+    --accent-dim: rgba(0,212,161,0.10);
+    --accent-mid: rgba(0,212,161,0.20);
+    --accent-glow: rgba(0,212,161,0.25);
+    --gold: #f0b840;
+    --gold-dim: rgba(240,184,64,0.10);
+    --purple: #8b7cf6;
+    --purple-dim: rgba(139,124,246,0.10);
+    --red: #ff5c5c;
+    --red-dim: rgba(255,92,92,0.10);
+    --border: #1f2636;
+    --radius: 16px;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:'Karla',sans-serif;line-height:1.78;
+    min-height:100vh;overflow-x:hidden;
+  }
+
+  .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-scene .dot-grid{
+    position:absolute;inset:0;opacity:0.035;
+    background-image:radial-gradient(circle,var(--accent) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .bg-scene .orb{position:absolute;border-radius:50%;filter:blur(140px);}
+  .bg-scene .orb{display:none;}
+
+  .container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:48px 24px 90px;}
+
+  /* Language Toggle - Consistent Style */
+  .lang-toggle-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .lang-toggle {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px;
+    display: inline-flex;
+    gap: 6px;
+  }
+  .lang-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: transparent;
+    color: var(--fg-muted);
+    border: none;
+  }
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .lang-btn:not(.active):hover {
+    color: var(--accent);
+  }
+  .lang-btn.nepali-active span:last-child {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .course-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent-dim);border:1px solid var(--accent-mid);
+    color:var(--accent);font-size:12px;font-weight:700;
+    letter-spacing:0.8px;text-transform:uppercase;
+    padding:7px 18px;border-radius:100px;margin-bottom:24px;
+  }
+  .course-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s ease infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.9rem,4.8vw,2.7rem);
+    font-weight:700;line-height:1.18;margin-bottom:14px;
+  }
+  h1 .accent{color:var(--accent);}
+  h1 .gold{color:var(--gold);}
+  .subtitle{font-size:1.02rem;color:var(--fg-muted);margin-bottom:36px;max-width:600px;}
+
+  h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.22rem;font-weight:600;margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  p{margin-bottom:13px;font-size:0.96rem;color:var(--fg-dim);}
+  strong{color:var(--fg);font-weight:600;}
+
+  .progress-wrap{margin-bottom:44px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--fg-muted);margin-bottom:8px;font-weight:600;letter-spacing:0.3px;}
+  .progress-track{height:5px;background:var(--bg-card-alt);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:30px 28px;
+    margin-bottom:24px;position:relative;overflow:hidden;
+  }
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .card--explain::after{background:linear-gradient(90deg,var(--accent),transparent 70%);}
+  .card--example::after{background:linear-gradient(90deg,var(--gold),transparent 70%);}
+  .card--why::after{background:linear-gradient(90deg,var(--purple),transparent 70%);}
+  .card--action::after{background:linear-gradient(90deg,var(--red),transparent 70%);}
+  .card--recap::after{background:linear-gradient(90deg,var(--fg-muted),transparent 70%);}
+  .card--quiz::after{background:linear-gradient(90deg,var(--gold),var(--accent));}
+  .card--complete::after{background:linear-gradient(90deg,var(--accent),var(--gold),var(--purple),var(--red));}
+
+  .card-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:10px;margin-bottom:14px;
+  }
+  .card--explain .card-icon{background:var(--accent-dim);color:var(--accent);}
+  .card--example .card-icon{background:var(--gold-dim);color:var(--gold);}
+  .card--why .card-icon{background:var(--purple-dim);color:var(--purple);}
+  .card--action .card-icon{background:var(--red-dim);color:var(--red);}
+  .card--recap .card-icon{background:rgba(113,125,145,0.10);color:var(--fg-muted);}
+  .card--quiz .card-icon{background:var(--gold-dim);color:var(--gold);}
+  .card--complete .card-icon{background:var(--accent-dim);color:var(--accent);}
+
+  ul{list-style:none;padding:0;margin-bottom:12px;}
+  ul li{position:relative;padding-left:22px;margin-bottom:9px;font-size:0.96rem;color:var(--fg-dim);}
+  ul li::before{content:'';position:absolute;left:3px;top:11px;width:7px;height:7px;border-radius:50%;}
+  .card--explain ul li::before{background:var(--accent);}
+  .card--example ul li::before{background:var(--gold);}
+  .card--why ul li::before{background:var(--purple);}
+  .card--action ul li::before{background:var(--red);}
+  .card--recap ul li::before{background:var(--fg-muted);width:5px;height:5px;top:12px;left:4px;}
+
+  .callout{border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0;}
+  .callout p{margin:0;font-size:0.94rem;}
+  .callout--accent{background:var(--accent-dim);border-left:3px solid var(--accent);}
+  .callout--gold{background:var(--gold-dim);border-left:3px solid var(--gold);}
+  .callout--red{background:var(--red-dim);border-left:3px solid var(--red);}
+
+  .svg-center{display:flex;justify-content:center;margin:22px 0;}
+  .svg-center svg{max-width:100%;height:auto;}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.93rem;}
+  thead th{
+    text-align:left;padding:11px 16px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-size:0.82rem;font-weight:700;letter-spacing:0.4px;
+  }
+  thead th:first-child{border-radius:10px 0 0 0;}
+  thead th:last-child{border-radius:0 10px 0 0;}
+  tbody td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--fg-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;margin:2px 2px;}
+  .tag--green{background:var(--accent-dim);color:var(--accent);}
+  .tag--red{background:var(--red-dim);color:var(--red);}
+  .tag--gold{background:var(--gold-dim);color:var(--gold);}
+  .tag--purple{background:var(--purple-dim);color:var(--purple);}
+
+  .quiz-block{margin-bottom:28px;}
+  .quiz-block:last-of-type{margin-bottom:0;}
+  .quiz-question{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.98rem;font-weight:600;color:var(--fg);
+    margin-bottom:14px;display:flex;gap:10px;
+  }
+  .quiz-qnum{
+    flex-shrink:0;width:26px;height:26px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--gold-dim);color:var(--gold);font-size:12px;font-weight:700;
+  }
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-opt{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 18px;border-radius:12px;
+    background:var(--bg-card-alt);border:1.5px solid var(--border);
+    cursor:pointer;transition:all 0.25s ease;
+    font-size:0.94rem;color:var(--fg-dim);user-select:none;
+  }
+  .quiz-opt:hover{border-color:var(--fg-muted);background:rgba(255,255,255,0.03);}
+  .quiz-opt .opt-letter{
+    flex-shrink:0;width:28px;height:28px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(113,125,145,0.10);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;
+    transition:all 0.25s ease;
+  }
+  .quiz-opt.correct{border-color:var(--accent);background:var(--accent-dim);color:var(--fg);}
+  .quiz-opt.correct .opt-letter{background:var(--accent);color:var(--bg);}
+  .quiz-opt.wrong{border-color:var(--red);background:var(--red-dim);color:var(--fg);}
+  .quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;}
+  .quiz-opt.disabled{pointer-events:none;opacity:0.6;}
+  .quiz-opt.disabled.correct{opacity:1;}
+
+  .quiz-feedback{
+    margin-top:12px;padding:12px 16px;border-radius:10px;
+    font-size:0.91rem;display:none;line-height:1.6;
+  }
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback--correct{background:var(--accent-dim);color:var(--accent);border-left:3px solid var(--accent);}
+  .quiz-feedback--wrong{background:var(--red-dim);color:var(--red);border-left:3px solid var(--red);}
+
+  .quiz-score{
+    text-align:center;margin-top:20px;padding:20px;
+    border-radius:var(--radius);background:var(--bg-card-alt);display:none;
+  }
+  .quiz-score.show{display:block;}
+  .quiz-score .score-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:2.4rem;font-weight:700;color:var(--accent);
+  }
+  .quiz-score .score-label{font-size:0.88rem;color:var(--fg-muted);}
+
+  .complete-block{text-align:center;padding:30px 20px;}
+  .complete-block .trophy{font-size:3rem;margin-bottom:16px;display:block;}
+  .complete-block h2{justify-content:center;font-size:1.5rem;margin-bottom:10px;}
+  .complete-block p{max-width:480px;margin:0 auto 10px;color:var(--fg-dim);}
+
+  .nav-footer{display:flex;justify-content:space-between;align-items:center;margin-top:44px;gap:16px;flex-wrap:wrap;}
+  .btn-back{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--bg-card-alt);color:var(--fg-muted);
+    font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;
+    padding:14px 28px;border:1px solid var(--border);border-radius:100px;
+    cursor:pointer;transition:all 0.3s ease;
+  }
+  .btn-back:hover{border-color:var(--fg-muted);color:var(--fg);}
+
+  .fi{opacity:0;transform:translateY(22px);animation:fadeUp 0.55s ease forwards;}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+  /* language containers */
+  .lang-content {
+    transition: opacity 0.2s ease;
+  }
+  .lang-hidden {
+    display: none;
+  }
+
+  @media(max-width:600px){
+    .container{padding:28px 16px 60px;}
+    .card{padding:22px 18px;}
+    .nav-footer{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="dot-grid"></div>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+</div>
+
+<div class="container">
+  <!-- Language Toggle Button -->
+  <div class="lang-toggle-wrap">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+      <button class="lang-btn" data-lang="ne">🇳🇵 नेपाली</button>
+    </div>
+  </div>
+
+  <!-- ================= ENGLISH VERSION ================= -->
+  <div id="englishContent" class="lang-content">
+    <!-- Badge -->
+    <div class="course-badge fi">
+      <span class="dot"></span>
+      Lesson 5 of 5 — Final Lesson
+    </div>
+
+    <!-- Title -->
+    <h1 class="fi">Making <span class="gold">Buy, Hold & Sell</span> Decisions</h1>
+    <p class="subtitle fi">Everything you've learned comes down to 3 decisions. This lesson gives you a simple framework to decide when to enter, when to wait, and when to exit — without relying on tips or emotions.</p>
+
+    <!-- Progress -->
+    <div class="progress-wrap fi">
+      <div class="progress-meta">
+        <span>Lesson 5 of 5</span>
+        <span>100%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBarEn"></div>
+      </div>
+    </div>
+
+    <!-- 1. SIMPLE EXPLANATION -->
+    <div class="card card--explain fi">
+      <div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+      <h2>Simple Explanation</h2>
+      <p>Think of investing like catching a bus. You wait at the right stop (buy), you enjoy the ride to your destination (hold), and you get off when you arrive or if the bus breaks down (sell).</p>
+      <p>Most beginners do the opposite — they run after a bus that already left (buy at peak), jump off at every bump (sell in panic), or fall asleep and miss their stop (hold forever without a reason).</p>
+      <p>Here's the <strong>simple checklist</strong> for each decision:</p>
+      <div class="svg-center"><svg width="500" height="230" viewBox="0 0 500 230"><rect x="8" y="10" width="150" height="210" rx="14" fill="#1a1f2b" stroke="#00d4a1" stroke-width="1.5"/><circle cx="83" cy="46" r="20" fill="#00d4a1" fill-opacity="0.15"/><text x="83" y="52" text-anchor="middle" fill="#00d4a1" font-size="18" font-weight="700">B</text><text x="83" y="82" text-anchor="middle" fill="#00d4a1" font-size="13" font-weight="700">BUY</text><line x1="28" y1="94" x2="138" y2="94" stroke="#252a36"/><text x="24" y="114" fill="#717d91" font-size="9.5">1. Company strong?</text><text x="24" y="132" fill="#717d91" font-size="9.5">2. Sector trending up?</text><text x="24" y="150" fill="#717d91" font-size="9.5">3. Volume confirming?</text><text x="24" y="168" fill="#717d91" font-size="9.5">4. Price reasonable?</text><text x="83" y="198" text-anchor="middle" fill="#00d4a1" font-size="10" font-weight="600">All 4 YES = Buy</text>
+      <rect x="172" y="10" width="150" height="210" rx="14" fill="#1a1f2b" stroke="#f0b840" stroke-width="1.5"/><circle cx="247" cy="46" r="20" fill="#f0b840" fill-opacity="0.15"/><text x="247" y="52" text-anchor="middle" fill="#f0b840" font-size="18">H</text><text x="247" y="82" text-anchor="middle" fill="#f0b840" font-size="13" font-weight="700">HOLD</text><line x1="192" y1="94" x2="302" y2="94" stroke="#252a36"/><text x="188" y="114" fill="#717d91" font-size="9.5">1. Still profitable?</text><text x="188" y="132" fill="#717d91" font-size="9.5">2. Still paying dividend?</text><text x="188" y="150" fill="#717d91" font-size="9.5">3. No better option?</text><text x="188" y="168" fill="#717d91" font-size="9.5">4. Price just fluctuating?</text><text x="247" y="198" text-anchor="middle" fill="#f0b840" font-size="10">Mostly YES = Hold</text>
+      <rect x="336" y="10" width="150" height="210" rx="14" fill="#1a1f2b" stroke="#ff5c5c"/><circle cx="411" cy="46" r="20" fill="#ff5c5c" fill-opacity="0.15"/><text x="411" y="52" text-anchor="middle" fill="#ff5c5c" font-size="18">S</text><text x="411" y="82" text-anchor="middle" fill="#ff5c5c" font-size="13" font-weight="700">SELL</text><line x1="356" y1="94" x2="466" y2="94" stroke="#252a36"/><text x="352" y="114" fill="#717d91" font-size="9.5">1. Target profit reached?</text><text x="352" y="132" fill="#717d91" font-size="9.5">2. Fundamentals broken?</text><text x="352" y="150" fill="#717d91" font-size="9.5">3. Better stock available?</text><text x="352" y="168" fill="#717d91" font-size="9.5">4. Cut loss needed?</text><text x="411" y="198" text-anchor="middle" fill="#ff5c5c" font-size="10">Any strong YES = Sell</text></svg></div>
+      <div class="callout callout--accent"><p><strong>The golden rule:</strong> Never buy on tips. Never sell in panic. Always have a reason.</p></div>
+    </div>
+
+    <!-- 2. PRACTICAL EXAMPLE -->
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2>Practical Example</h2><p>Let's follow <strong>Ram</strong>, a beginner investor, with <strong>NMB Bank</strong>:</p><div class="svg-center"><svg width="500" height="160" viewBox="0 0 500 160"><line x1="20" y1="80" x2="480" y2="80" stroke="#717d91" stroke-width="2" stroke-dasharray="6 4"/><circle cx="70" cy="80" r="16" fill="#00d4a1" fill-opacity="0.2" stroke="#00d4a1"/><text x="70" y="85" text-anchor="middle" fill="#00d4a1" font-size="11">B</text><text x="70" y="40" text-anchor="middle" fill="#00d4a1" font-size="10">BUY</text><text x="70" y="55" text-anchor="middle" fill="#717d91" font-size="9">Rs. 380</text><text x="70" y="112" text-anchor="middle" fill="#e4e7ec" font-size="8.5">Good Q4 report</text><text x="70" y="126" text-anchor="middle" fill="#e4e7ec" font-size="8.5">+ High volume</text><circle cx="250" cy="80" r="16" fill="#f0b840" fill-opacity="0.2" stroke="#f0b840"/><text x="250" y="85" text-anchor="middle" fill="#f0b840" font-size="11">H</text><text x="250" y="40" text-anchor="middle" fill="#f0b840" font-size="10">HOLD</text><text x="250" y="55" text-anchor="middle" fill="#717d91" font-size="9">Rs. 420</text><text x="250" y="112" text-anchor="middle" fill="#e4e7ec" font-size="8.5">Company still strong</text><circle cx="430" cy="80" r="16" fill="#ff5c5c" fill-opacity="0.2" stroke="#ff5c5c"/><text x="430" y="85" text-anchor="middle" fill="#ff5c5c" font-size="11">S</text><text x="430" y="40" text-anchor="middle" fill="#ff5c5c" font-size="10">SELL</text><text x="430" y="55" text-anchor="middle" fill="#717d91" font-size="9">Rs. 510</text><text x="430" y="112" text-anchor="middle" fill="#e4e7ec" font-size="8.5">Target 30% reached</text></svg></div><ul><li><strong>Buy at Rs. 380</strong> — Strong profits, sector trending, high volume.</li><li><strong>Hold at Rs. 420</strong> — Normal fluctuation, still profitable.</li><li><strong>Sell at Rs. 510</strong> — Target profit + NRB tight policy.</li></ul><div class="callout callout--gold"><p>Emotion-free investing: checklist wins.</p></div></div>
+
+    <!-- 3. WHY IT MATTERS -->
+    <div class="card card--why fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2>Why It Matters</h2><ul><li>FOMO is real — Checklist stops you from buying at the peak.</li><li>Panic selling destroys wealth — Check fundamentals first.</li><li>Knowing when to sell is hardest — Have profit target & stop-loss.</li><li>Paper trading builds confidence before real money.</li></ul>
+    <table><thead><tr><th>Emotional Reaction</th><th>What Beginners Do</th><th>What Smart Investors Do</th></tr></thead><tbody><tr><td>Market rising fast</td><td>Buy immediately (FOMO)</td><td>Wait for good entry with volume</td></tr><tr><td>Market falling</td><td>Sell everything in panic</td><td>Check fundamentals: if strong, hold</td></tr></tbody></table></div>
+
+    <!-- 4. ACTION INSIGHT -->
+    <div class="card card--action fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><h2>Quick Action Insight</h2><ul><li>Write your Personal Investment Rules</li><li>Paper trade for 2 weeks</li><li>Start with a small amount</li><li>Open DEMAT & Trading account</li></ul><div class="callout callout--red"><p>Never invest borrowed money or emergency fund.</p></div></div>
+
+    <!-- 5. RECAP -->
+    <div class="card card--recap fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><h2>Mini Recap</h2><ul><li>Buy when: Company strong + Sector up + Volume confirms + Price reasonable</li><li>Hold when: Still profitable + Normal fluctuation + No better alternative</li><li>Sell when: Target profit reached + Fundamentals broken + Stop-loss hit</li><li>FOMO and panic are enemies — written checklist removes emotion</li><li>Paper trade first, start small</li></ul></div>
+
+    <!-- 6. QUIZ (same logic but reused) -->
+    <div class="card card--quiz fi" id="quizEnBlock"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18l6-6-6-6"/></svg></div><h2>Final Test</h2><p style="margin-bottom:24px;">5 questions to complete the course.</p>
+    <div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">1</span><span>Before buying a stock, which is MOST important?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'en')"><span class="opt-letter">A</span><span>What your friends are buying</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'en')"><span class="opt-letter">B</span><span>Low price per share</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'en')"><span class="opt-letter">C</span><span>Company fundamentals, sector trend, volume confirmation</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'en')"><span class="opt-letter">D</span><span>If stock hit upper circuit yesterday</span></div></div><div class="quiz-feedback" id="fb1_en"></div></div>
+    <div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">2</span><span>A stock you own drops 5% but quarterly profit is strong. What to do?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'en')"><span class="opt-letter">A</span><span>Sell immediately</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'en')"><span class="opt-letter">B</span><span>Hold — company healthy, normal fluctuation</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'en')"><span class="opt-letter">C</span><span>Borrow and buy more</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'en')"><span class="opt-letter">D</span><span>Complain on social media</span></div></div><div class="quiz-feedback" id="fb2_en"></div></div>
+    <div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">3</span><span>When is a good time to sell?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'en')"><span class="opt-letter">A</span><span>Never</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'en')"><span class="opt-letter">B</span><span>When bored</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'en')"><span class="opt-letter">C</span><span>Only when price drops</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'en')"><span class="opt-letter">D</span><span>Profit target reached or fundamentals deteriorated</span></div></div><div class="quiz-feedback" id="fb3_en"></div></div>
+    <div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">4</span><span>What is "Paper Trading"?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'en')"><span class="opt-letter">A</span><span>Practicing buy/sell with fake money to test strategy</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'en')"><span class="opt-letter">B</span><span>Trading paper companies</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'en')"><span class="opt-letter">C</span><span>Reading newspapers for tips</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'en')"><span class="opt-letter">D</span><span>Printing physical certificates</span></div></div><div class="quiz-feedback" id="fb4_en"></div></div>
+    <div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">5</span><span>SAFEST way to start investing in NEPSE?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'en')"><span class="opt-letter">A</span><span>Invest entire savings at upper circuit</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'en')"><span class="opt-letter">B</span><span>Take a loan based on friend's tip</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'en')"><span class="opt-letter">C</span><span>Paper trade first, then start small with affordable loss</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'en')"><span class="opt-letter">D</span><span>Wait forever for perfect moment</span></div></div><div class="quiz-feedback" id="fb5_en"></div></div>
+    <div class="quiz-score" id="quizScoreEn"><div class="score-num">0/5</div><div class="score-label">Questions answered correctly</div></div></div>
+    <div class="card card--complete fi"><div class="complete-block"><span class="trophy">🏆</span><h2>Course Complete!</h2><p>You've completed the NEPSE Beginner Course. The market rewards discipline, not luck. Good luck on your investing journey!</p></div></div>
+    <div class="nav-footer fi"><button class="btn-back" onclick="window.location.href='4.html'">← Back</button></div>
+  </div>
+
+  <!-- ================= NEPALI VERSION ================= -->
+  <div id="nepaliContent" class="lang-content lang-hidden">
+    <div class="course-badge fi"><span class="dot"></span>पाठ ५ of ५ — अन्तिम पाठ</div>
+    <h1 class="fi"><span class="gold">Buy, Hold</span> र Sell निर्णय कसरी गर्ने</h1>
+    <p class="subtitle fi">तपाईंंले सिकेको सबै कुरा ३ वटा निर्णयमा आउँछ। यो पाठले टिप्स वा भावनामा भर पर्नुभन्दा पनि कहिले प्रवेश गर्ने, कहिले पर्खने र कहिले बाहिर निस्कने भन्ने सरल ढाँचा दिन्छ।</p>
+    <div class="progress-wrap fi"><div class="progress-meta"><span>पाठ ५ of ५</span><span>१००%</span></div><div class="progress-track"><div class="progress-fill" id="progressBarNe"></div></div></div>
+    <div class="card card--explain fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><h2>सरल व्याख्या</h2><p>लगानीलाई बस पकड्ने जस्तै सोच्नुहोस्। सही बसस्टपमा पर्खनुहोस् (Buy), गन्तव्यसम्म यात्राको आनन्द लिनुहोस् (Hold), र आफ्नो स्टप आएपछि वा बस बिग्रिएमा ओर्लनुहोस् (Sell)।</p><div class="callout callout--accent"><p><strong>सुनौलो नियम:</strong> कहिल्यै Tip मा Buy नगर्नुहोस्। कहिल्यै Panic मा Sell नगर्नुहोस्। सधैं कारण होस्।</p></div></div>
+    <div class="card card--example fi"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2>व्यावहारिक उदाहरण</h2><p><strong>राम</strong> र NMB Bank को यात्रा:</p><ul><li><strong>Rs. ३८० मा Buy</strong> — बलियो नाफा, क्षेत्र बढ्दो, उच्च Volume</li><li><strong>Rs. ४२० मा Hold</strong> — सामान्य हल्लिइ, अझै नाफामा</li><li><strong>Rs. ५१० मा Sell</strong> — Target नाफा + NRB Tight Policy</li></ul><div class="callout callout--gold"><p>भावना-रहित लगानी: Checklist पालना गर्नुहोस्।</p></div></div>
+    <div class="card card--why fi"><h2>यो किन महत्त्वपूर्ण छ</h2><ul><li>FOMO वास्तविक हुन्छ — Checklist ले Peak मा Buy गर्न रोक्छ।</li><li>Panic Selling ले सम्पत्ति नष्ट गर्छ — Fundamentals जाँच्नुहोस्।</li><li>कहिले Sell गर्ने जान्नु गाह्रो — Profit Target र Stop-Loss राख्नुहोस्।</li><li>Paper Trading ले विश्वास बढाउँछ।</li></ul>
+    <table><thead><tr><th>भावनात्मक प्रतिक्रिया</th><th>सुरुवातकर्ताले गर्छन्</th><th>बुद्धिमान लगानीकर्ताले गर्छन्</th></tr></thead><tbody><tr><td>बजार छिटो बढ्दैछ</td><td>तुरुन्तै Buy (FOMO)</td><td>Volume पुष्टि भएको राम्रो Entry पर्खनुहोस्</td></tr><tr><td>बजार खस्दैछ</td><td>Panic मा सबै Sell</td><td>Fundamentals जाँच गर्नुहोस्, बलियो छ भने Hold</td></tr></tbody></table></div>
+    <div class="card card--action fi"><h2>द्रुत कार्य अन्तर्दृष्टि</h2><ul><li>आफ्नो व्यक्तिगत लगानी नियम लेख्नुहोस्</li><li>२ हप्ता Paper Trade गर्नुहोस्</li><li>सानो रकमबाट सुरु गर्नुहोस्</li><li>DEMAT र Trading खाता खोल्नुहोस्</li></ul><div class="callout callout--red"><p>कहिल्यै सापटी वा आपतकालीन कोष लगानी नगर्नुहोस्।</p></div></div>
+    <div class="card card--recap fi"><h2>संक्षिप्त सारांश</h2><ul><li>Buy: कम्पनी बलियो + Sector बढ्दो + Volume पुष्टि + Price उचित</li><li>Hold: अझै नाफामा + सामान्य हल्लिइ + राम्रो विकल्प छैन</li><li>Sell: Target नाफा पुग्यो + Fundamentals बिग्रियो + Stop-Loss हिट</li><li>FOMO र Panic शत्रु हुन् — लिखित Checklist भावना हटाउँछ</li></ul></div>
+    <div class="card card--quiz fi" id="quizNeBlock"><div class="card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18l6-6-6-6"/></svg></div><h2>अन्तिम परीक्षा</h2><p>कोर्स पूरा गर्न ५ प्रश्नहरू</p>
+    <div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">१</span><span>स्टक Buy गर्नु अघि सबैभन्दा महत्त्वपूर्ण के जाँच्ने?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'ne')"><span class="opt-letter">A</span><span>साथीहरू के किन्छन्</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'ne')"><span class="opt-letter">B</span><span>मूल्य सस्तो छ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'ne')"><span class="opt-letter">C</span><span>Fundamentals, Sector Trend, Volume पुष्टि</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'ne')"><span class="opt-letter">D</span><span>हिजो Upper Circuit हिट गरेको</span></div></div><div class="quiz-feedback" id="fb1_ne"></div></div>
+    <div class="quiz-block" data-answer="1"><div class="quiz-question"><span class="quiz-qnum">२</span><span>तपाईंको स्टक ५% घट्यो तर कम्पनीको नाफा बलियो छ, के गर्ने?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,1,'ne')"><span class="opt-letter">A</span><span>तुरुन्तै Sell</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,1,'ne')"><span class="opt-letter">B</span><span>Hold — कम्पनी स्वस्थ, सामान्य हल्लिइ</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,1,'ne')"><span class="opt-letter">C</span><span>सापटी लिएर अरू किन्ने</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,1,'ne')"><span class="opt-letter">D</span><span>सोशल मिडियामा गुनासो</span></div></div><div class="quiz-feedback" id="fb2_ne"></div></div>
+    <div class="quiz-block" data-answer="3"><div class="quiz-question"><span class="quiz-qnum">३</span><span>Sell गर्ने राम्रो समय कहिले?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,3,'ne')"><span class="opt-letter">A</span><span>कहिल्यै</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,3,'ne')"><span class="opt-letter">B</span><span>बोर लाग्दा</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,3,'ne')"><span class="opt-letter">C</span><span>Price घट्दा मात्र</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,3,'ne')"><span class="opt-letter">D</span><span>Profit Target पुग्यो वा Fundamentals बिग्रियो</span></div></div><div class="quiz-feedback" id="fb3_ne"></div></div>
+    <div class="quiz-block" data-answer="0"><div class="quiz-question"><span class="quiz-qnum">४</span><span>"Paper Trading" भनेको के?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,0,'ne')"><span class="opt-letter">A</span><span>रणनीति परीक्षण गर्न Fake पैसाले अभ्यास</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,0,'ne')"><span class="opt-letter">B</span><span>कागज उत्पादन गर्ने कम्पनी कारोबार</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,0,'ne')"><span class="opt-letter">C</span><span>टिप्सको लागि पत्रिका पढ्नु</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,0,'ne')"><span class="opt-letter">D</span><span>भौतिक प्रमाणपत्र छाप्नु</span></div></div><div class="quiz-feedback" id="fb4_ne"></div></div>
+    <div class="quiz-block" data-answer="2"><div class="quiz-question"><span class="quiz-qnum">५</span><span>NEPSE मा लगानी सुरु गर्ने सबैभन्दा सुरक्षित तरिका?</span></div><div class="quiz-options"><div class="quiz-opt" onclick="checkAnswer(this,0,2,'ne')"><span class="opt-letter">A</span><span>सम्पूर्ण बचत Upper Circuit मा लगानी</span></div><div class="quiz-opt" onclick="checkAnswer(this,1,2,'ne')"><span class="opt-letter">B</span><span>साथीको टिप्समा सापटी लिएर लगानी</span></div><div class="quiz-opt" onclick="checkAnswer(this,2,2,'ne')"><span class="opt-letter">C</span><span>पहिले Paper Trade गर्ने, सानो रकमबाट सुरु गर्ने</span></div><div class="quiz-opt" onclick="checkAnswer(this,3,2,'ne')"><span class="opt-letter">D</span><span>सधैं Perfect Moment पर्खने</span></div></div><div class="quiz-feedback" id="fb5_ne"></div></div>
+    <div class="quiz-score" id="quizScoreNe"><div class="score-num">०/५</div><div class="score-label">सही उत्तरहरू</div></div></div>
+    <div class="card card--complete fi"><div class="complete-block"><span class="trophy">🏆</span><h2>कोर्स समाप्त!</h2><p>बजारले अनुशासनलाई पुरस्कृत गर्छ। तपाईंंको लगानी यात्रा शुभ!</p></div></div>
+    <div class="nav-footer fi"><button class="btn-back" onclick="alert('पाठ ४ मा जानुहोस्')">← पछाडि</button></div>
+  </div>
+</div>
+
+<script>
+  // Progress bars init
+  window.addEventListener('load', () => {
+    const barEn = document.getElementById('progressBarEn');
+    const barNe = document.getElementById('progressBarNe');
+    if(barEn) { barEn.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barEn.style.width = '100%'; }); }); }
+    if(barNe) { barNe.style.width = '0%'; requestAnimationFrame(() => { requestAnimationFrame(() => { barNe.style.width = '100%'; }); }); }
+  });
+
+  // Quiz state tracking per language
+  let quizState = {
+    en: { totalAnswered: 0, correctCount: 0, answeredMap: new Set() },
+    ne: { totalAnswered: 0, correctCount: 0, answeredMap: new Set() }
+  };
+  const totalQ = 5;
+
+  const feedbackDataEn = {
+    1: { correct: "Correct! Buy checklist – fundamentals, sector trend, volume confirmation.", wrong: "Not quite. The most important: company fundamentals + sector trend + volume." },
+    2: { correct: "Correct! Healthy company's 5% drop is normal fluctuation, not panic sell.", wrong: "Panic selling on healthy stocks is beginner mistake. Hold if fundamentals intact." },
+    3: { correct: "Correct! Sell when profit target reached or fundamentals broken.", wrong: "Not quite. Sell when profit target or fundamentals deteriorate." },
+    4: { correct: "Correct! Paper trading = practice with fake money.", wrong: "Paper trading means practicing without real money to test strategy." },
+    5: { correct: "Correct! Paper trade first, then small affordable amount.", wrong: "Safest: paper trade, then start small with money you can lose." }
+  };
+  const feedbackDataNe = {
+    1: { correct: "सही! Buy Checklist – fundamentals, sector trend, volume पुष्टि।", wrong: "गलत। सबैभन्दा महत्त्वपूर्ण: fundamentals + sector trend + volume पुष्टि।" },
+    2: { correct: "सही! स्वस्थ कम्पनीमा ५% घट्नु सामान्य हल्लिइ हो, panic sell होइन।", wrong: "गलत। Panic sell गर्नु सुरुवातकर्ताको गल्ती। यदि fundamentals बलियो छ भने hold गर्नुहोस्।" },
+    3: { correct: "सही! जब profit target पुग्छ वा fundamentals बिग्रिन्छ sell गर्ने।", wrong: "गलत। Profit target वा fundamentals बिग्रिएपछि मात्र sell गर्नुपर्छ।" },
+    4: { correct: "सही! Paper Trading भनेको fake पैसाले अभ्यास।", wrong: "गलत। Paper trading = वास्तविक पैसा विना रणनीति परीक्षण।" },
+    5: { correct: "सही! पहिले paper trade, त्यसपछि सानो रकम।", wrong: "सुरक्षित तरिका: paper trade र सानो रकमबाट सुरु गर्नुहोस्।" }
+  };
+
+  function checkAnswer(optEl, selectedIdx, correctIdx, lang) {
+    const block = optEl.closest('.quiz-block');
+    if (quizState[lang].answeredMap.has(block)) return;
+    
+    const options = block.querySelectorAll('.quiz-opt');
+    const blocks = Array.from(document.querySelectorAll(`#${lang === 'en' ? 'quizEnBlock' : 'quizNeBlock'} .quiz-block`));
+    const blockIndex = blocks.indexOf(block) + 1;
+    const isCorrect = (selectedIdx === correctIdx);
+    
+    options.forEach((opt, i) => {
+      opt.classList.add('disabled');
+      if (i === correctIdx) opt.classList.add('correct');
+      if (i === selectedIdx && !isCorrect) opt.classList.add('wrong');
+    });
+    
+    const fb = document.getElementById(`fb${blockIndex}_${lang}`);
+    if (fb) {
+      const data = lang === 'en' ? feedbackDataEn[blockIndex] : feedbackDataNe[blockIndex];
+      fb.className = `quiz-feedback show ${isCorrect ? 'quiz-feedback--correct' : 'quiz-feedback--wrong'}`;
+      fb.textContent = isCorrect ? data.correct : data.wrong;
+    }
+    
+    quizState[lang].answeredMap.add(block);
+    quizState[lang].totalAnswered++;
+    if (isCorrect) quizState[lang].correctCount++;
+    
+    if (quizState[lang].totalAnswered === totalQ) {
+      const scoreDiv = document.getElementById(`quizScore${lang === 'en' ? 'En' : 'Ne'}`);
+      if (scoreDiv) {
+        const scoreNumSpan = scoreDiv.querySelector('.score-num');
+        const scoreLabelSpan = scoreDiv.querySelector('.score-label');
+        scoreNumSpan.textContent = `${quizState[lang].correctCount}/${totalQ}`;
+        scoreDiv.classList.add('show');
+        if (quizState[lang].correctCount === 5) scoreLabelSpan.textContent = lang === 'en' ? "Perfect score! You're ready." : "उत्कृष्ट! तपाईं तयार हुनुहुन्छ।";
+        else if (quizState[lang].correctCount >= 3) scoreLabelSpan.textContent = lang === 'en' ? "Good understanding!" : "राम्रो बुझाइ!";
+        else scoreLabelSpan.textContent = lang === 'en' ? "Review the framework again." : "फ्रेमवर्क फेरि पढ्नुहोस्।";
+      }
+    }
+  }
+
+  // Language switching
+  const engDiv = document.getElementById('englishContent');
+  const nepDiv = document.getElementById('nepaliContent');
+  const langBtns = document.querySelectorAll('.lang-btn');
+  
+  function setLanguage(lang) {
+    if (lang === 'en') {
+      engDiv.classList.remove('lang-hidden');
+      nepDiv.classList.add('lang-hidden');
+    } else {
+      engDiv.classList.add('lang-hidden');
+      nepDiv.classList.remove('lang-hidden');
+    }
+    
+    langBtns.forEach(btn => {
+      if (btn.getAttribute('data-lang') === lang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+  
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+  });
+  
+  // Initialize with English
+  setLanguage('en');
+</script>
+</body>
+</html>

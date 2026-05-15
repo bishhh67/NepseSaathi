@@ -1,288 +1,312 @@
-/* NEPSE Sathi — Professional Stock Market Theme */
-/* Clean, human-made design - No flashy gradients, no heavy shadows */
+/* ═══════════════════════════════════════════════════════════
+   home.css — NEPSE Sathi Home Page Theme
+   Palette: White #FFFFFF | Deep Navy #0F172A | Muted Gold #D4AF37
+═══════════════════════════════════════════════════════════ */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ── CSS Variables ─────────────────────────────────────── */
 :root {
-  --bg-white:     #FFFFFF;
-  --bg-light:     #F8F9FA;
-  --bg-gray:      #F1F3F5;
-  --border-light: #E9ECEF;
-  --text-primary: #1A1F36;
-  --text-secondary: #5A677A;
-  --text-muted:   #8A94A6;
-  --success:      #10B981;
-  --danger:       #EF4444;
-  --warning:      #F59E0B;
-  --info:         #3B82F6;
-  --accent:       #2563EB;
+  --white:          #FFFFFF;
+  --bg:             #F8FAFC;
+  --surface:        #FFFFFF;
+  --navy:           #0F172A;
+  --navy-mid:       #1E293B;
+  --navy-light:     #334155;
+  --slate:          #334155;
+  --slate-light:    #475569;
+  --slate-lighter:  #64748B;
+  --slate-border:   #CBD5E1;
+  --slate-bg:       #F1F5F9;
+  --gold:           #D4AF37;
+  --gold-hover:     #B8960C;
+  --gold-soft:      #E6C76A;
+  --gold-light:     #FBF3D5;
+  --gold-mid:       #F0DC82;
+  --red:            #DC2626;
+  --red-light:      #FEE2E2;
+  --emerald:        #059669;
+  --emerald-light:  #D1FAE5;
+  --emerald-mid:    #A7F3D0;
+  --amber:          #D97706;
+  --amber-light:    #FEF3C7;
+  --font-sans:      'Inter', -apple-system, sans-serif;
+  --font-mono:      'IBM Plex Mono', monospace;
+  --radius:         8px;
+  --radius-sm:      5px;
+  --shadow-card:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover:   0 4px 12px rgba(212,175,55,0.15), 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ══════════════════════════════════════════════════════════
+   FORCE WHITE BACKGROUND — beats Tailwind + main.css
+   Using body prefix on every rule for higher specificity.
+══════════════════════════════════════════════════════════ */
+
+html { background-color: var(--bg) !important; }
+
+html body {
+  background-color: var(--bg) !important;
+  color: var(--navy) !important;
+  font-family: var(--font-sans) !important;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  background: var(--bg-light);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  line-height: 1.5;
+body main { background-color: var(--bg) !important; }
+
+/* Kill dark overlay divs injected by base template */
+body > div.fixed,
+body > div[class*="fixed"],
+body > div[class*="pointer-events-none"] {
+  display: none !important;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  letter-spacing: -0.02em;
+/* ── Dark bg utility class overrides ────────────────────── */
+
+body .bg-gray-900 { background-color: var(--surface) !important; background-image: none !important; }
+body .bg-gray-800 { background-color: var(--surface) !important; background-image: none !important; }
+body .bg-gray-700 { background-color: var(--slate-bg) !important; background-image: none !important; }
+body .bg-gray-600 { background-color: var(--slate-bg) !important; background-image: none !important; }
+
+/* Gradient panels → warm gold tint */
+body .bg-gradient-to-r,
+body .bg-gradient-to-br,
+body .bg-gradient-to-l,
+body .bg-gradient-to-bl {
+  background: #FFFDF0 !important;
+  background-image: none !important;
+  border: 1px solid var(--gold-mid) !important;
 }
 
-/* Cards - Clean white cards with subtle border */
-.card {
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+/* ── Card shared style ──────────────────────────────────── */
+
+body .card,
+body .bg-gray-800,
+body .bg-gray-900 {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--slate-border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
 }
 
-.card:hover {
-  transform: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  border-color: #D1D5DB;
+body .card:hover,
+body .bg-gray-800:hover {
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--gold-soft) !important;
 }
 
-/* Buttons */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.25rem;
-  background: var(--accent);
-  color: white;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: 8px;
-  border: none;
-  transition: background 0.2s;
-  cursor: pointer;
+body .bg-gray-700 {
+  background-color: var(--slate-bg) !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: var(--radius-sm) !important;
 }
 
-.btn-primary:hover {
-  background: #1D4ED8;
-  transform: none;
-  box-shadow: none;
+/* ══════════════════════════════════════════════════════════
+   TEXT COLORS
+══════════════════════════════════════════════════════════ */
+
+body h1, body h2, body h3, body h4, body h5, body h6 {
+  color: var(--navy) !important;
+  font-family: var(--font-sans) !important;
 }
 
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.25rem;
-  background: transparent;
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.875rem;
-  border: 1px solid var(--border-light);
-  border-radius: 8px;
-  transition: all 0.2s;
-  cursor: pointer;
+/* White → Navy (readable on white bg) */
+body .text-white { color: var(--navy) !important; }
+
+body .text-gray-100 { color: var(--slate) !important; }
+body .text-gray-200 { color: var(--slate) !important; }
+body .text-gray-300 { color: var(--slate-lighter) !important; }
+body .text-gray-400 { color: var(--slate-lighter) !important; }
+body .text-gray-500 { color: #94A3B8 !important; }
+
+body .text-slate-300 { color: var(--slate-light) !important; }
+body .text-slate-400 { color: var(--slate-lighter) !important; }
+body .text-slate-500 { color: #94A3B8 !important; }
+
+/* Financial signal colors — keep meaningful */
+body .text-green-400 { color: var(--emerald) !important; }
+body .text-green-300 { color: var(--emerald) !important; }
+body .text-red-400   { color: var(--red) !important; }
+body .text-red-300   { color: var(--red) !important; }
+body .text-yellow-400 { color: var(--amber) !important; }
+
+/* Blue/Purple/Indigo → Gold / Navy */
+body .text-blue-400   { color: var(--gold-hover) !important; }
+body .text-blue-300   { color: var(--gold-hover) !important; }
+body .text-indigo-400 { color: var(--navy-mid) !important; }
+body .text-purple-300 { color: var(--gold-hover) !important; }
+body .text-orange-400 { color: #EA580C !important; }
+
+/* Semantic */
+body .text-accent { color: var(--gold) !important; }
+body .text-gain   { color: var(--emerald) !important; }
+body .text-loss   { color: var(--red) !important; }
+
+body .font-mono { font-family: var(--font-mono) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   BORDERS
+══════════════════════════════════════════════════════════ */
+
+body .border-gray-700 { border-color: var(--slate-border) !important; }
+body .border-gray-600 { border-color: var(--slate-border) !important; }
+body .border-gray-800 { border-color: var(--slate-border) !important; }
+body .border-blue-700 { border-color: var(--gold-mid) !important; }
+body .border-blue-800 { border-color: var(--gold-mid) !important; }
+body .border-purple-700 { border-color: var(--gold-mid) !important; }
+body .border-purple-800 { border-color: var(--gold-mid) !important; }
+body .border-green-700 { border-color: var(--emerald-mid) !important; }
+body .border-red-700   { border-color: #FCA5A5 !important; }
+body .border-slate-800 { border-color: var(--slate-border) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   PILL / BADGE BACKGROUNDS
+══════════════════════════════════════════════════════════ */
+
+body .bg-green-900\/30,
+body .bg-green-900\/50,
+body .bg-green-900 {
+  background-color: var(--emerald-light) !important;
+  background-image: none !important;
 }
 
-.btn-ghost:hover {
-  background: var(--bg-gray);
-  border-color: #D1D5DB;
-  color: var(--text-primary);
-  transform: none;
+body .bg-red-900\/30,
+body .bg-red-900\/50,
+body .bg-red-900 {
+  background-color: var(--red-light) !important;
+  background-image: none !important;
 }
 
-/* Badges */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: normal;
-  text-transform: none;
+body .bg-yellow-900\/30,
+body .bg-yellow-900\/50,
+body .bg-yellow-900 {
+  background-color: var(--amber-light) !important;
+  background-image: none !important;
 }
 
-.badge-gain {
-  background: #DEF7EC;
-  color: #03543F;
+/* Blue → Gold pill */
+body .bg-blue-900\/20,
+body .bg-blue-900\/30,
+body .bg-blue-900\/50,
+body .bg-blue-900,
+body .bg-blue-600\/30,
+body .bg-blue-600 {
+  background-color: var(--gold-light) !important;
+  background-image: none !important;
+  color: var(--gold-hover) !important;
 }
 
-.badge-loss {
-  background: #FDE2E2;
-  color: #9B1C1C;
+/* Purple → Gold pill */
+body .bg-purple-900\/20,
+body .bg-purple-900\/30,
+body .bg-purple-900\/50,
+body .bg-purple-900,
+body .bg-purple-600\/30,
+body .bg-purple-600 {
+  background-color: var(--gold-light) !important;
+  background-image: none !important;
+  color: var(--gold-hover) !important;
 }
 
-.badge-neutral {
-  background: #F3F4F6;
-  color: #4B5563;
+/* ══════════════════════════════════════════════════════════
+   SECTIONS
+══════════════════════════════════════════════════════════ */
+
+body #market {
+  background-color: var(--white) !important;
+  border-top: 1px solid var(--slate-border) !important;
 }
 
-.badge-info {
-  background: #E0F2FE;
-  color: #075985;
+body #features {
+  background-color: var(--bg) !important;
+  border-top: 1px solid var(--slate-border) !important;
 }
 
-/* Section Label */
-.section-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+body .section-label {
+  color: var(--gold) !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
 }
 
-/* Gradient text - keep minimal */
-.gradient-text {
-  color: var(--accent);
-  background: none;
-  -webkit-text-fill-color: var(--accent);
+/* ── Badges ─────────────────────────────────────────────── */
+
+body .badge {
+  font-family: var(--font-mono) !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+  padding: 0.2rem 0.55rem !important;
+}
+body .badge-gain { background-color: var(--emerald-light) !important; color: var(--emerald) !important; }
+body .badge-loss { background-color: var(--red-light) !important; color: var(--red) !important; }
+body .badge-info { background-color: var(--gold-light) !important; color: var(--gold-hover) !important; }
+
+/* ── Icon ring backgrounds ──────────────────────────────── */
+
+body .bg-accent\/15, body .bg-accent\/25 { background-color: var(--gold-light) !important; background-image: none !important; }
+body .bg-gain\/15,   body .bg-gain\/25   { background-color: var(--emerald-light) !important; background-image: none !important; }
+body .bg-loss\/15,   body .bg-loss\/25   { background-color: var(--red-light) !important; background-image: none !important; }
+body .bg-indigo-500\/15, body .bg-indigo-500\/25 { background-color: #EEF0FF !important; background-image: none !important; }
+body .bg-yellow-500\/15, body .bg-yellow-500\/25 { background-color: var(--amber-light) !important; background-image: none !important; }
+
+/* ── Icon colors ────────────────────────────────────────── */
+
+body .text-accent svg, body .text-accent { color: var(--gold) !important; }
+body .bg-accent\/15 svg, body .bg-accent\/25 svg { color: var(--gold-hover) !important; }
+body .bg-indigo-500\/15 svg, body .bg-indigo-500\/25 svg { color: var(--navy-mid) !important; }
+body .bg-gain\/15 svg, body .bg-gain\/25 svg { color: var(--emerald) !important; }
+body .bg-loss\/15 svg, body .bg-loss\/25 svg { color: var(--red) !important; }
+
+/* ── Links ──────────────────────────────────────────────── */
+
+body a.text-accent { color: var(--gold) !important; }
+body a[href="/market"] { color: var(--gold) !important; }
+body a.text-indigo-400 { color: var(--navy-mid) !important; }
+body a.text-yellow-400 { color: var(--amber) !important; }
+body a.text-gain { color: var(--emerald) !important; }
+
+/* ── Warning box ────────────────────────────────────────── */
+
+body .bg-yellow-900\/20 {
+  background-color: var(--amber-light) !important;
+  background-image: none !important;
+  border-color: #FDE68A !important;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Disclaimer ─────────────────────────────────────────── */
+
+body .market-snapshot-wrapper > div.mt-6.p-3 {
+  background-color: var(--slate-bg) !important;
+  border: 1px solid #E2E8F0 !important;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-gray);
-}
+/* ── Reveal animation ───────────────────────────────────── */
 
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
-}
-
-/* Selection */
-::selection {
-  background: var(--accent);
-  color: white;
-}
-
-/* Focus outline */
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Reveal animation - subtle */
-.reveal {
+body .reveal {
   opacity: 0;
-  transform: translateY(15px);
+  transform: translateY(14px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
-
-.reveal.visible {
+body .reveal.visible {
   opacity: 1;
   transform: none;
 }
 
-/* Ticker tape */
-.ticker-wrap {
-  overflow: hidden;
-  position: relative;
-  background: var(--bg-white);
-  border-bottom: 1px solid var(--border-light);
-}
+/* ── Scrollbar ──────────────────────────────────────────── */
 
-.ticker-inner {
-  display: flex;
-  animation: ticker 30s linear infinite;
-  width: max-content;
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #F1F5F9; }
+::-webkit-scrollbar-thumb { background: var(--gold-mid); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-.ticker-wrap:hover .ticker-inner {
-  animation-play-state: paused;
-}
+/* ── Responsive ─────────────────────────────────────────── */
 
-@keyframes ticker {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-/* Chart container */
-.chart-container {
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 1rem;
-}
-
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th {
-  text-align: left;
-  padding: 0.75rem 0.5rem;
-  font-weight: 600;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-light);
-}
-
-td {
-  padding: 0.75rem 0.5rem;
-  font-size: 0.875rem;
-  border-bottom: 1px solid var(--border-light);
-}
-
-/* Light theme is default - no dark mode needed */
-/* Remove dark mode overrides */
-
-/* Market data specific */
-.market-stat {
-  background: var(--bg-white);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 1rem;
-}
-
-.market-stat-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-}
-
-.market-stat-value {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-/* Positive/Negative colors */
-.text-green {
-  color: var(--success);
-}
-
-.text-red {
-  color: var(--danger);
-}
-
-.text-yellow {
-  color: var(--warning);
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .card {
-    border-radius: 10px;
-  }
-  
-  .market-stat-value {
-    font-size: 1.25rem;
+  body .market-snapshot-wrapper {
+    max-width: 95% !important;
+    padding-top: 80px !important;
   }
 }

@@ -1,9 +1,9 @@
 {% load static %}
-<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-  <!-- Glass overlay on scroll -->
-  <div id="navbar-bg" class="absolute inset-0 bg-[#0F172A]/0 backdrop-blur-none transition-all duration-300 border-b border-transparent"></div>
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full">
+  <!-- Solid background overlay -->
+  <div id="navbar-bg" class="absolute inset-0 bg-[#1E293B] transition-all duration-300 border-b border-[#334155] w-full"></div>
 
-  <nav class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <nav class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
     <div class="flex items-center justify-between h-16 lg:h-18">
 
       <!-- Logo -->
@@ -15,44 +15,39 @@
           </svg>
         </div>
         <span class="text-lg font-semibold tracking-tight">
-          <span class="text-white">NEPSE</span><span class="text-accent"> Sathi</span>
+          <span class="text-[#F8FAFC]">NEPSE</span><span class="text-accent"> Sathi</span>
         </span>
       </a>
 
       <!-- Center Nav Links (desktop) -->
       <div class="hidden lg:flex items-center gap-1">
         {% for link in nav_links %}
-          <a href="{{ link.url }}" class="px-3.5 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150">{{ link.label }}</a>
+          <a href="{{ link.url }}" class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">{{ link.label }}</a>
         {% empty %}
-          <a href="/"          class="px-3.5 py-2 text-sm font-medium text-white   rounded-lg bg-white/5">Home</a>
-          <a href="/learn"     class="px-3.5 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150">Learn</a>
-
-          <a href="/why-moved/"  
-
-          class="px-3.5 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150">Analyse   </a>
-
-          <a href="/market"    class="px-3.5 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150">Forecast</a>
-          
-          <a href="/about"     class="px-3.5 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-150">About US</a>
+          <a href="/"          class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] rounded-lg bg-[#10B981]/10">Home</a>
+          <a href="/learn"     class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Learn</a>
+          <a href="/why-moved/" class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Analyse</a>
+          <a href="/market"    class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Forecast</a>
+          <a href="/about"     class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">About US</a>
         {% endfor %}
       </div>
 
       <!-- Right: Auth + Theme toggle -->
       <div class="flex items-center gap-3">
         <!-- Dark/Light toggle -->
-        <button id="theme-toggle" aria-label="Toggle theme" class="hidden sm:flex w-8 h-8 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-150">
+        <button id="theme-toggle" aria-label="Toggle theme" class="hidden sm:flex w-8 h-8 items-center justify-center rounded-lg text-[#F8FAFC] hover:text-[#10B981] hover:bg-[#10B981]/10 transition-all duration-150">
           <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
           <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         </button>
 
         <!-- Auth buttons (desktop) -->
         <div class="hidden sm:flex items-center gap-2">
-          <a href="/login" class="px-4 py-1.5 text-sm font-medium text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 rounded-lg transition-all duration-150">Log in</a>
+          <a href="/login" class="px-4 py-1.5 text-sm font-medium text-[#F8FAFC] border border-[#334155] hover:border-[#10B981] rounded-lg transition-all duration-150 hover:bg-[#10B981]/10 hover:text-[#10B981]">Log in</a>
           <a href="/signup" class="px-4 py-1.5 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-all duration-200 shadow-glow hover:shadow-glow-lg">Sign up</a>
         </div>
 
         <!-- Mobile menu button -->
-        <button id="mobile-menu-btn" aria-label="Open menu" class="lg:hidden flex w-9 h-9 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+        <button id="mobile-menu-btn" aria-label="Open menu" class="lg:hidden flex w-9 h-9 items-center justify-center rounded-lg text-[#F8FAFC] hover:text-[#10B981] hover:bg-[#10B981]/10 transition-all">
           <svg id="icon-menu" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           <svg id="icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
@@ -61,15 +56,15 @@
 
     <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden lg:hidden pb-4">
-      <div class="flex flex-col gap-1 pt-2 border-t border-slate-800">
-        <a href="/"          class="px-3 py-2.5 text-sm font-medium text-white   rounded-lg bg-white/5">Home</a>
-        <a href="/learn"     class="px-3 py-2.5 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all">Learn</a>
-        <a href="/companies" class="px-3 py-2.5 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all">Companies</a>
-        <a href="/market"    class="px-3 py-2.5 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all">Market</a>
-        <a href="/simulator" class="px-3 py-2.5 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all">Simulator</a>
-        <a href="/about"     class="px-3 py-2.5 text-sm font-medium text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all">About</a>
+      <div class="flex flex-col gap-1 pt-2 border-t border-[#334155]">
+        <a href="/"          class="px-3 py-2.5 text-sm font-medium text-[#F8FAFC] rounded-lg bg-[#10B981]/10">Home</a>
+        <a href="/learn"     class="px-3 py-2.5 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all">Learn</a>
+        <a href="/companies" class="px-3 py-2.5 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all">Companies</a>
+        <a href="/market"    class="px-3 py-2.5 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all">Market</a>
+        <a href="/simulator" class="px-3 py-2.5 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all">Simulator</a>
+        <a href="/about"     class="px-3 py-2.5 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all">About</a>
         <div class="flex gap-2 pt-2">
-          <a href="/login"  class="flex-1 text-center px-4 py-2 text-sm font-medium text-slate-300 border border-slate-700 rounded-lg">Log in</a>
+          <a href="/login"  class="flex-1 text-center px-4 py-2 text-sm font-medium text-[#F8FAFC] border border-[#334155] hover:border-[#10B981] rounded-lg hover:bg-[#10B981]/10 hover:text-[#10B981]">Log in</a>
           <a href="/signup" class="flex-1 text-center px-4 py-2 text-sm font-semibold text-white bg-accent rounded-lg">Sign up</a>
         </div>
       </div>
