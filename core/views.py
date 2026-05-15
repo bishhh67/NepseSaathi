@@ -302,46 +302,33 @@ def lesson_detail(request, lesson_number):
 
 
 ## for live market 
-
 def live_market(request):
-    """Main live market page"""
     return render(request, 'livemarket/index.html')
 
-def live_market_chart(request):
-    """Chart page (embedded from char.html)"""
-    return render(request, 'livemarket/char.html')
+def get_market_data(request):
+    import os
+    from django.conf import settings
+    from django.http import HttpResponse
+    
+    js_file = os.path.join(settings.BASE_DIR, 'templates', 'livemarket', 'market_data.js')
+    if os.path.exists(js_file):
+        with open(js_file, 'r') as f:
+            return HttpResponse(f.read(), content_type='application/javascript')
+    return HttpResponse("window.LATEST_MARKET_DATA = {};", content_type='application/javascript')
 
 @csrf_exempt
 def trigger_scraper(request):
-    """Trigger the scraper from Django"""
+    import subprocess
+    import os
+    from django.conf import settings
+    from django.http import JsonResponse
+    
     try:
-        # Get the path to scrap_all.py
         scraper_path = os.path.join(settings.BASE_DIR, 'templates', 'livemarket', 'scrap_all.py')
-        
-        # Run the scraper
-        result = subprocess.run(
-            ['python', scraper_path], 
-            capture_output=True, 
-            text=True,
-            cwd=os.path.dirname(scraper_path)
-        )
+        result = subprocess.run(['python', scraper_path], capture_output=True, text=True, cwd=os.path.dirname(scraper_path))
         
         if result.returncode == 0:
             return JsonResponse({"status": "success", "message": "Data synced"})
-        else:
-            error_msg = result.stderr or "Unknown scraper error"
-            return JsonResponse({"status": "error", "message": error_msg}, status=500)
-            
+        return JsonResponse({"status": "error", "message": result.stderr}, status=500)
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-def get_market_data(request):
-    """Serve the market_data.js file directly"""
-    js_file_path = os.path.join(settings.BASE_DIR, 'templates', 'livemarket', 'market_data.js')
-    
-    if os.path.exists(js_file_path):
-        with open(js_file_path, 'r') as f:
-            content = f.read()
-        return HttpResponse(content, content_type='application/javascript')
-    else:
-        return HttpResponse("window.LATEST_MARKET_DATA = {};", content_type='application/javascript')

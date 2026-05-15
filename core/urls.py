@@ -24,7 +24,6 @@ urlpatterns = [
 
 
     path('livemarket/', views.live_market, name='live_market'),
-    path('livemarket/chart/', views.live_market_chart, name='live_market_chart'),
-    path('api/scrape/', views.trigger_scraper, name='trigger_scraper'),
     path('api/market-data/', views.get_market_data, name='get_market_data'),
+    path('api/scrape/', views.trigger_scraper, name='trigger_scraper'),
 ]
