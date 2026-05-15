@@ -1,7 +1,8 @@
 {% load static %}
 <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full">
-  <!-- Solid background overlay -->
-  <div id="navbar-bg" class="absolute inset-0 bg-[#1E293B] transition-all duration-300 border-b border-[#334155] w-full"></div>
+  <!-- Solid background overlay - add inline style as backup -->
+  <div id="navbar-bg" class="absolute inset-0 transition-all duration-300 w-full" 
+       style="background-color: #1E293B !important; border-bottom: 1px solid #334155 !important;"></div>
 
   <nav class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
     <div class="flex items-center justify-between h-16 lg:h-18">
@@ -27,7 +28,7 @@
           <a href="/"          class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] rounded-lg bg-[#10B981]/10">Home</a>
           <a href="/learn"     class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Learn</a>
           <a href="/why-moved/" class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Analyse</a>
-          <a href="/market"    class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Forecast</a>
+          <a href="/forecast/"    class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Forecast</a>
           <a href="/livemarket"     class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Live market </a>
         {% endfor %}
       </div>

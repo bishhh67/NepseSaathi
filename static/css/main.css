@@ -302,7 +302,37 @@ body .reveal.visible {
 ::-webkit-scrollbar-thumb { background: var(--gold-mid); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
+
+
+
+
+/* Navbar scroll styles - using CSS instead of inline JS */
+/* FORCE NAVBAR - ALWAYS BLUE - NO INLINE STYLES NEEDED */
+/* FORCE NAVBAR ALWAYS NAVY */
+html body #navbar-bg,
+html.light body #navbar-bg,
+html.dark body #navbar-bg,
+body #navbar-bg,
+#navbar-bg,
+#navbar .absolute {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  background: #1E293B !important;
+  background-color: #1E293B !important;
+  border-bottom: 1px solid #334155 !important;
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+/* Kill any top-page transparency */
+#navbar,
+html.light #navbar,
+html.dark #navbar {
+  background: transparent !important;
+}
 /* ── Responsive ─────────────────────────────────────────── */
+
 
 @media (max-width: 768px) {
   body .market-snapshot-wrapper {

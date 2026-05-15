@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ company.symbol }} - Stock Analysis | NEPSE Sathi{% endblock %}
+
+{% block extra_head %}
+<!-- Link to your forecast-specific CSS -->
+<link rel="stylesheet" href="{% static 'forecast/css/style.css' %}">
+<style>
+    /* Override any conflicting styles */
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6B7280;
+        margin-bottom: 1.5rem;
+        text-decoration: none;
+    }
+    .back-btn:hover {
+        color: #D4AF37;
+    }
+    .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+    }
+    .symbol {
+        font-size: 0.875rem;
+        color: #D4AF37;
+        font-weight: 600;
+    }
+    .sector {
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+    .price-badge {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #D4AF37;
+    }
+    .analysis-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    .analysis-section-single {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    .stats-card, .conclusion-card, .error-card {
+        background: white;
+        border: 1px solid #E5E7EB;
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #F3F4F6;
+    }
+    .stat-label {
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+    .stat-value {
+        font-weight: 600;
+        color: #1F2937;
+    }
+    .conclusion-text {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #374151;
+        margin-top: 1rem;
+    }
+    .graphs-section {
+        background: white;
+        border: 1px solid #E5E7EB;
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+    .graph-container {
+        margin-bottom: 1.5rem;
+    }
+    .graph-container img {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid #E5E7EB;
+    }
+    .loading-spinner {
+        text-align: center;
+        padding: 3rem;
+    }
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #E5E7EB;
+        border-top-color: #D4AF37;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .hidden {
+        display: none;
+    }
+    .error-message {
+        color: #DC2626;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+    .warning-message {
+        background: #FEF3C7;
+        border: 1px solid #F59E0B;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        color: #92400E;
+        font-size: 0.875rem;
+    }
+    @media (max-width: 768px) {
+        .analysis-section {
+            grid-template-columns: 1fr;
+        }
+        .detail-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <a href="{% url 'forecast:index' %}" class="back-btn">← Back to Dashboard</a>
+    
+    <div class="detail-header">
+        <div>
+            <span class="symbol">{{ company.symbol }}</span>
+            <h1 style="font-size: 1.875rem; font-weight: 700; margin: 0.5rem 0 0.25rem;">{{ company.name }}</h1>
+            <p class="sector">{{ company.sector }} | {{ company.website }}</p>
+        </div>
+        <div style="text-align: right">
+            <p class="stat-label">Current Price</p>
+            <div class="price-badge">
+                {% if last_price != 'N/A' %}
+                    Rs. {{ last_price|floatformat:2 }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Show error/warning messages if any -->
+    {% if analysis.error_message %}
+    <div class="warning-message">
+        ⚠️ {{ analysis.error_message }}
+    </div>
+    {% endif %}
+
+    <!-- Show No Data Message when no_data flag is true -->
+    {% if no_data %}
+    <div class="analysis-section-single">
+        <div class="error-card">
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #DC2626;">⚠️ No Data Available</h3>
+            <p style="color: #6B7280; margin-bottom: 1.5rem;">{{ analysis.conclusion }}</p>
+            <a href="{% url 'forecast:index' %}" style="display: inline-block; background: #D4AF37; color: #0F172A; padding: 0.75rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 600;">← Back to Dashboard</a>
+        </div>
+    </div>
+    {% else %}
+    
+    <!-- Normal Analysis Section (when data exists) -->
+    <div class="analysis-section">
+        <div class="stats-card">
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem;">Technical Indicators</h3>
+            
+            <div class="stat-item">
+                <span class="stat-label">RSI (14)</span>
+                <span class="stat-value">{{ analysis.rsi|default:"N/A" }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">SMA 20</span>
+                <span class="stat-value">{{ analysis.sma20|default:"N/A" }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">SMA 50</span>
+                <span class="stat-value">{{ analysis.sma50|default:"N/A" }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">52W High</span>
+                <span class="stat-value">{{ analysis.high_52|default:"N/A" }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">52W Low</span>
+                <span class="stat-value">{{ analysis.low_52|default:"N/A" }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Volatility</span>
+                <span class="stat-value">{{ analysis.volatility|default:"N/A" }}%</span>
+            </div>
+            
+            {% if analysis.signals %}
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #F3F4F6">
+                <h4 style="font-size: 0.875rem; font-weight: 600; color: #6B7280; margin-bottom: 0.5rem;">Market Signals</h4>
+                <ul style="padding-left: 1.25rem; font-size: 0.875rem; color: #6B7280;">
+                    {% for signal in analysis.signals %}
+                    <li style="margin-bottom: 0.25rem;">{{ signal }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="conclusion-card">
+            <h3 style="color: #D4AF37; font-size: 1.125rem; font-weight: 600;">Analysis Conclusion</h3>
+            
+            {% if analysis.data_span_years is not None and analysis.data_span_years < 2 %}
+            <div style="background: #FEF3C7; border: 1px solid #F59E0B; padding: 0.75rem; border-radius: 12px; margin: 1rem 0; color: #92400E; font-size: 0.875rem;">
+                ⚠️ Limited Data Warning: This stock only has {{ analysis.data_span_years }} years of historical data.
+            </div>
+            {% endif %}
+
+            <p class="conclusion-text">{{ analysis.conclusion|default:"Analysis not available." }}</p>
+            
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #E5E7EB">
+                <h4 style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #9CA3AF; margin-bottom: 0.5rem;">Disclaimer</h4>
+                <p style="font-size: 0.7rem; color: #9CA3AF; line-height: 1.4;">
+                    The forecasts and analysis provided are for educational purposes only. Stock market investments involve significant risk. 
+                    Always consult with a certified financial advisor before making investment decisions.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphs Section (only if data exists) -->
+    <div class="graphs-section">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">AI-Powered Price Prediction</h2>
+        
+        <div id="loading-overlay" class="loading-spinner {% if graphs %}hidden{% endif %}">
+            <div class="spinner"></div>
+            <p>Generating AI Predictions...</p>
+        </div>
+
+        <div id="graphs-content" class="{% if not graphs %}hidden{% endif %}">
+            <div class="graph-container">
+                <p style="padding: 0 0 0.5rem 0; font-weight: 600; color: #4B5563;">1-Year Forecast Trend</p>
+                {% if graphs %}
+                <img id="graph-0" src="{% static 'forecast_graphs/' %}{{ graphs.0 }}" alt="Forecast Graph">
+                {% else %}
+                <img id="graph-0" src="" alt="Forecast Graph">
+                {% endif %}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="graph-container">
+                    <p style="padding: 0 0 0.5rem 0; font-weight: 600; color: #4B5563;">Weekly Seasonality</p>
+                    {% if graphs %}
+                    <img id="graph-1" src="{% static 'forecast_graphs/' %}{{ graphs.1 }}" alt="Weekly Graph">
+                    {% else %}
+                    <img id="graph-1" src="" alt="Weekly Graph">
+                    {% endif %}
+                </div>
+                <div class="graph-container">
+                    <p style="padding: 0 0 0.5rem 0; font-weight: 600; color: #4B5563;">Yearly Seasonality</p>
+                    {% if graphs %}
+                    <img id="graph-2" src="{% static 'forecast_graphs/' %}{{ graphs.2 }}" alt="Yearly Graph">
+                    {% else %}
+                    <img id="graph-2" src="" alt="Yearly Graph">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hasGraphs = {{ graphs|yesno:"true,false" }};
+        const noData = {{ no_data|yesno:"true,false" }};
+        
+        if (!hasGraphs && !noData) {
+            fetch('{% url "forecast:generate_graphs_api" symbol=company.symbol %}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('graph-0').src = '/static/forecast_graphs/' + data.graphs[0];
+                        document.getElementById('graph-1').src = '/static/forecast_graphs/' + data.graphs[1];
+                        document.getElementById('graph-2').src = '/static/forecast_graphs/' + data.graphs[2];
+                        document.getElementById('loading-overlay').classList.add('hidden');
+                        document.getElementById('graphs-content').classList.remove('hidden');
+                    } else {
+                        document.getElementById('loading-overlay').innerHTML = '<p style="color: #EF4444">Error generating graphs: ' + data.error + '</p>';
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('loading-overlay').innerHTML = '<p style="color: #EF4444">Connection error while generating graphs.</p>';
+                });
+        }
+    });
+</script>
+
+{% endblock %}

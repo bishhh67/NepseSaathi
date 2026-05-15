@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     # Local apps
     "core",
     'stock_analysis',
+    'forecast',
 ]
 
 DATABASES = {

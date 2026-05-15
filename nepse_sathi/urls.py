@@ -21,6 +21,8 @@ urlpatterns = [
     path('lesson/3/', views.lesson_detail, {'lesson_number': 3}, name='lesson3'),
     path('lesson/4/', views.lesson_detail, {'lesson_number': 4}, name='lesson4'),
     path('lesson/5/', views.lesson_detail, {'lesson_number': 5}, name='lesson5'),
+
+    path('forecast/', include('forecast.urls')),
     
 ]
 

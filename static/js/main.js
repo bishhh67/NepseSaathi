@@ -3,23 +3,20 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Navbar scroll behaviour ──────────────────────── */
-  const navbar    = document.getElementById('navbar');
-  const navbarBg  = document.getElementById('navbar-bg');
+  /* ── Navbar scroll behaviour ──────────────────────── */
+// const navbar    = document.getElementById('navbar');
+// const navbarBg  = document.getElementById('navbar-bg');
 
-  const onScroll = () => {
-    if (window.scrollY > 20) {
-      navbarBg.classList.add('scrolled');
-      navbarBg.style.backgroundColor = 'rgba(15,23,42,0.85)';
-      navbarBg.style.backdropFilter  = 'blur(16px)';
-      navbarBg.style.borderBottomColor = 'rgba(255,255,255,0.06)';
-    } else {
-      navbarBg.classList.remove('scrolled');
-      navbarBg.style.backgroundColor  = 'transparent';
-      navbarBg.style.backdropFilter   = 'none';
-      navbarBg.style.borderBottomColor = 'transparent';
-    }
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
+// const onScroll = () => {
+//   if (window.scrollY > 20) {
+//     navbarBg.classList.add('scrolled');
+//   } else {
+//     navbarBg.classList.remove('scrolled');
+//   }
+// };
+// window.addEventListener('scroll', onScroll, { passive: true });
+
+
 
   /* ── Mobile menu ───────────────────────────────────── */
   const mobileBtn   = document.getElementById('mobile-menu-btn');
@@ -58,8 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Load saved theme
-  const savedTheme = localStorage.getItem('nepse-theme') || 'dark';
-  applyTheme(savedTheme);
+ applyTheme('dark');
+localStorage.setItem('nepse-theme', 'dark');
+
 
   themeBtn?.addEventListener('click', () => {
     const current = html.classList.contains('light') ? 'light' : 'dark';
