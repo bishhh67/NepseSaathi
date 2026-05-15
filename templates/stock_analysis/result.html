@@ -116,9 +116,7 @@
         <span class="text-sm font-medium">Analysis Confidence</span>
         <span class="text-2xl font-bold">{{ analysis.confidence_score }}%</span>
       </div>
-      <div class="w-full bg-white/20 rounded-full h-2 overflow-hidden">
-        <div class="confidence-bar bg-white h-2 rounded-full" style="width: 0%" data-confidence="{{ analysis.confidence_score }}"></div>
-      </div>
+     
     </div>
   </div>
 
@@ -135,9 +133,7 @@
         <span class="text-2xl font-bold text-accent">{{ analysis.volume.ratio }}x</span>
       </div>
       <p class="text-sm text-slate-400 mt-2">vs 20-day average: {{ analysis.volume.avg_20d|floatformat:0 }} shares</p>
-      <div class="mt-3 w-full bg-primary rounded-full h-1.5">
-        <div class="bg-accent h-1.5 rounded-full" style="width: {{ analysis.volume.ratio|div:4|multiply:100|floatformat:0 }}%"></div>
-      </div>
+      
     </div>
 
     <!-- Trend Analysis -->
@@ -217,6 +213,70 @@
       {% endfor %}
     </ul>
   </div>
+
+<!-- Display Recommendation Section -->
+<div class="bg-gray-800 rounded-xl p-5 mt-6">
+    <h3 class="text-white font-bold text-lg mb-4">💡 Investment Recommendation</h3>
+    
+    <!-- Action Badge -->
+    <div class="mb-4">
+        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-bold 
+            {% if analysis.recommendation.action == 'BUY' %}bg-green-900/50 text-green-400 border border-green-700
+            {% elif analysis.recommendation.action == 'ACCUMULATE' %}bg-lime-900/50 text-lime-400 border border-lime-700
+            {% elif analysis.recommendation.action == 'HOLD' %}bg-yellow-900/50 text-yellow-400 border border-yellow-700
+            {% elif analysis.recommendation.action == 'REDUCE' %}bg-orange-900/50 text-orange-400 border border-orange-700
+            {% else %}bg-red-900/50 text-red-400 border border-red-700{% endif %}">
+            {{ analysis.recommendation.action_icon }} {{ analysis.recommendation.action }} - Risk Level: {{ analysis.recommendation.risk_level }}
+        </span>
+    </div>
+    
+    <!-- Signal Strength -->
+    <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+            <p class="text-green-400 text-sm">Bullish Signals</p>
+            <p class="text-white text-2xl font-bold">{{ analysis.recommendation.bullish_signals }}</p>
+        </div>
+        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+            <p class="text-red-400 text-sm">Bearish Signals</p>
+            <p class="text-white text-2xl font-bold">{{ analysis.recommendation.bearish_signals }}</p>
+        </div>
+    </div>
+    
+    <!-- Actionable Strategies -->
+    <div class="mb-4">
+        <h4 class="text-gray-300 font-semibold mb-2">📋 Action Plan</h4>
+        <ul class="space-y-2">
+            {% for strategy in analysis.recommendation.strategies %}
+            <li class="text-gray-300 text-sm">{{ strategy }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Outlook -->
+    <div class="mb-4 p-3 bg-gray-700/30 rounded-lg">
+        <h4 class="text-blue-300 font-semibold mb-1">🔮 Outlook</h4>
+        <p class="text-gray-300 text-sm">{{ analysis.recommendation.outlook }}</p>
+    </div>
+    
+    <!-- Risk Factors -->
+    <div>
+        <h4 class="text-yellow-300 font-semibold mb-2">⚠️ Risk Factors</h4>
+        <ul class="space-y-1">
+            {% for risk in analysis.recommendation.risk_factors %}
+            <li class="text-gray-400 text-xs">{{ risk }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
 
   <!-- Recent History Table -->
   <div class="bg-secondary/40 backdrop-blur-sm rounded-2xl overflow-hidden border border-border animate-fade-up" style="animation-delay: 0.45s">

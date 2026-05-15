@@ -85,6 +85,8 @@ class AnalysisResult:
     # history
     recent_history: list[StockDailyData] = field(default_factory=list)
 
+    recommendation: dict = field(default_factory=dict) 
+    
     # meta
     error: Optional[str] = None
 
@@ -383,6 +385,176 @@ def _generate_explanation(
 # Public API
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _generate_recommendation(
+    price_class: PriceClassification,
+    volume: VolumeSignal,
+    trend: TrendSignal,
+    breakout: BreakoutSignal,
+    momentum: MomentumSignal,
+    change_pct: float,
+    row: StockDailyData,
+) -> dict:
+    """
+    Generate detailed investment recommendation based on all signals.
+    Returns dict with strategy, actions, risk level, and outlook.
+    """
+    
+    is_up = change_pct > 0
+    is_down = change_pct < 0
+    
+    # Determine overall market signal
+    bullish_signals = 0
+    bearish_signals = 0
+    
+    # Price signal
+    if "Bullish" in price_class.label:
+        bullish_signals += 2
+    elif "Bearish" in price_class.label:
+        bearish_signals += 2
+    
+    # Volume signal
+    if volume.label in ["High", "Extreme"]:
+        if is_up:
+            bullish_signals += 2
+        else:
+            bearish_signals += 2
+    elif volume.label == "Elevated":
+        if is_up:
+            bullish_signals += 1
+        else:
+            bearish_signals += 1
+    
+    # Trend signal
+    if "Bullish" in trend.label:
+        bullish_signals += 3
+    elif "Bearish" in trend.label:
+        bearish_signals += 3
+    elif "Reversal" in trend.label:
+        if is_up:
+            bullish_signals += 2
+        else:
+            bearish_signals += 2
+    
+    # Breakout signal
+    if breakout.breakout:
+        bullish_signals += 3
+    elif breakout.breakdown:
+        bearish_signals += 3
+    
+    # Momentum signal
+    if "Positive" in momentum.label:
+        bullish_signals += 2
+    elif "Negative" in momentum.label:
+        bearish_signals += 2
+    
+    # Determine overall action
+    if bullish_signals > bearish_signals + 3:
+        action = "BUY"
+        action_color = "green"
+        action_icon = "🟢"
+        risk_level = "Moderate"
+    elif bullish_signals > bearish_signals:
+        action = "ACCUMULATE"
+        action_color = "lime"
+        action_icon = "📈"
+        risk_level = "Moderate"
+    elif bearish_signals > bullish_signals + 3:
+        action = "SELL"
+        action_color = "red"
+        action_icon = "🔴"
+        risk_level = "High"
+    elif bearish_signals > bullish_signals:
+        action = "REDUCE"
+        action_color = "orange"
+        action_icon = "📉"
+        risk_level = "High"
+    else:
+        action = "HOLD"
+        action_color = "yellow"
+        action_icon = "⏸️"
+        risk_level = "Low"
+    
+    # Generate detailed strategy
+    strategies = {
+        "BUY": [
+            f"✅ Entry opportunity: Current price NPR {row.close_price:,.2f}",
+            f"🎯 Target 1: NPR {row.close_price * 1.05:,.2f} (+5%)",
+            f"🎯 Target 2: NPR {row.close_price * 1.10:,.2f} (+10%)",
+            f"🛑 Stop Loss: NPR {row.close_price * 0.95:,.2f} (-5%)",
+            "📊 Position Size: Start with 40-50% of intended allocation",
+            "💡 Strategy: Buy on dips if price retests support levels"
+        ],
+        "ACCUMULATE": [
+            f"✅ Entry Zone: NPR {row.close_price * 0.97:,.2f} - {row.close_price * 1.02:,.2f}",
+            f"🎯 Target: NPR {row.close_price * 1.08:,.2f} (+8%)",
+            f"🛑 Stop Loss: NPR {row.close_price * 0.92:,.2f} (-8%)",
+            "📊 Position Size: Accumulate in 2-3 tranches",
+            "💡 Strategy: Buy partial now, add more on weakness"
+        ],
+        "HOLD": [
+            f"✅ Hold existing positions at NPR {row.close_price:,.2f}",
+            f"🎯 Watch for breakout above {row.close_price * 1.03:,.2f}",
+            f"🛑 Trail stop loss at {row.close_price * 0.95:,.2f}",
+            "📊 Position Size: Maintain current exposure",
+            "💡 Strategy: Wait for clearer directional signal"
+        ],
+        "REDUCE": [
+            f"⚠️ Reduce exposure at current levels NPR {row.close_price:,.2f}",
+            f"🎯 Book profits on strength to {row.close_price * 1.02:,.2f}",
+            f"🛑 Keep remaining with tight stop at {row.close_price * 0.97:,.2f}",
+            "📊 Position Size: Reduce by 30-40%",
+            "💡 Strategy: Move to sidelines, re-enter on stability"
+        ],
+        "SELL": [
+            f"🔴 Exit recommended at NPR {row.close_price:,.2f}",
+            f"🎯 Re-entry level: {row.close_price * 0.92:,.2f} (-8%)",
+            f"🛑 Cover shorts above {row.close_price * 1.03:,.2f}",
+            "📊 Position Size: Liquidate 60-70% exposure",
+            "💡 Strategy: Book losses/profits, preserve capital"
+        ],
+    }
+    
+    # Generate outlook based on trend and momentum
+    if "Bullish" in trend.label and "Positive" in momentum.label:
+        outlook = f"Bullish outlook. Expect continued upward momentum toward {row.close_price * 1.08:,.0f} in near term."
+        outlook_color = "green"
+    elif "Bearish" in trend.label and "Negative" in momentum.label:
+        outlook = f"Bearish outlook. Expect further downside to {row.close_price * 0.92:,.0f} in coming sessions."
+        outlook_color = "red"
+    elif "Reversal" in trend.label:
+        outlook = f"Reversal signal detected. Watch for confirmation. Next key level: {'up' if is_up else 'down'} to {row.close_price * (1.05 if is_up else 0.95):,.0f}."
+        outlook_color = "yellow"
+    else:
+        outlook = f"Sideways outlook. Range expected between {row.close_price * 0.97:,.0f} - {row.close_price * 1.03:,.0f}. Wait for breakout."
+        outlook_color = "gray"
+    
+    # Risk assessment
+    risk_factors = []
+    if volume.label in ["High", "Extreme"]:
+        risk_factors.append(f"⚠️ High volatility from {volume.label.lower()} volume")
+    if "Bearish" in trend.label:
+        risk_factors.append("📉 Downtrend increases downside risk")
+    if breakout.breakdown:
+        risk_factors.append("🔻 Support breakdown - further downside possible")
+    if not risk_factors:
+        risk_factors.append("📊 Normal market risk - standard position sizing advised")
+    
+    return {
+        'action': action,
+        'action_color': action_color,
+        'action_icon': action_icon,
+        'risk_level': risk_level,
+        'strategies': strategies.get(action, strategies["HOLD"]),
+        'outlook': outlook,
+        'outlook_color': outlook_color,
+        'risk_factors': risk_factors,
+        'bullish_signals': bullish_signals,
+        'bearish_signals': bearish_signals,
+        'current_price': row.close_price,
+    }
+
+
+
 def explain_stock_movement(symbol: str, target_date: date) -> AnalysisResult:
     """
     Main entry point. Returns a fully populated AnalysisResult.
@@ -436,6 +608,13 @@ def explain_stock_movement(symbol: str, target_date: date) -> AnalysisResult:
         price_class, volume, trend, breakout, momentum, row.change_percent
     )
 
+    # ========== ADD THIS NEW SECTION ==========
+    # Generate recommendation
+    recommendation = _generate_recommendation(
+        price_class, volume, trend, breakout, momentum, row.change_percent, row
+    )
+    # ==========================================
+    
     return AnalysisResult(
         symbol=symbol,
         target_date=target_date,
@@ -449,6 +628,7 @@ def explain_stock_movement(symbol: str, target_date: date) -> AnalysisResult:
         supporting_reasons=supporting,
         confidence_score=confidence,
         recent_history=recent_history,
+        recommendation=recommendation,  # ADD THIS LINE
         error=None,
     )
 

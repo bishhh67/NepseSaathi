@@ -263,6 +263,8 @@ def home(request):
         "technical_news": technical_news,
         "technical_indicators": technical_indicators,
         "ai_analysis": ai_context,
+         "up_days": technical_indicators.get('up_days', 0),  # Add if available
+        "down_days": technical_indicators.get('down_days', 0),
     }
     
     return render(request, "core/home.html", context)

@@ -79,76 +79,279 @@
         </div>
     </div>
 
-    <!-- SECTION 1: HARDCODED MARKET SUMMARY -->
-    <div class="mt-6 bg-gray-800 rounded-xl p-5">
-        <h3 class="text-white font-semibold mb-2">📋 Market Summary</h3>
+    <!--  .........................................-->
+      <!-- SECTION 1: HARDCODED MARKET SUMMARY - Improved Card Layout -->
+<div class="mt-6">
+    <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-5">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">📋</span>
+            <h3 class="text-white font-bold text-lg">Market Summary</h3>
+        </div>
         <p class="text-gray-300 text-sm leading-relaxed">{{ market_summary }}</p>
     </div>
+</div>
 
-    <!-- SECTION 2: HARDCODED KEY MARKET FACTORS -->
-    <div class="mt-6">
-        <h3 class="text-white font-semibold mb-3">🔍 Key Market Factors</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            {% for factor in market_factors %}
-            <div class="bg-gray-800 rounded-lg p-3">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-xl">{{ factor.icon }}</span>
-                    <h4 class="text-white text-sm font-semibold">{{ factor.title }}</h4>
-                </div>
-                <p class="text-gray-400 text-xs">{{ factor.description }}</p>
-                {% if factor.impact %}
-                <span class="inline-block text-xs mt-2 px-2 py-0.5 rounded-full 
-                    {% if factor.impact == 'Positive' %}bg-green-900/50 text-green-400
-                    {% elif factor.impact == 'Negative' %}bg-red-900/50 text-red-400
-                    {% else %}bg-gray-700 text-gray-400{% endif %}">
-                    {{ factor.impact }}
-                </span>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
+<!-- SECTION 2: KEY MARKET FACTORS - Card Grid -->
+<div class="mt-6">
+    <div class="flex items-center gap-2 mb-4">
+        <span class="text-2xl">🔍</span>
+        <h3 class="text-white font-bold text-lg">Key Market Factors</h3>
     </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for factor in market_factors %}
+        <div class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-gray-600 transition-all">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="text-2xl">{{ factor.icon }}</span>
+                <h4 class="text-white font-semibold">{{ factor.title }}</h4>
+            </div>
+            <p class="text-gray-400 text-sm leading-relaxed">{{ factor.description }}</p>
+            {% if factor.impact %}
+            <div class="mt-3">
+                <span class="inline-block text-xs px-3 py-1 rounded-full 
+                    {% if factor.impact == 'Positive' %}bg-green-900/50 text-green-400 border border-green-700/50
+                    {% elif factor.impact == 'Negative' %}bg-red-900/50 text-red-400 border border-red-700/50
+                    {% else %}bg-gray-700 text-gray-400 border border-gray-600{% endif %}">
+                    {{ factor.impact }} Impact
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- SECTION 3: TECHNICAL ANALYSIS - Modern Card Layout -->
+{% if technical_report %}
+
+<div class="mt-6 space-y-5">
     
-    <!-- SECTION 3: TECHNICAL ANALYSIS (from market_analyzer) -->
-    {% if technical_report %}
-    <div class="mt-6 bg-gray-800 rounded-xl p-5">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
-            <h3 class="text-white font-semibold text-lg">📊 Technical Analysis & Market Report</h3>
-            <span class="text-xs bg-blue-600/30 text-blue-300 px-3 py-1 rounded-full">
+    <!-- Technical Indicators - Card Row (Using Actual Calculated Values) -->
+    <div>
+        <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">📊</span>
+            <h3 class="text-white font-bold text-lg">Technical Indicators</h3>
+            <span class="text-xs bg-blue-600/30 text-blue-300 px-3 py-1 rounded-full ml-2">
                 {{ technical_news|length }} News Sources
             </span>
         </div>
         
-        <!-- Technical Report Content -->
-        <div class="text-gray-300 text-sm whitespace-pre-line leading-relaxed">
-            {{ technical_report|linebreaks }}
-        </div>
-        
-        <!-- News Items if available -->
-        {% if technical_news %}
-        <div class="mt-6">
-            <h4 class="text-yellow-300 font-semibold mb-3">📰 Latest Market News</h4>
-            <div class="space-y-3">
-                {% for news in technical_news|slice:":5" %}
-                <div class="bg-gray-700/50 p-3 rounded-lg">
-                    <p class="text-white text-sm font-semibold">{{ news.title }}</p>
-                    <div class="flex items-center gap-3 mt-1">
-                        <span class="text-xs text-gray-400">📅 {{ news.date }}</span>
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-purple-900/50 text-purple-300">{{ news.category|title }}</span>
-                        <span class="text-xs text-gray-400">Source: {{ news.source }}</span>
-                    </div>
-                    <p class="text-gray-400 text-xs mt-2">{{ news.summary|truncatechars:150 }}</p>
+        <!-- 5 Cards in a row for key indicators -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            
+            <!-- RSI Card - Using actual calculated value -->
+            <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs uppercase tracking-wide">RSI (14)</span>
+                    <span class="text-sm {% if technical_indicators.rsi > 70 %}text-red-400{% elif technical_indicators.rsi < 30 %}text-green-400{% else %}text-yellow-400{% endif %}">●</span>
                 </div>
-                {% endfor %}
+                <p class="text-white text-3xl font-bold">{{ technical_indicators.rsi|floatformat:1 }}</p>
+                <p class="text-xs mt-2 {% if technical_indicators.rsi > 70 %}text-red-400{% elif technical_indicators.rsi < 30 %}text-green-400{% else %}text-yellow-400{% endif %}">
+                    {% if technical_indicators.rsi > 70 %}Overbought - Caution Advised
+                    {% elif technical_indicators.rsi < 30 %}Oversold - Accumulation Zone
+                    {% else %}Neutral - Balanced Momentum{% endif %}
+                </p>
+            </div>
+            
+            <!-- 5-Day SMA Card - Using actual calculated value -->
+            <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs uppercase tracking-wide">5-Day SMA</span>
+                    <span class="text-sm {% if market_data.close > technical_indicators.sma5 %}text-green-400{% else %}text-red-400{% endif %}">●</span>
+                </div>
+                <p class="text-white text-3xl font-bold">{{ technical_indicators.sma5|floatformat:1 }}</p>
+                <p class="text-xs mt-2 {% if market_data.close > technical_indicators.sma5 %}text-green-400{% else %}text-red-400{% endif %}">
+                    {% if market_data.close > technical_indicators.sma5 %}Bullish - Above MA{% else %}Bearish - Below MA{% endif %}
+                </p>
+            </div>
+            
+            <!-- 20-Day SMA Card - Using actual calculated value -->
+            <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs uppercase tracking-wide">20-Day SMA</span>
+                    <span class="text-sm {% if market_data.close > technical_indicators.sma20 %}text-green-400{% else %}text-red-400{% endif %}">●</span>
+                </div>
+                <p class="text-white text-3xl font-bold">{{ technical_indicators.sma20|floatformat:1 }}</p>
+                <p class="text-xs mt-2 {% if market_data.close > technical_indicators.sma20 %}text-green-400{% else %}text-red-400{% endif %}">
+                    {% if market_data.close > technical_indicators.sma20 %}Bullish - Above MA{% else %}Bearish - Below MA{% endif %}
+                </p>
+            </div>
+            
+            <!-- Support Card - Using actual calculated value -->
+            <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs uppercase tracking-wide">Support Level</span>
+                    <span class="text-sm text-blue-400">▼</span>
+                </div>
+                <p class="text-white text-3xl font-bold">{{ technical_indicators.support|floatformat:0 }}</p>
+                <p class="text-xs mt-2 text-blue-400">Key Buying Zone</p>
+            </div>
+            
+            <!-- Resistance Card - Using actual calculated value -->
+            <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 border border-gray-700">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-xs uppercase tracking-wide">Resistance Level</span>
+                    <span class="text-sm text-orange-400">▲</span>
+                </div>
+                <p class="text-white text-3xl font-bold">{{ technical_indicators.resistance|floatformat:0 }}</p>
+                <p class="text-xs mt-2 text-orange-400">Key Selling Zone</p>
             </div>
         </div>
-        {% else %}
-        <div class="mt-4 p-3 bg-yellow-900/20 rounded-lg">
-            <p class="text-yellow-400 text-xs">⚠️ News feeds temporarily unavailable. Analysis based on technical data only.</p>
-        </div>
-        {% endif %}
     </div>
-    {% endif %}
+    
+   <!-- //////////////////////////-->
+
+<!-- Detailed Technical Analysis in Clean Format -->
+<div class="bg-gray-800 rounded-xl p-5">
+    <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-700">
+        <h3 class="text-white font-semibold text-lg">📈 Market Analysis Summary</h3>
+    </div>
+    
+    <!-- Market Sentiment Card -->
+    <div class="mb-5 p-4 rounded-xl bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-700/30">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+                <p class="text-gray-400 text-xs uppercase tracking-wide">Market Sentiment</p>
+                <p class="text-2xl font-bold 
+                    {% if technical_indicators.rsi > 70 %}text-red-400
+                    {% elif technical_indicators.rsi < 30 %}text-green-400
+                    {% else %}text-yellow-400{% endif %}">
+                    {% if technical_indicators.rsi > 70 %}BEARISH
+                    {% elif technical_indicators.rsi < 30 %}BULLISH
+                    {% else %}NEUTRAL{% endif %}
+                </p>
+                <p class="text-gray-400 text-sm mt-1">
+                    {% if technical_indicators.rsi > 70 %}Overbought conditions - Caution advised
+                    {% elif technical_indicators.rsi < 30 %}Oversold conditions - Accumulation opportunity
+                    {% else %}Neutral momentum - Balanced market{% endif %}
+                </p>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-400 text-xs">Current Level</p>
+                <p class="text-white text-2xl font-bold">{{ market_data.close|floatformat:2 }}</p>
+                <p class="text-gray-500 text-xs">NEPSE Index</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+            <p class="text-gray-400 text-xs">Today's Change</p>
+            <p class="{% if market_data.point_change >= 0 %}text-green-400{% else %}text-red-400{% endif %} font-bold text-lg">
+                {{ market_data.point_change|floatformat:2 }}
+            </p>
+            <p class="text-gray-500 text-xs">{{ market_data.percent_change|floatformat:2 }}%</p>
+        </div>
+        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+            <p class="text-gray-400 text-xs">Day Range</p>
+            <p class="text-white font-bold text-lg">{{ market_data.low|floatformat:0 }} - {{ market_data.high|floatformat:0 }}</p>
+            <p class="text-gray-500 text-xs">Intraday range</p>
+        </div>
+        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+            <p class="text-gray-400 text-xs">Market Trend</p>
+            <p class="{% if market_data.trend == 'Upward' %}text-green-400{% elif market_data.trend == 'Downward' %}text-red-400{% else %}text-yellow-400{% endif %} font-bold text-lg">
+                {{ market_data.trend }}
+            </p>
+            <p class="text-gray-500 text-xs">Short-term direction</p>
+        </div>
+        <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+            <p class="text-gray-400 text-xs">Price Range</p>
+            <p class="text-white font-bold text-lg">{{ technical_indicators.support|floatformat:0 }} - {{ technical_indicators.resistance|floatformat:0 }}</p>
+            <p class="text-gray-500 text-xs">30-day range</p>
+        </div>
+    </div>
+    
+    <!-- Key Levels to Watch -->
+    <div class="mb-5">
+        <h4 class="text-gray-300 font-semibold text-sm mb-3">🎯 Key Levels to Watch</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+                <p class="text-gray-400 text-xs">Immediate Support</p>
+                <p class="text-white font-bold text-xl">{{ technical_indicators.support|floatformat:0 }}</p>
+                <p class="text-green-400 text-xs">Key buying zone</p>
+            </div>
+            <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+                <p class="text-gray-400 text-xs">Immediate Resistance</p>
+                <p class="text-white font-bold text-xl">{{ technical_indicators.resistance|floatformat:0 }}</p>
+                <p class="text-red-400 text-xs">Profit booking zone</p>
+            </div>
+            <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+                <p class="text-gray-400 text-xs">Stop Loss</p>
+                <p class="text-white font-bold text-xl">{{ technical_indicators.support|add:-20|floatformat:0 }}</p>
+                <p class="text-gray-400 text-xs">For long positions</p>
+            </div>
+            <div class="bg-gray-700/50 rounded-lg p-3 text-center">
+                <p class="text-gray-400 text-xs">Target</p>
+                <p class="text-white font-bold text-xl">{{ technical_indicators.resistance|add:30|floatformat:0 }}</p>
+                <p class="text-gray-400 text-xs">Near term target</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Investment Recommendation (Dynamic based on RSI) -->
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <!-- Investment Recommendation Card - Using actual values -->
+    <div class="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-5 border border-blue-700/30">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">💡</span>
+            <h4 class="text-white font-semibold text-lg">Investment Recommendation</h4>
+        </div>
+        <p class="text-gray-300 text-sm leading-relaxed">
+            {% if technical_indicators.rsi > 70 %}
+                    RSI at {{ technical_indicators.rsi|floatformat:1 }} indicates overbought conditions. Consider booking partial profits at resistance level ({{ technical_indicators.resistance|floatformat:0 }}). Wait for a pullback to {{ technical_indicators.support|floatformat:0 }} before fresh entry. Recommended action: Reduce exposure by 20-30%.
+                    {% elif technical_indicators.rsi < 30 %}
+                    RSI at {{ technical_indicators.rsi|floatformat:1 }} indicates oversold conditions. This may be a good accumulation opportunity near support ({{ technical_indicators.support|floatformat:0 }}). Recommended action: Start building positions gradually with stop loss below {{ technical_indicators.support|add:-20|floatformat:0 }}.
+                    {% else %}
+                    RSI at {{ technical_indicators.rsi|floatformat:1 }} indicates neutral momentum. Market is in consolidation phase. Recommended action: Hold quality positions with stop loss at {{ technical_indicators.support|add:-20|floatformat:0 }}. Add on dips to {{ technical_indicators.support|floatformat:0 }}.
+                    {% endif %}
+                    <br><br> <br>
+
+                    {% if technical_indicators.rsi > 70 %}
+                    <span class="text-xs px-2 py-1 bg-red-900/50 text-red-300 rounded-full">⚠️ Overbought Alert</span>
+                    <span class="text-xs px-2 py-1 bg-yellow-900/50 text-yellow-300 rounded-full">📉 Profit Booking Recommended</span>
+                    {% elif technical_indicators.rsi < 30 %}
+                    <span class="text-xs px-2 py-1 bg-green-900/50 text-green-300 rounded-full">✅ Accumulation Zone</span>
+                    <span class="text-xs px-2 py-1 bg-blue-900/50 text-blue-300 rounded-full">📈 Buying Opportunity</span>
+                    {% else %}
+                    <span class="text-xs px-2 py-1 bg-blue-900/50 text-blue-300 rounded-full">⚖️ Neutral Zone</span>
+                    <span class="text-xs px-2 py-1 bg-yellow-900/50 text-yellow-300 rounded-full">📊 Wait for Direction</span>
+                    {% endif %}
+                    <span class="text-xs px-2 py-1 bg-purple-900/50 text-purple-300 rounded-full">🎯 Target: {{ technical_indicators.resistance|add:30|floatformat:0 }}</span>
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-3 border-t border-blue-800/30">
+            <div>
+                <p class="text-gray-400 text-xs">Stop Loss</p>
+                <p class="text-white font-semibold">Below {{ technical_indicators.support|add:-20|floatformat:0 }} for long positions</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Target</p>
+                <p class="text-white font-semibold">{{ technical_indicators.resistance|add:30|floatformat:0 }} in near term</p>
+            </div>
+        </div>
+    </div>
+  
+    
+</div>
+{% endif %}
+
+<!-- .................................................-->
+
     
     <!-- SECTION 4: AI-POWERED DEEP ANALYSIS (from ai_market_analyzer) -->
     {% if ai_analysis and ai_analysis.analysis %}
@@ -387,213 +590,10 @@
         <a href="/simulator" class="inline-flex items-center gap-1 text-xs text-yellow-400 mt-4 hover:gap-2 transition-all">Try Simulator <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
       </div>
 
-      <!-- Feature 5: Watchlist -->
-      <div class="card p-6 group reveal" style="transition-delay:0.1s">
-        <div class="w-11 h-11 rounded-xl bg-pink-500/15 flex items-center justify-center mb-4 group-hover:bg-pink-500/25 transition-colors">
-          <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-2">Watchlist</h3>
-        <p class="text-sm text-slate-500 leading-relaxed">Pin your favorite stocks and get instant alerts when they hit your target price or show significant movement.</p>
-        <a href="/watchlist" class="inline-flex items-center gap-1 text-xs text-pink-400 mt-4 hover:gap-2 transition-all">Create Watchlist <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
-      </div>
-
-      <!-- Feature 6: Market Insights -->
-      <div class="card p-6 group reveal" style="transition-delay:0.15s">
-        <div class="w-11 h-11 rounded-xl bg-purple-500/15 flex items-center justify-center mb-4 group-hover:bg-purple-500/25 transition-colors">
-          <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-2">Market Insights</h3>
-        <p class="text-sm text-slate-500 leading-relaxed">Weekly analysis, sector breakdowns, and AI-powered market insights tailored to the NEPSE ecosystem.</p>
-        <a href="/insights" class="inline-flex items-center gap-1 text-xs text-purple-400 mt-4 hover:gap-2 transition-all">View Insights <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
-      </div>
-
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════
-     SECTION 4 — WHY CHOOSE US
-════════════════════════════════════════════════════ -->
-<section id="why" class="py-20 lg:py-28 bg-[#111827]/50 border-y border-slate-800/60">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
 
-      <!-- Left: copy -->
-      <div class="reveal">
-        <span class="section-label">Why NEPSE Sathi</span>
-        <h2 class="text-3xl lg:text-4xl font-bold text-white mt-3 mb-5">Built for Nepali Investors, by People Who Understand NEPSE</h2>
-        <p class="text-slate-400 leading-relaxed mb-5">Most stock platforms are built for global markets and leave Nepali investors to figure things out alone. NEPSE Sathi is different — we focus entirely on the Nepal Stock Exchange, in context you understand.</p>
-        <p class="text-slate-400 leading-relaxed mb-8">Whether you're applying for an IPO for the first time or analyzing sector rotation trends, we have the tools and lessons for every level.</p>
-        <ul class="space-y-3">
-          <li class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-gain/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-gain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
-            <span class="text-sm text-slate-400">NEPSE-specific content — not generic global stock market advice</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-gain/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-gain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
-            <span class="text-sm text-slate-400">Real data from NEPSE — live prices, historical charts, fundamentals</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-gain/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-gain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
-            <span class="text-sm text-slate-400">Risk-free simulator to build confidence before investing real money</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-gain/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-3 h-3 text-gain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>
-            <span class="text-sm text-slate-400">Beginner to advanced — grow with the platform at your own pace</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Right: Stat cards -->
-      <div class="flex flex-col gap-4 reveal" style="transition-delay:0.1s">
-
-        <div class="card p-6 flex items-center gap-5">
-          <div class="w-14 h-14 rounded-2xl bg-accent/15 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-          </div>
-          <div>
-            <div class="text-3xl font-bold text-white" data-count="100" data-suffix="+">0+</div>
-            <div class="text-sm text-slate-500 mt-0.5">Listed Companies Tracked</div>
-          </div>
-        </div>
-
-        <div class="card p-6 flex items-center gap-5">
-          <div class="w-14 h-14 rounded-2xl bg-indigo-500/15 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-          </div>
-          <div>
-            <div class="text-3xl font-bold text-white" data-count="50" data-suffix="+">0+</div>
-            <div class="text-sm text-slate-500 mt-0.5">Structured Learning Modules</div>
-          </div>
-        </div>
-
-        <div class="card p-6 flex items-center gap-5">
-          <div class="w-14 h-14 rounded-2xl bg-gain/15 flex items-center justify-center flex-shrink-0">
-            <svg class="w-7 h-7 text-gain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-          </div>
-          <div>
-            <div class="text-3xl font-bold text-white">Smart</div>
-            <div class="text-sm text-slate-500 mt-0.5">Investor Tools &amp; Analytics</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════
-     SECTION 5 — LEARNING PREVIEW
-════════════════════════════════════════════════════ -->
-<section id="learn-preview" class="py-20 lg:py-28">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 reveal">
-      <div>
-        <span class="section-label">Start Learning</span>
-        <h2 class="text-3xl font-bold text-white mt-3">Popular Lessons</h2>
-      </div>
-      <a href="/learn" class="text-sm text-accent hover:text-accent-hover flex items-center gap-1 transition-colors">
-        All Lessons <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-      </a>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-      <!-- Lesson 1 -->
-      <a href="/learn/what-is-nepse" class="card p-5 group flex flex-col reveal" style="transition-delay:0.05s">
-        <div class="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div class="flex items-center gap-2 mb-3">
-          <span class="badge badge-gain">Beginner</span>
-          <span class="text-[10px] text-slate-500">5 min read</span>
-        </div>
-        <h3 class="text-sm font-semibold text-white mb-2 group-hover:text-accent transition-colors">What is NEPSE?</h3>
-        <p class="text-xs text-slate-500 leading-relaxed flex-1">Understand how Nepal's stock exchange works, who regulates it, and why it matters for your financial future.</p>
-        <div class="flex items-center gap-1 text-xs text-accent mt-4 group-hover:gap-2 transition-all">Start <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></div>
-      </a>
-
-      <!-- Lesson 2 -->
-      <a href="/learn/ipo-basics" class="card p-5 group flex flex-col reveal" style="transition-delay:0.1s">
-        <div class="w-10 h-10 rounded-xl bg-yellow-500/15 flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        </div>
-        <div class="flex items-center gap-2 mb-3">
-          <span class="badge badge-gain">Beginner</span>
-          <span class="text-[10px] text-slate-500">8 min read</span>
-        </div>
-        <h3 class="text-sm font-semibold text-white mb-2 group-hover:text-yellow-400 transition-colors">IPO Basics</h3>
-        <p class="text-xs text-slate-500 leading-relaxed flex-1">Learn how to apply for IPOs in Nepal using ASBA, understand allotment ratios, and what to do after listing.</p>
-        <div class="flex items-center gap-1 text-xs text-yellow-400 mt-4 group-hover:gap-2 transition-all">Start <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></div>
-      </a>
-
-      <!-- Lesson 3 -->
-      <a href="/learn/candlestick-charts" class="card p-5 group flex flex-col reveal" style="transition-delay:0.15s">
-        <div class="w-10 h-10 rounded-xl bg-indigo-500/15 flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        </div>
-        <div class="flex items-center gap-2 mb-3">
-          <span class="badge badge-warn">Intermediate</span>
-          <span class="text-[10px] text-slate-500">12 min read</span>
-        </div>
-        <h3 class="text-sm font-semibold text-white mb-2 group-hover:text-indigo-400 transition-colors">Reading Candlestick Charts</h3>
-        <p class="text-xs text-slate-500 leading-relaxed flex-1">Master the visual language of markets — identify bullish reversals, bearish patterns, and momentum signals.</p>
-        <div class="flex items-center gap-1 text-xs text-indigo-400 mt-4 group-hover:gap-2 transition-all">Start <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></div>
-      </a>
-
-      <!-- Lesson 4 -->
-      <a href="/learn/understanding-pe-ratio" class="card p-5 group flex flex-col reveal" style="transition-delay:0.2s">
-        <div class="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center mb-4">
-          <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
-        </div>
-        <div class="flex items-center gap-2 mb-3">
-          <span class="badge badge-warn">Intermediate</span>
-          <span class="text-[10px] text-slate-500">10 min read</span>
-        </div>
-        <h3 class="text-sm font-semibold text-white mb-2 group-hover:text-purple-400 transition-colors">Understanding PE Ratio</h3>
-        <p class="text-xs text-slate-500 leading-relaxed flex-1">Decode what Price-to-Earnings ratio really tells you and how to use it to compare NEPSE stocks intelligently.</p>
-        <div class="flex items-center gap-1 text-xs text-purple-400 mt-4 group-hover:gap-2 transition-all">Start <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></div>
-      </a>
-
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════
-     SECTION 6 — CTA BANNER
-════════════════════════════════════════════════════ -->
-<section id="cta" class="py-16 lg:py-24">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="relative rounded-3xl overflow-hidden reveal">
-      <div class="absolute inset-0 bg-gradient-to-br from-[#0c2a4a] via-[#0F172A] to-[#0c1e35]"></div>
-      <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-accent/20 blur-[80px]"></div>
-      <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-indigo-500/15 blur-[80px]"></div>
-      <div class="absolute inset-0 opacity-20"><svg width="100%" height="100%"><defs><pattern id="cta-grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#cta-grid)"/></svg></div>
-      <div class="absolute inset-0 rounded-3xl border border-accent/20 pointer-events-none"></div>
-
-      <div class="relative px-8 py-16 lg:py-20 text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-accent text-xs font-semibold mb-6">
-          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-          Free to Get Started
-        </div>
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 max-w-3xl mx-auto leading-tight">
-          Start Your NEPSE Journey<br/><span class="gradient-text">Today</span>
-        </h2>
-        <p class="text-slate-400 text-lg mb-8 max-w-xl mx-auto">Join thousands of Nepali investors who are learning, analyzing, and growing with NEPSE Sathi — completely free.</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="/signup" class="btn-primary text-base px-7 py-3 glow-pulse">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-            Create Free Account
-          </a>
-          <a href="/companies" class="btn-ghost text-base px-7 py-3">
-            Start Exploring
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </a>
-        </div>
-        <p class="text-slate-600 text-xs mt-8">No credit card required · Free forever plan · Made for Nepal</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 {% endblock %}
