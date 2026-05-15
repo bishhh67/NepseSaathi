@@ -7,6 +7,14 @@ from pathlib import Path
 from datetime import datetime
 import logging
 from django.http import Http404
+
+import subprocess
+import os
+
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
 logger = logging.getLogger(__name__)
 
 # ============================================
@@ -287,3 +295,53 @@ def lesson_detail(request, lesson_number):
         return render(request, template, {'lesson_number': lesson_number})
     except:
         raise Http404(f"Lesson {lesson_number} not found")
+    
+
+
+
+
+
+## for live market 
+
+def live_market(request):
+    """Main live market page"""
+    return render(request, 'livemarket/index.html')
+
+def live_market_chart(request):
+    """Chart page (embedded from char.html)"""
+    return render(request, 'livemarket/char.html')
+
+@csrf_exempt
+def trigger_scraper(request):
+    """Trigger the scraper from Django"""
+    try:
+        # Get the path to scrap_all.py
+        scraper_path = os.path.join(settings.BASE_DIR, 'templates', 'livemarket', 'scrap_all.py')
+        
+        # Run the scraper
+        result = subprocess.run(
+            ['python', scraper_path], 
+            capture_output=True, 
+            text=True,
+            cwd=os.path.dirname(scraper_path)
+        )
+        
+        if result.returncode == 0:
+            return JsonResponse({"status": "success", "message": "Data synced"})
+        else:
+            error_msg = result.stderr or "Unknown scraper error"
+            return JsonResponse({"status": "error", "message": error_msg}, status=500)
+            
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+def get_market_data(request):
+    """Serve the market_data.js file directly"""
+    js_file_path = os.path.join(settings.BASE_DIR, 'templates', 'livemarket', 'market_data.js')
+    
+    if os.path.exists(js_file_path):
+        with open(js_file_path, 'r') as f:
+            content = f.read()
+        return HttpResponse(content, content_type='application/javascript')
+    else:
+        return HttpResponse("window.LATEST_MARKET_DATA = {};", content_type='application/javascript')

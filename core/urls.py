@@ -20,4 +20,11 @@ urlpatterns = [
     path('learn/lesson/3/', views.lesson_detail, {'lesson_number': 3}, name='lesson3'),
     path('learn/lesson/4/', views.lesson_detail, {'lesson_number': 4}, name='lesson4'),
     path('learn/lesson/5/', views.lesson_detail, {'lesson_number': 5}, name='lesson5'),
+
+
+
+    path('livemarket/', views.live_market, name='live_market'),
+    path('livemarket/chart/', views.live_market_chart, name='live_market_chart'),
+    path('api/scrape/', views.trigger_scraper, name='trigger_scraper'),
+    path('api/market-data/', views.get_market_data, name='get_market_data'),
 ]

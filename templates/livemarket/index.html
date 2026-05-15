@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Live Market - NEPSE Sathi{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/livemarket.css' %}">
+<style>
+    /* Your existing CSS from index.html */
+    :root {
+        --bg-deep: #06090f;
+        --card-glass: rgba(15, 23, 42, 0.6);
+        --accent-cyan: #00f2ff;
+        --accent-purple: #7000ff;
+        --gain-glow: #00ff88;
+        --loss-glow: #ff3366;
+        --text-primary: #e2e8f0;
+        --text-muted: #94a3b8;
+    }
+
+    body {
+        background: radial-gradient(circle at top right, #111827, var(--bg-deep));
+        color: var(--text-primary);
+        font-family: 'Inter', -apple-system, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    /* Copy ALL your CSS from index.html here */
+    .dashboard-container { max-width: 1400px; margin: 0 auto; padding: 20px 25px; }
+    /* ... rest of your CSS ... */
+
+
+
+    /* NEPSE Sathi — Main Stylesheet */
+
+:root {
+  --c-primary:   #0F172A;
+  --c-secondary: #1E293B;
+  --c-accent:    #0EA5E9;
+  --c-gain:      #22C55E;
+  --c-loss:      #EF4444;
+  --c-muted:     #64748B;
+}
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0F172A; }
+::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+/* Selection */
+::selection { background: rgba(14,165,233,0.25); color: #fff; }
+
+/* Remove default outline, add custom focus */
+*:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ---------- Reusable Components ---------- */
+
+.card {
+  background: #1E293B;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  border-color: rgba(14,165,233,0.2);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: var(--c-accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0.625rem;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 20px rgba(14,165,233,0.25);
+}
+.btn-primary:hover {
+  background: #38BDF8;
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(14,165,233,0.4);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  color: #cbd5e1;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 0.625rem;
+  transition: all 0.2s;
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-gain  { background: rgba(34,197,94,0.15);  color: #4ade80; }
+.badge-loss  { background: rgba(239,68,68,0.15);   color: #f87171; }
+.badge-info  { background: rgba(14,165,233,0.15);  color: #38bdf8; }
+.badge-warn  { background: rgba(234,179,8,0.15);   color: #facc15; }
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #fff 0%, var(--c-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section divider */
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+
+/* Mini chart line (SVG sparkline look) */
+.sparkline { stroke: var(--c-gain); fill: none; stroke-width: 2; }
+.sparkline-loss { stroke: var(--c-loss); }
+
+/* Ticker tape animation */
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-wrap { overflow: hidden; position: relative; }
+.ticker-inner { display: flex; animation: ticker 30s linear infinite; width: max-content; }
+.ticker-wrap:hover .ticker-inner { animation-play-state: paused; }
+
+/* Light theme overrides */
+html.light body                  { background: #f1f5f9; color: #0f172a; }
+html.light .card                 { background: #fff; border-color: #e2e8f0; }
+html.light #navbar-bg.scrolled   { background: rgba(241,245,249,0.9) !important; }
+html.light .btn-ghost            { color: #334155; border-color: #cbd5e1; }
+html.light .btn-ghost:hover      { background: #e2e8f0; }
+html.light .section-label        { color: #0369a1; }
+
+/* Fade-in on scroll (JS toggled) */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* Dashboard mockup specific */
+.chart-bar { transition: height 0.4s ease; }
+.chart-line-path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawLine 2s ease forwards 0.5s; }
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
+
+/* Glow pulse on accent elements */
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 12px rgba(14,165,233,0.3); }
+  50%      { box-shadow: 0 0 28px rgba(14,165,233,0.6); }
+}
+.glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
+
+
+
+
+/* Add these to your existing CSS */
+.btn-primary {
+    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+}
+
+.btn-ghost {
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(14, 165, 233, 0.5);
+    transform: translateY(-2px);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Your entire HTML content from index.html goes here -->
+<!-- But update the JavaScript to use Django URLs -->
+
+<div id="loader-overlay">
+    <div class="cyber-spinner"></div>
+    <p id="loader-text" style="margin-top: 20px; font-weight: 700; color: var(--accent-cyan); letter-spacing: 2px;">LIVE_METRIC_SYNC...</p>
+</div>
+
+<div class="dashboard-container">
+    <header>
+        <div class="logo"><span>NEPSE</span> SATHI</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Terminal Online</div>
+    </header>
+
+    <div class="chart-container">
+        <iframe src="/livemarket/chart/"></iframe>
+    </div>
+
+    <div class="control-bar">
+        <div class="status-info">DATA_STATUS: <span id="last-update">CONNECTING...</span></div>
+        <button class="btn-refresh" onclick="refreshMarket()">MANUAL REFRESH</button>
+    </div>
+
+    <div class="tables-grid" id="tables-grid"></div>
+</div>
+
+<div id="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 20px;">
+            <h2 id="modal-title" style="margin:0; font-weight: 800;">DETAILED_METRICS</h2>
+            <button class="btn-refresh" onclick="closeModal()">CLOSE</button>
+        </div>
+        <div id="modal-table-container"></div>
+    </div>
+</div>
+
+<script>
+    const CATEGORIES = [
+        { key: 'gainers', name: 'TOP_GAINERS', cols: ['symbol', 'close', 'diff_per'], headers: ['SYM', 'LTP', 'CHG%'] },
+        { key: 'losers', name: 'TOP_LOSERS', cols: ['symbol', 'close', 'diff_per'], headers: ['SYM', 'LTP', 'CHG%'] },
+        { key: 'turnovers', name: 'TURNOVER_LEADERS', cols: ['symbol', 'close', 'traded_amount'], headers: ['SYM', 'LTP', 'VALUE'] },
+        { key: 'traded', name: 'VOLUME_LEADERS', cols: ['symbol', 'close', 'traded_quantity'], headers: ['SYM', 'LTP', 'VOLUME'] },
+        { key: 'transactions', name: 'TRANSACTION_COUNT', cols: ['symbol', 'close', 'no_trade'], headers: ['SYM', 'LTP', 'TXN'] },
+        { key: 'brokers', name: 'TOP_BROKERS', cols: ['number', 'name', 'totalAmount'], headers: ['ID', 'BROKER_NAME', 'TOTAL_AMT'] }
+    ];
+
+    async function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSynced = urlParams.get('synced');
+
+        if (isSynced === 'true') {
+            loadDataBridge();
+        } else {
+            console.log("Auto-Syncing on Open...");
+            refreshMarket(true);
+        }
+    }
+
+    function loadDataBridge() {
+        const script = document.createElement('script');
+        script.src = "/api/market-data/?t=" + new Date().getTime();
+        script.onload = () => {
+            document.getElementById('last-update').innerText = "LIVE_SYNCED";
+            renderDashboard();
+        };
+        script.onerror = () => refreshMarket(true);
+        document.head.appendChild(script);
+    }
+
+    function renderDashboard() {
+        const grid = document.getElementById('tables-grid');
+        grid.innerHTML = '';
+        const data = window.LATEST_MARKET_DATA;
+
+        CATEGORIES.forEach(cat => {
+            const catData = data[cat.key];
+            const card = document.createElement('div');
+            card.className = 'table-card';
+            let html = `<div class="card-header"><h2>${cat.name}</h2></div>`;
+
+            if (catData && catData.data && catData.data.length > 0) {
+                html += `<table class="preview-table"><thead><tr>`;
+                cat.headers.forEach(h => html += `<th>${h}</th>`);
+                html += `</thead><tbody>`;
+                catData.data.slice(0, 6).forEach(row => {
+                    let rowClass = (cat.key === 'gainers') ? 'row-gain' : (cat.key === 'losers' ? 'row-loss' : '');
+                    html += `<tr class="${rowClass}">`;
+                    cat.cols.forEach(col => html += `<td>${row[col] || '-'}</td>`);
+                    html += `</tr>`;
+                });
+                html += `</tbody></table>
+                    <div style="text-align:right; margin-top:15px;">
+                        <button class="btn-refresh" style="font-size:0.7rem; padding:5px 15px;" onclick="openModal('${cat.key}')">EXPAND</button>
+                    </div>`;
+            } else {
+                html += `<div style="padding:40px; text-align:center; opacity:0.3;">[!] OFFLINE</div>`;
+            }
+            card.innerHTML = html;
+            grid.appendChild(card);
+        });
+    }
+
+    async function refreshMarket(isAuto = false) {
+        const loader = document.getElementById('loader-overlay');
+        loader.style.display = 'flex';
+
+        try {
+           const response = await fetch("/api/scrape/");
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = window.location.pathname + '?synced=true';
+            } else {
+                alert("CRITICAL_SYNC_ERROR:\n" + (result.message || "Unknown Server Error"));
+                loader.style.display = 'none';
+            }
+        } catch (e) {
+            alert("SERVER_DISCONNECTED");
+            loader.style.display = 'none';
+        }
+    }
+
+    function openModal(key) {
+        const data = window.LATEST_MARKET_DATA[key];
+        const container = document.getElementById('modal-table-container');
+        document.getElementById('modal-title').innerText = `${key.toUpperCase()}_SCAN`;
+        let html = '<table class="preview-table" style="font-size:1rem;"><thead><tr>';
+        const headers = Object.keys(data.data[0]);
+        headers.forEach(h => html += `<th>${h}</th>`);
+        html += '</thead><tbody>';
+        data.data.forEach(row => {
+            html += `<tr>`;
+            headers.forEach(h => html += `<td>${row[h]}</td>`);
+            html += `</tr>`;
+        });
+        container.innerHTML = html + '</tbody></table>';
+        document.getElementById('modal-overlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() { 
+        document.getElementById('modal-overlay').style.display = 'none'; 
+        document.body.style.overflow = 'auto'; 
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+{% endblock %}
