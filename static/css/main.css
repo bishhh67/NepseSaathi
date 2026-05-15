@@ -1,193 +1,288 @@
-/* NEPSE Sathi — Main Stylesheet */
+/* NEPSE Sathi — Professional Stock Market Theme */
+/* Clean, human-made design - No flashy gradients, no heavy shadows */
 
 :root {
-  --c-primary:   #0F172A;
-  --c-secondary: #1E293B;
-  --c-accent:    #0EA5E9;
-  --c-gain:      #22C55E;
-  --c-loss:      #EF4444;
-  --c-muted:     #64748B;
+  --bg-white:     #FFFFFF;
+  --bg-light:     #F8F9FA;
+  --bg-gray:      #F1F3F5;
+  --border-light: #E9ECEF;
+  --text-primary: #1A1F36;
+  --text-secondary: #5A677A;
+  --text-muted:   #8A94A6;
+  --success:      #10B981;
+  --danger:       #EF4444;
+  --warning:      #F59E0B;
+  --info:         #3B82F6;
+  --accent:       #2563EB;
 }
 
-/* Smooth scrolling */
-html { scroll-behavior: smooth; }
+/* Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0F172A; }
-::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #334155; }
+body {
+  background: var(--bg-light);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+}
 
-/* Selection */
-::selection { background: rgba(14,165,233,0.25); color: #fff; }
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
 
-/* Remove default outline, add custom focus */
-*:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-radius: 4px; }
-
-/* ---------- Reusable Components ---------- */
-
+/* Cards - Clean white cards with subtle border */
 .card {
-  background: #1E293B;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 1rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-  border-color: rgba(14,165,233,0.2);
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 
+.card:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-color: #D1D5DB;
+}
+
+/* Buttons */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  background: var(--c-accent);
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border-radius: 0.625rem;
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 0 20px rgba(14,165,233,0.25);
+  padding: 0.6rem 1.25rem;
+  background: var(--accent);
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  border: none;
+  transition: background 0.2s;
+  cursor: pointer;
 }
+
 .btn-primary:hover {
-  background: #38BDF8;
-  transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(14,165,233,0.4);
+  background: #1D4ED8;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-ghost {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  color: #cbd5e1;
+  padding: 0.6rem 1.25rem;
+  background: transparent;
+  color: var(--text-secondary);
   font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
   transition: all 0.2s;
-}
-.btn-ghost:hover {
-  background: rgba(255,255,255,0.05);
-  color: #fff;
-  border-color: rgba(255,255,255,0.2);
+  cursor: pointer;
 }
 
-/* Badge */
+.btn-ghost:hover {
+  background: var(--bg-gray);
+  border-color: #D1D5DB;
+  color: var(--text-primary);
+  transform: none;
+}
+
+/* Badges */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.65rem;
-  border-radius: 99px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
   font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.badge-gain  { background: rgba(34,197,94,0.15);  color: #4ade80; }
-.badge-loss  { background: rgba(239,68,68,0.15);   color: #f87171; }
-.badge-info  { background: rgba(14,165,233,0.15);  color: #38bdf8; }
-.badge-warn  { background: rgba(234,179,8,0.15);   color: #facc15; }
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #fff 0%, var(--c-accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
-/* Section divider */
+.badge-gain {
+  background: #DEF7EC;
+  color: #03543F;
+}
+
+.badge-loss {
+  background: #FDE2E2;
+  color: #9B1C1C;
+}
+
+.badge-neutral {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.badge-info {
+  background: #E0F2FE;
+  color: #075985;
+}
+
+/* Section Label */
 .section-label {
   font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--c-accent);
+  color: var(--text-muted);
 }
 
-
-/* Mini chart line (SVG sparkline look) */
-.sparkline { stroke: var(--c-gain); fill: none; stroke-width: 2; }
-.sparkline-loss { stroke: var(--c-loss); }
-
-/* Ticker tape animation */
-@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.ticker-wrap { overflow: hidden; position: relative; }
-.ticker-inner { display: flex; animation: ticker 30s linear infinite; width: max-content; }
-.ticker-wrap:hover .ticker-inner { animation-play-state: paused; }
-
-/* Light theme overrides */
-html.light body                  { background: #f1f5f9; color: #0f172a; }
-html.light .card                 { background: #fff; border-color: #e2e8f0; }
-html.light #navbar-bg.scrolled   { background: rgba(241,245,249,0.9) !important; }
-html.light .btn-ghost            { color: #334155; border-color: #cbd5e1; }
-html.light .btn-ghost:hover      { background: #e2e8f0; }
-html.light .section-label        { color: #0369a1; }
-
-/* Fade-in on scroll (JS toggled) */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
-.reveal.visible { opacity: 1; transform: none; }
-
-/* Dashboard mockup specific */
-.chart-bar { transition: height 0.4s ease; }
-.chart-line-path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: drawLine 2s ease forwards 0.5s; }
-@keyframes drawLine { to { stroke-dashoffset: 0; } }
-
-/* Glow pulse on accent elements */
-@keyframes glowPulse {
-  0%,100% { box-shadow: 0 0 12px rgba(14,165,233,0.3); }
-  50%      { box-shadow: 0 0 28px rgba(14,165,233,0.6); }
-}
-.glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
-
-
-
-
-/* Add these to your existing CSS */
-.btn-primary {
-    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
-}
-
-.btn-ghost {
-    background: rgba(30, 41, 59, 0.5);
-    backdrop-filter: blur(10px);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid rgba(51, 65, 85, 0.5);
-    transition: all 0.3s ease;
-}
-
-.btn-ghost:hover {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(14, 165, 233, 0.5);
-    transform: translateY(-2px);
-}
-
+/* Gradient text - keep minimal */
 .gradient-text {
-    background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  color: var(--accent);
+  background: none;
+  -webkit-text-fill-color: var(--accent);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* Focus outline */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reveal animation - subtle */
+.reveal {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Ticker tape */
+.ticker-wrap {
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.ticker-inner {
+  display: flex;
+  animation: ticker 30s linear infinite;
+  width: max-content;
+}
+
+.ticker-wrap:hover .ticker-inner {
+  animation-play-state: paused;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Chart container */
+.chart-container {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+}
+
+td {
+  padding: 0.75rem 0.5rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Light theme is default - no dark mode needed */
+/* Remove dark mode overrides */
+
+/* Market data specific */
+.market-stat {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.market-stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.market-stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Positive/Negative colors */
+.text-green {
+  color: var(--success);
+}
+
+.text-red {
+  color: var(--danger);
+}
+
+.text-yellow {
+  color: var(--warning);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 10px;
+  }
+  
+  .market-stat-value {
+    font-size: 1.25rem;
+  }
 }
