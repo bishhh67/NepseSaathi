@@ -5,54 +5,43 @@
 
 {% block extra_head %}
 <style>
-    /* Critical styles - paste these directly */
     .live-market-container {
         max-width: 1400px;
         margin: 0 auto;
         padding: 100px 24px 40px;
     }
     
-    .control-bar {
-        background: #1E293B;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .btn-refresh {
-        background: #C9A84C;
-        color: #0F172A;
-        border: none;
-        padding: 10px 25px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    
-    .btn-refresh:hover {
-        background: #B8960C;
-    }
-    
     .tables-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
         gap: 24px;
     }
     
     .table-card {
-        background: #1E293B;
-        border-radius: 16px;
-        padding: 20px;
-        border: 1px solid #334155;
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+    }
+
+    .table-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: var(--primary);
     }
     
     .table-card h2 {
-        color: #C9A84C;
-        font-size: 1.2rem;
-        margin-bottom: 16px;
+        color: var(--text-main);
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
     .preview-table {
@@ -62,32 +51,36 @@
     
     .preview-table th {
         text-align: left;
-        padding: 10px;
-        color: #94A3B8;
-        font-size: 0.7rem;
+        padding: 12px 8px;
+        color: var(--text-muted);
+        font-size: 0.65rem;
+        font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border);
     }
     
     .preview-table td {
-        padding: 10px;
-        color: #F8FAFC;
-        border-top: 1px solid #334155;
+        padding: 12px 8px;
+        color: var(--text-main);
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-bottom: 1px solid #f8fafc;
     }
+
+    .preview-table tr:last-child td { border: none; }
     
-    .row-gain td {
-        color: #10B981;
-    }
-    
-    .row-loss td {
-        color: #EF4444;
-    }
+    .row-gain td:nth-child(3) { color: #10B981 !important; font-weight: 800; }
+    .row-loss td:nth-child(3) { color: #EF4444 !important; font-weight: 800; }
     
     .chart-container {
-        background: #0F172A;
-        border-radius: 16px;
-        margin-bottom: 30px;
-        height: 500px;
+        background: white;
+        border-radius: 24px;
+        margin-bottom: 32px;
+        height: 600px;
         overflow: hidden;
+        border: 1px solid var(--border);
+        box-shadow: var(--card-shadow);
     }
     
     .chart-container iframe {
@@ -96,18 +89,14 @@
         border: none;
     }
     
-    .status-info {
-        color: #10B981;
-        font-weight: 600;
-    }
-    
     .loader-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: #0F172A;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
         display: none;
         justify-content: center;
         align-items: center;
@@ -117,8 +106,8 @@
     .spinner {
         width: 50px;
         height: 50px;
-        border: 3px solid #334155;
-        border-top-color: #C9A84C;
+        border: 4px solid #f3f4f6;
+        border-top-color: var(--primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -130,30 +119,34 @@
 {% endblock %}
 
 {% block content %}
-
 <div id="loaderOverlay" class="loader-overlay">
     <div class="spinner"></div>
 </div>
 
-<div class="live-market-container">
-    
+<div class="live-market-container pt-24">
+    <!-- Chart Section -->
     <div class="chart-container">
         <iframe src="https://nepsealpha.com/trading/chart"></iframe>
     </div>
 
-    <div class="control-bar">
-        <div class="status-info">
-            📊 DATA_STATUS: <span id="lastUpdate">CONNECTING...</span>
+    <!-- Control Bar -->
+    <div class="card-premium !py-4 flex justify-between items-center mb-8">
+        <div class="flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-sm font-bold text-gray-500 uppercase tracking-widest">Market Status:</span>
+            <span id="lastUpdate" class="text-sm font-black text-gray-900">CONNECTING...</span>
         </div>
-        <button class="btn-refresh" onclick="refreshData()">
-            🔄 MANUAL REFRESH
+        <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-700 shadow-lg hover:shadow-blue-100 transition-all flex items-center gap-2" onclick="refreshData()">
+            🔄 SYNC DATA
         </button>
     </div>
 
+    <!-- Grid -->
     <div class="tables-grid" id="tablesGrid">
-        <div style="text-align: center; grid-column: span 2;">Loading market data...</div>
+        <div class="col-span-full py-20 text-center text-gray-400 font-medium italic">
+            Gathering live market insights...
+        </div>
     </div>
-    
 </div>
 
 <script>
@@ -170,8 +163,6 @@
         try {
             const response = await fetch('/api/market-data/?t=' + Date.now());
             const text = await response.text();
-            
-            // Extract the JSON from the JavaScript file
             const match = text.match(/window\.LATEST_MARKET_DATA = ({.*?});/s);
             if (match) {
                 const data = JSON.parse(match[1]);
@@ -184,7 +175,7 @@
         } catch (error) {
             console.error('Error loading data:', error);
             document.getElementById('lastUpdate').innerText = 'OFFLINE';
-            document.getElementById('tablesGrid').innerHTML = '<div style="text-align: center; grid-column: span 2; color: red;">Failed to load market data. Please click "MANUAL REFRESH".</div>';
+            document.getElementById('tablesGrid').innerHTML = '<div class="col-span-full py-20 text-center text-rose-500 font-bold">Failed to load market data. Please click "SYNC DATA".</div>';
         }
     }
 
@@ -218,7 +209,7 @@
                 });
                 html += `</tbody></table>`;
             } else {
-                html += `<div style="padding: 40px; text-align: center; color: #64748B;">No data available</div>`;
+                html += `<div style="padding: 60px; text-align: center; color: #94A3B8; font-style: italic;">No current data available</div>`;
             }
             
             card.innerHTML = html;
@@ -229,27 +220,22 @@
     async function refreshData() {
         const loader = document.getElementById('loaderOverlay');
         loader.style.display = 'flex';
-        
         try {
             const response = await fetch('/api/scrape/');
-            const result = await response.json();
-            
             if (response.ok) {
                 await loadData();
             } else {
-                alert('Error: ' + (result.message || 'Failed to sync data'));
+                alert('Sync failed. Please try again.');
             }
         } catch (error) {
-            alert('Error: Make sure your scraper is working');
+            alert('Error connecting to scraper.');
         } finally {
             loader.style.display = 'none';
         }
     }
 
-    // Auto-load on page load
     document.addEventListener('DOMContentLoaded', () => {
         loadData();
     });
 </script>
-
 {% endblock %}

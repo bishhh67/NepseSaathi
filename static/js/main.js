@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Load saved theme
- applyTheme('dark');
-localStorage.setItem('nepse-theme', 'dark');
+ applyTheme('light');
+localStorage.setItem('nepse-theme', 'light');
 
 
   themeBtn?.addEventListener('click', () => {

@@ -4,449 +4,202 @@
 
 {% block title %}NEPSE Sathi — Master Nepal's Stock Market{% endblock %}
 
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'css/main.css' %}" />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --navy:        #0F172A;
-  --navy-mid:    #1E293B;
-  --navy-soft:   #334155;
-  --gold:        #C9A84C;
-  --gold-deep:   #A07828;
-  --gold-light:  #FDF6E3;
-  --gold-mid:    #EDD98A;
-  --slate:       #475569;
-  --slate-light: #94A3B8;
-  --border:      #E2E8F0;
-  --border-soft: #F1F5F9;
-  --surface:     #FFFFFF;
-  --bg:          #FFFFFF;      /* ← main background now white */
-  --emerald:     #0F7A5A;
-  --emerald-bg:  #ECFDF5;
-  --red:         #C0392B;
-  --red-bg:      #FEF2F2;
-  --amber:       #B45309;
-  --amber-bg:    #FFFBEB;
-  --ff:          'Sora', sans-serif;
-  --fm:          'DM Mono', monospace;
-  --r:           10px;
-  --r-lg:        14px;
-  --sh:          0 1px 4px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04);
-  --sh-md:       0 8px 20px rgba(0,0,0,0.05), 0 0 0 1px rgba(15,23,42,0.03);
-  --sh-gold:     0 8px 24px rgba(201,168,76,0.12);
-}
-html, body { background: var(--bg) !important; color: var(--navy) !important; font-family: var(--ff) !important; }
-body main   { background: var(--bg) !important; }
-* { box-sizing: border-box; }
-
-/* ── Enhanced white cards with subtle separation ── */
-.ns-card {
-  background: grey;
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh);
-  transition: box-shadow .2s, border-color .2s, transform .2s;
-}
-.ns-card:hover {
-  box-shadow: var(--sh-md);
-  border-color: var(--gold-mid);
-  transform: translateY(-2px);
-}
-
-/* ── Gold pill / badge ── */
-.ns-pill {
-  display: inline-flex; align-items: center; gap: .3rem;
-  font-size: .72rem; font-weight: 600; letter-spacing: .03em;
-  padding: .25rem .7rem; border-radius: 999px;
-  font-family: var(--fm);
-}
-
-/* ── Section heading ── */
-.ns-section-label {
-  font-size: .68rem; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--gold);
-  font-family: var(--fm);
-}
-
-/* ── Gold accent card (left border) ── */
-.ns-accent-card {
-  border-left: 3px solid var(--gold);
-}
-
-/* ── Stat value ── */
-.ns-stat {
-  font-family: var(--fm); font-weight: 500; color: var(--navy);
-}
-
-/* ── Divider ── */
-.ns-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
-
-/* ── Reveal animation ── */
-.reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
-.reveal.visible { opacity: 1; transform: none; }
-
-/* Scrollbar refinement */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--border-soft); }
-::-webkit-scrollbar-thumb { background: var(--gold-mid); border-radius: 3px; }
-
-/* Additional polish: soft separator for cards in white-on-white */
-.section-bg-subtle {
-  background: #F9FAFC;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-</style>
-{% endblock %}
-
 {% block content %}
-
-<!-- ═══════════════════════════════════
-     MARKET SNAPSHOT WRAPPER
-════════════════════════════════════ -->
-<div style="max-width:1200px;margin:0 auto;padding:110px 24px 48px;background: #334155;">
-
+<div class="max-w-7xl mx-auto px-6 py-12 pt-32">
+  
   {% if market_data.close == 0 %}
-  <div class="ns-card" style="padding:3rem;text-align:center;">
-    <div style="font-size:3rem;margin-bottom:1rem;">📊</div>
-    <h3 style="font-size:1.2rem;font-weight:600;margin-bottom:.5rem;">Loading Market Data</h3>
-    <p style="color:var(--slate-light);">{{ market_summary }}</p>
+  <div class="card-premium text-center !py-20">
+    <div class="text-6xl mb-6">📊</div>
+    <h3 class="text-2xl font-black text-gray-900 mb-4">Initializing Market Data</h3>
+    <p class="text-gray-500 max-w-md mx-auto">{{ market_summary }}</p>
   </div>
   {% else %}
 
-  <!-- ── TOP HERO ROW ── -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;" class="reveal">
+  <!-- Hero Section -->
+  <div class="grid lg:grid-cols-2 gap-8 mb-12">
+    <!-- Left: Market Snapshot -->
+    <div class="card-premium relative overflow-hidden group">
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold shadow-sm
+            {% if market_data.direction_color == 'green' %}bg-emerald-50 text-emerald-600 border border-emerald-100
+            {% elif market_data.direction_color == 'red' %}bg-rose-50 text-rose-600 border border-rose-100
+            {% else %}bg-amber-50 text-amber-600 border border-amber-100{% endif %}">
+            {{ market_data.direction_icon }} {{ market_data.direction }} Market
+          </span>
+        </div>
 
-    <!-- Left: index hero (pure white card) -->
-    <div class="ns-card" style="padding:28px 32px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.08) 0%,transparent 70%);pointer-events:none;"></div>
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight">
+          NEPSE Snapshot
+        </h1>
+        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs mb-8">{{ market_data.date }}</p>
 
-      <div style="margin-bottom:16px;">
-        <span class="ns-pill" style="
-          {% if market_data.direction_color == 'green' %}background:var(--emerald-bg);color:var(--emerald);
-          {% elif market_data.direction_color == 'red' %}background:var(--red-bg);color:var(--red);
-          {% else %}background:var(--gold-light);color:var(--gold-deep);{% endif %}">
-          {{ market_data.direction_icon }} {{ market_data.direction }} Market
-        </span>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Closing Index</p>
+            <p class="text-3xl font-black text-gray-900">{{ market_data.close|floatformat:2 }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Day Range</p>
+            <p class="text-xl font-black text-gray-900">{{ market_data.low|floatformat:0 }} – {{ market_data.high|floatformat:0 }}</p>
+          </div>
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Change</p>
+            <p class="text-2xl font-black {% if market_data.point_change >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+              {% if market_data.point_change >= 0 %}+{% endif %}{{ market_data.point_change|floatformat:2 }}
+            </p>
+          </div>
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">% Change</p>
+            <p class="text-2xl font-black {% if market_data.percent_change >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+              {% if market_data.percent_change >= 0 %}+{% endif %}{{ market_data.percent_change|floatformat:2 }}%
+            </p>
+          </div>
+        </div>
+
+        {% for insight in market_insights %}
+        <div class="flex items-start gap-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100 text-sm font-medium text-blue-800">
+          <span class="text-blue-600">💡</span>
+          {{ insight }}
+        </div>
+        {% endfor %}
       </div>
-
-      <h1 style="font-size:1.75rem;font-weight:700;color:var(--navy);margin-bottom:4px;letter-spacing:-.02em;">NEPSE Market Snapshot</h1>
-      <p style="font-size:.8rem;color:var(--slate-light);margin-bottom:24px;font-family:var(--fm);">{{ market_data.date }}</p>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px 16px;">
-          <p style="font-size:.68rem;color:var(--slate-light);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm);margin-bottom:6px;">Closing</p>
-          <p class="ns-stat" style="font-size:1.6rem;">{{ market_data.close|floatformat:2 }}</p>
-        </div>
-        <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px 16px;">
-          <p style="font-size:.68rem;color:var(--slate-light);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm);margin-bottom:6px;">Day Range</p>
-          <p class="ns-stat" style="font-size:1.15rem;">{{ market_data.low|floatformat:0 }} – {{ market_data.high|floatformat:0 }}</p>
-        </div>
-        <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px 16px;">
-          <p style="font-size:.68rem;color:var(--slate-light);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm);margin-bottom:6px;">Change</p>
-          <p class="ns-stat" style="font-size:1.3rem;color:{% if market_data.point_change >= 0 %}var(--emerald){% else %}var(--red){% endif %};">
-            {% if market_data.point_change >= 0 %}+{% endif %}{{ market_data.point_change|floatformat:2 }}
-          </p>
-        </div>
-        <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px 16px;">
-          <p style="font-size:.68rem;color:var(--slate-light);text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm);margin-bottom:6px;">% Change</p>
-          <p class="ns-stat" style="font-size:1.3rem;color:{% if market_data.percent_change >= 0 %}var(--emerald){% else %}var(--red){% endif %};">
-            {% if market_data.percent_change >= 0 %}+{% endif %}{{ market_data.percent_change|floatformat:2 }}%
-          </p>
-        </div>
-      </div>
-
-      {% for insight in market_insights %}
-      <p style="font-size:.78rem;color:var(--slate);margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">{{ insight }}</p>
-      {% endfor %}
+      <!-- Decorative background -->
+      <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl"></div>
     </div>
 
-    <!-- Right: chart card (white with chart) -->
-    <div class="ns-card" style="padding:24px;display:flex;flex-direction:column;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+    <!-- Right: Chart Section -->
+    <div class="card-premium flex flex-col">
+      <div class="flex justify-between items-start mb-8">
         <div>
-          <p class="ns-section-label">30-Day Performance</p>
-          <p style="font-size:.78rem;color:var(--slate-light);margin-top:3px;">NEPSE Composite Index</p>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">30-Day Performance</h3>
+          <p class="text-xl font-black text-gray-900">Index History</p>
         </div>
-        <div style="text-align:right;">
-          <p class="ns-stat" style="font-size:1.4rem;">{{ market_data.close|floatformat:2 }}</p>
-          <p style="font-size:.72rem;color:var(--slate-light);font-family:var(--fm);">{{ market_data.trend }}</p>
+        <div class="text-right">
+          <p class="text-2xl font-black text-gray-900">{{ market_data.close|floatformat:2 }}</p>
+          <p class="text-sm font-bold uppercase tracking-widest {% if market_data.trend == 'Upward' %}text-emerald-600{% else %}text-rose-600{% endif %}">{{ market_data.trend }}</p>
         </div>
       </div>
-      <div style="flex:1;min-height:200px;"><canvas id="nepse30DayChart"></canvas></div>
-      <hr class="ns-divider" style="margin:14px 0;">
-      <div style="display:flex;justify-content:space-between;font-size:.75rem;font-family:var(--fm);">
-        <span style="color:var(--slate-light);">Trend <span style="color:var(--navy);font-weight:500;">{{ market_data.trend }}</span></span>
-        <span style="color:var(--slate-light);">High <span style="color:var(--navy);font-weight:500;">{{ market_data.high|floatformat:0 }}</span></span>
-        <span style="color:var(--slate-light);">Low <span style="color:var(--navy);font-weight:500;">{{ market_data.low|floatformat:0 }}</span></span>
+      <div class="flex-1 min-h-[250px] relative">
+        <canvas id="nepse30DayChart"></canvas>
       </div>
     </div>
   </div>
 
-  <!-- ── MARKET SUMMARY (gentle background) ── -->
-  <div class="ns-card ns-accent-card reveal" style="padding:24px 28px;margin-bottom:28px;background:#FEFBF5;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:1rem;">📋</div>
-      <h3 style="font-size:1rem;font-weight:600;color:var(--navy);">Market Summary</h3>
+  <!-- Market Summary -->
+  <div class="card-premium !bg-blue-600 !border-none !p-10 mb-12 shadow-xl shadow-blue-100">
+    <div class="flex items-center gap-4 mb-6">
+      <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl">📋</div>
+      <h3 class="text-2xl font-black text-white">Market Intelligence Summary</h3>
     </div>
-    <p style="font-size:.875rem;color:var(--slate);line-height:1.7;">{{ market_summary }}</p>
+    <p class="text-white text-lg leading-relaxed font-medium opacity-90">{{ market_summary }}</p>
   </div>
 
-  <!-- ── KEY MARKET FACTORS ── -->
-  <div style="margin-bottom:28px;" class="reveal">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-      <span class="ns-section-label">Key Market Factors</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
-      {% for factor in market_factors %}
-      <div class="ns-card" style="padding:20px;background:#FFFFFF;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <span style="font-size:1.3rem;">{{ factor.icon }}</span>
-          <h4 style="font-size:.9rem;font-weight:600;color:var(--navy);">{{ factor.title }}</h4>
-        </div>
-        <p style="font-size:.8rem;color:var(--slate);line-height:1.6;margin-bottom:14px;">{{ factor.description }}</p>
-        {% if factor.impact %}
-        <span class="ns-pill" style="
-          {% if factor.impact == 'Positive' %}background:var(--emerald-bg);color:var(--emerald);
-          {% elif factor.impact == 'Negative' %}background:var(--red-bg);color:var(--red);
-          {% else %}background:var(--border-soft);color:var(--slate);{% endif %}">
-          {{ factor.impact }} Impact
-        </span>
-        {% endif %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <!-- ── TECHNICAL INDICATORS ── -->
+  <!-- Technical Analysis Section -->
   {% if technical_report %}
-  <div style="margin-bottom:28px;" class="reveal">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <span class="ns-section-label">Technical Indicators</span>
-      <span class="ns-pill" style="background:var(--gold-light);color:var(--gold-deep);border:1px solid var(--gold-mid);">
-        {{ technical_news|length }} News Sources
+  <div class="mb-16">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-black text-gray-900">Technical Indicators</h2>
+      <span class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-xs font-bold border border-blue-100 tracking-widest uppercase">
+        {{ technical_news|length }} News Sources Found
       </span>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;">
-
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
       <!-- RSI -->
-      <div class="ns-card" style="padding:18px 16px;background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-light);font-family:var(--fm);">RSI (14)</span>
-          <span style="width:8px;height:8px;border-radius:50%;background:{% if technical_indicators.rsi > 70 %}var(--red){% elif technical_indicators.rsi < 30 %}var(--emerald){% else %}var(--amber){% endif %};display:inline-block;"></span>
-        </div>
-        <p class="ns-stat" style="font-size:2rem;margin-bottom:6px;">{{ technical_indicators.rsi|floatformat:1 }}</p>
-        <p style="font-size:.7rem;color:{% if technical_indicators.rsi > 70 %}var(--red){% elif technical_indicators.rsi < 30 %}var(--emerald){% else %}var(--amber){% endif %};">
+      <div class="card-premium !p-6">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">RSI (14)</p>
+        <p class="text-4xl font-black text-gray-900 mb-2">{{ technical_indicators.rsi|floatformat:1 }}</p>
+        <span class="text-sm font-bold uppercase
+          {% if technical_indicators.rsi > 70 %}text-rose-600{% elif technical_indicators.rsi < 30 %}text-emerald-600{% else %}text-amber-600{% endif %}">
           {% if technical_indicators.rsi > 70 %}Overbought{% elif technical_indicators.rsi < 30 %}Oversold{% else %}Neutral{% endif %}
-        </p>
+        </span>
       </div>
 
       <!-- 5D SMA -->
-      <div class="ns-card" style="padding:18px 16px;background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-light);font-family:var(--fm);">5-Day SMA</span>
-          <span style="width:8px;height:8px;border-radius:50%;background:{% if market_data.close > technical_indicators.sma5 %}var(--emerald){% else %}var(--red){% endif %};display:inline-block;"></span>
-        </div>
-        <p class="ns-stat" style="font-size:2rem;margin-bottom:6px;">{{ technical_indicators.sma5|floatformat:1 }}</p>
-        <p style="font-size:.7rem;color:{% if market_data.close > technical_indicators.sma5 %}var(--emerald){% else %}var(--red){% endif %};">
-          {% if market_data.close > technical_indicators.sma5 %}Bullish · Above MA{% else %}Bearish · Below MA{% endif %}
-        </p>
+      <div class="card-premium !p-6">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">5-Day SMA</p>
+        <p class="text-4xl font-black text-gray-900 mb-2">{{ technical_indicators.sma5|floatformat:0 }}</p>
+        <span class="text-sm font-bold uppercase {% if market_data.close > technical_indicators.sma5 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+          {% if market_data.close > technical_indicators.sma5 %}Bullish{% else %}Bearish{% endif %}
+        </span>
       </div>
 
       <!-- 20D SMA -->
-      <div class="ns-card" style="padding:18px 16px;background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-light);font-family:var(--fm);">20-Day SMA</span>
-          <span style="width:8px;height:8px;border-radius:50%;background:{% if market_data.close > technical_indicators.sma20 %}var(--emerald){% else %}var(--red){% endif %};display:inline-block;"></span>
-        </div>
-        <p class="ns-stat" style="font-size:2rem;margin-bottom:6px;">{{ technical_indicators.sma20|floatformat:1 }}</p>
-        <p style="font-size:.7rem;color:{% if market_data.close > technical_indicators.sma20 %}var(--emerald){% else %}var(--red){% endif %};">
-          {% if market_data.close > technical_indicators.sma20 %}Bullish · Above MA{% else %}Bearish · Below MA{% endif %}
-        </p>
+      <div class="card-premium !p-6">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">20-Day SMA</p>
+        <p class="text-4xl font-black text-gray-900 mb-2">{{ technical_indicators.sma20|floatformat:0 }}</p>
+        <span class="text-sm font-bold uppercase {% if market_data.close > technical_indicators.sma20 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+          {% if market_data.close > technical_indicators.sma20 %}Bullish{% else %}Bearish{% endif %}
+        </span>
       </div>
 
       <!-- Support -->
-      <div class="ns-card" style="padding:18px 16px;border-top:3px solid var(--emerald);background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-light);font-family:var(--fm);">Support</span>
-          <span style="color:var(--emerald);font-size:.8rem;">▼</span>
-        </div>
-        <p class="ns-stat" style="font-size:2rem;margin-bottom:6px;">{{ technical_indicators.support|floatformat:0 }}</p>
-        <p style="font-size:.7rem;color:var(--emerald);">Key Buying Zone</p>
+      <div class="card-premium !p-6 !border-emerald-200 !bg-emerald-50/30">
+        <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-4">Support Level</p>
+        <p class="text-4xl font-black text-emerald-700 mb-2">{{ technical_indicators.support|floatformat:0 }}</p>
+        <span class="text-sm font-bold text-emerald-500 uppercase">Strong Buying Zone</span>
       </div>
 
       <!-- Resistance -->
-      <div class="ns-card" style="padding:18px 16px;border-top:3px solid var(--red);background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <span style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-light);font-family:var(--fm);">Resistance</span>
-          <span style="color:var(--red);font-size:.8rem;">▲</span>
-        </div>
-        <p class="ns-stat" style="font-size:2rem;margin-bottom:6px;">{{ technical_indicators.resistance|floatformat:0 }}</p>
-        <p style="font-size:.7rem;color:var(--red);">Key Selling Zone</p>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ── MARKET ANALYSIS SUMMARY (white card, subtle stats) ── -->
-  <div class="ns-card reveal" style="padding:28px;margin-bottom:28px;background:#FFFFFF;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid var(--border);margin-bottom:20px;">
-      <h3 style="font-size:1rem;font-weight:600;color:var(--navy);">📈 Market Analysis Summary</h3>
-    </div>
-
-    <!-- Sentiment banner (warm gold background, text clearly readable) -->
-    <div style="background:var(--gold-light);border:1px solid var(--gold-mid);border-radius:var(--r);padding:20px 24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <div>
-        <p style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-deep);font-family:var(--fm);margin-bottom:4px;">Market Sentiment</p>
-        <p style="font-size:1.6rem;font-weight:700;letter-spacing:-.02em;color:{% if technical_indicators.rsi > 70 %}var(--red){% elif technical_indicators.rsi < 30 %}var(--emerald){% else %}var(--amber){% endif %};">
-          {% if technical_indicators.rsi > 70 %}BEARISH{% elif technical_indicators.rsi < 30 %}BULLISH{% else %}NEUTRAL{% endif %}
-        </p>
-        <p style="font-size:.8rem;color:var(--slate);margin-top:3px;">
-          {% if technical_indicators.rsi > 70 %}Overbought — caution advised{% elif technical_indicators.rsi < 30 %}Oversold — accumulation opportunity{% else %}Balanced momentum{% endif %}
-        </p>
-      </div>
-      <div style="text-align:right;">
-        <p style="font-size:.68rem;color:var(--gold-deep);font-family:var(--fm);margin-bottom:2px;">NEPSE Index</p>
-        <p class="ns-stat" style="font-size:1.8rem;">{{ market_data.close|floatformat:2 }}</p>
-      </div>
-    </div>
-
-    <!-- 4 stat tiles with light background for contrast -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:6px;">Today's Change</p>
-        <p class="ns-stat" style="font-size:1.15rem;color:{% if market_data.point_change >= 0 %}var(--emerald){% else %}var(--red){% endif %};">{{ market_data.point_change|floatformat:2 }}</p>
-        <p style="font-size:.7rem;color:var(--slate-light);font-family:var(--fm);">{{ market_data.percent_change|floatformat:2 }}%</p>
-      </div>
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:6px;">Day Range</p>
-        <p class="ns-stat" style="font-size:1rem;">{{ market_data.low|floatformat:0 }}–{{ market_data.high|floatformat:0 }}</p>
-        <p style="font-size:.7rem;color:var(--slate-light);">Intraday</p>
-      </div>
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:6px;">Trend</p>
-        <p class="ns-stat" style="font-size:1rem;color:{% if market_data.trend == 'Upward' %}var(--emerald){% elif market_data.trend == 'Downward' %}var(--red){% else %}var(--amber){% endif %};">{{ market_data.trend }}</p>
-        <p style="font-size:.7rem;color:var(--slate-light);">Short-term</p>
-      </div>
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:6px;">30-Day Range</p>
-        <p class="ns-stat" style="font-size:1rem;">{{ technical_indicators.support|floatformat:0 }}–{{ technical_indicators.resistance|floatformat:0 }}</p>
-        <p style="font-size:.7rem;color:var(--slate-light);">Support/Resist</p>
-      </div>
-    </div>
-
-    <!-- Key levels (colored tiles) -->
-    <p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-family:var(--fm);margin-bottom:12px;">🎯 Key Levels</p>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-      <div style="border:1px solid var(--emerald-bg);background:var(--emerald-bg);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--emerald);font-family:var(--fm);margin-bottom:4px;">Support</p>
-        <p class="ns-stat" style="font-size:1.3rem;">{{ technical_indicators.support|floatformat:0 }}</p>
-        <p style="font-size:.68rem;color:var(--emerald);">Buying zone</p>
-      </div>
-      <div style="border:1px solid var(--red-bg);background:var(--red-bg);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--red);font-family:var(--fm);margin-bottom:4px;">Resistance</p>
-        <p class="ns-stat" style="font-size:1.3rem;">{{ technical_indicators.resistance|floatformat:0 }}</p>
-        <p style="font-size:.68rem;color:var(--red);">Profit zone</p>
-      </div>
-      <div style="border:1px solid var(--border);background:#F8FAFE;border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:4px;">Stop Loss</p>
-        <p class="ns-stat" style="font-size:1.3rem;">{{ technical_indicators.support|add:-20|floatformat:0 }}</p>
-        <p style="font-size:.68rem;color:var(--slate-light);">Long positions</p>
-      </div>
-      <div style="border:1px solid var(--gold-mid);background:var(--gold-light);border-radius:var(--r);padding:14px;text-align:center;">
-        <p style="font-size:.68rem;color:var(--gold-deep);font-family:var(--fm);margin-bottom:4px;">Target</p>
-        <p class="ns-stat" style="font-size:1.3rem;">{{ technical_indicators.resistance|add:30|floatformat:0 }}</p>
-        <p style="font-size:.68rem;color:var(--gold-deep);">Near term</p>
+      <div class="card-premium !p-6 !border-rose-200 !bg-rose-50/30">
+        <p class="text-xs font-bold text-rose-600 uppercase tracking-widest mb-4">Resistance Level</p>
+        <p class="text-4xl font-black text-rose-700 mb-2">{{ technical_indicators.resistance|floatformat:0 }}</p>
+        <span class="text-sm font-bold text-rose-500 uppercase">Strong Selling Zone</span>
       </div>
     </div>
   </div>
 
-  <!-- ── INVESTMENT RECOMMENDATION (navy background - stands out on white) ── -->
-  <div style="background:var(--navy);border-radius:var(--r-lg);padding:28px 32px;margin-bottom:28px;box-shadow:var(--sh-gold);" class="reveal">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <span style="font-size:1.3rem;">💡</span>
-      <h4 style="font-size:1rem;font-weight:600;color:#fff;">Investment Recommendation</h4>
-    </div>
-    <p style="font-size:.875rem;color:rgba(255,255,255,.85);line-height:1.75;margin-bottom:20px;">
-      {% if technical_indicators.rsi > 70 %}
-        RSI at {{ technical_indicators.rsi|floatformat:1 }} signals overbought conditions. Consider booking partial profits at resistance ({{ technical_indicators.resistance|floatformat:0 }}). Wait for a pullback to {{ technical_indicators.support|floatformat:0 }} before re-entry. Reduce exposure by 20–30%.
-      {% elif technical_indicators.rsi < 30 %}
-        RSI at {{ technical_indicators.rsi|floatformat:1 }} signals oversold conditions. Accumulation opportunity near support ({{ technical_indicators.support|floatformat:0 }}). Build positions gradually with stop loss below {{ technical_indicators.support|add:-20|floatformat:0 }}.
-      {% else %}
-        RSI at {{ technical_indicators.rsi|floatformat:1 }} indicates neutral momentum — market is consolidating. Hold quality positions with stop loss at {{ technical_indicators.support|add:-20|floatformat:0 }}. Add on dips toward {{ technical_indicators.support|floatformat:0 }}.
-      {% endif %}
-    </p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
-      {% if technical_indicators.rsi > 70 %}
-      <span class="ns-pill" style="background:rgba(192,57,43,.2);color:#FF8A80;border:1px solid rgba(192,57,43,.3);">⚠️ Overbought</span>
-      <span class="ns-pill" style="background:rgba(180,83,9,.2);color:#FFB74D;border:1px solid rgba(180,83,9,.3);">📉 Profit Booking</span>
-      {% elif technical_indicators.rsi < 30 %}
-      <span class="ns-pill" style="background:rgba(15,122,90,.2);color:#69F0AE;border:1px solid rgba(15,122,90,.3);">✅ Accumulation</span>
-      <span class="ns-pill" style="background:rgba(201,168,76,.2);color:var(--gold-mid);border:1px solid rgba(201,168,76,.3);">📈 Buy Zone</span>
-      {% else %}
-      <span class="ns-pill" style="background:rgba(201,168,76,.2);color:var(--gold-mid);border:1px solid rgba(201,168,76,.3);">⚖️ Neutral</span>
-      <span class="ns-pill" style="background:rgba(180,83,9,.2);color:#FFB74D;border:1px solid rgba(180,83,9,.3);">📊 Wait</span>
-      {% endif %}
-      <span class="ns-pill" style="background:rgba(201,168,76,.15);color:var(--gold-mid);border:1px solid rgba(201,168,76,.3);">🎯 Target {{ technical_indicators.resistance|add:30|floatformat:0 }}</span>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);">
-      <div>
-        <p style="font-size:.68rem;color:rgba(255,255,255,.5);font-family:var(--fm);margin-bottom:3px;">STOP LOSS</p>
-        <p style="color:#fff;font-weight:600;font-family:var(--fm);">Below {{ technical_indicators.support|add:-20|floatformat:0 }}</p>
-      </div>
-      <div>
-        <p style="font-size:.68rem;color:rgba(255,255,255,.5);font-family:var(--fm);margin-bottom:3px;">TARGET</p>
-        <p style="color:var(--gold-mid);font-weight:600;font-family:var(--fm);">{{ technical_indicators.resistance|add:30|floatformat:0 }} near term</p>
-      </div>
-    </div>
-  </div>
-
-  {% endif %}{# end technical_report #}
-
-  <!-- ── AI ANALYSIS (white card with gemini badge) ── -->
+  <!-- AI Analysis Card -->
   {% if ai_analysis and ai_analysis.analysis %}
-  <div class="ns-card reveal" style="padding:28px;margin-bottom:28px;border-top:3px solid var(--gold);background:#FFFFFF;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-      <h3 style="font-size:1rem;font-weight:600;color:var(--navy);">🤖 AI-Powered Deep Market Analysis</h3>
-      <span class="ns-pill" style="background:var(--gold-light);color:var(--gold-deep);border:1px solid var(--gold-mid);">Gemini AI · {{ ai_analysis.generated_at }}</span>
+  <div class="card-premium !p-10 mb-16 border-l-8 border-l-blue-600">
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div class="flex items-center gap-4">
+        <div class="text-4xl">🤖</div>
+        <h3 class="text-2xl font-black text-gray-900">AI Deep Market Analysis</h3>
+      </div>
+      <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-xs font-bold border border-gray-200 tracking-widest uppercase">
+        {{ ai_analysis.model }} · {{ ai_analysis.generated_at }}
+      </span>
     </div>
-    <div style="font-size:.875rem;color:var(--slate);line-height:1.75;white-space:pre-line;margin-bottom:20px;">{{ ai_analysis.analysis }}</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:12px;text-align:center;">
-        <p style="font-size:.65rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:4px;">30-Day Return</p>
-        <p class="ns-stat" style="font-size:1.1rem;color:{% if ai_analysis.monthly_return >= 0 %}var(--emerald){% else %}var(--red){% endif %};">{{ ai_analysis.monthly_return|floatformat:1 }}%</p>
+    
+    <div class="text-gray-600 text-lg leading-relaxed font-medium mb-10 whitespace-pre-line italic">
+      "{{ ai_analysis.analysis }}"
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-gray-100">
+      <div class="text-center">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">30-Day Return</p>
+        <p class="text-2xl font-black {% if ai_analysis.monthly_return >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+          {{ ai_analysis.monthly_return|floatformat:1 }}%
+        </p>
       </div>
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:12px;text-align:center;">
-        <p style="font-size:.65rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:4px;">RSI (14)</p>
-        <p class="ns-stat" style="font-size:1.1rem;color:{% if ai_analysis.rsi > 70 %}var(--red){% elif ai_analysis.rsi < 30 %}var(--emerald){% else %}var(--amber){% endif %};">{{ ai_analysis.rsi|floatformat:0 }}</p>
+      <div class="text-center">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Confidence RSI</p>
+        <p class="text-2xl font-black text-gray-900">{{ ai_analysis.rsi|floatformat:0 }}</p>
       </div>
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:12px;text-align:center;">
-        <p style="font-size:.65rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:4px;">Support</p>
-        <p class="ns-stat" style="font-size:1.1rem;">{{ ai_analysis.support|floatformat:0 }}</p>
+      <div class="text-center">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">AI Support</p>
+        <p class="text-2xl font-black text-gray-900">{{ ai_analysis.support|floatformat:0 }}</p>
       </div>
-      <div style="background:#F8FAFE;border:1px solid var(--border-soft);border-radius:var(--r);padding:12px;text-align:center;">
-        <p style="font-size:.65rem;color:var(--slate-light);font-family:var(--fm);margin-bottom:4px;">Resistance</p>
-        <p class="ns-stat" style="font-size:1.1rem;">{{ ai_analysis.resistance|floatformat:0 }}</p>
+      <div class="text-center">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">AI Target</p>
+        <p class="text-2xl font-black text-gray-900">{{ ai_analysis.resistance|floatformat:0 }}</p>
       </div>
     </div>
-    <p style="font-size:.72rem;color:var(--slate-light);text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">🤖 AI-generated via Google Gemini. For educational purposes only.</p>
-  </div>
-  {% elif ai_analysis is None %}
-  <div style="background:var(--amber-bg);border:1px solid #FDE68A;border-radius:var(--r);padding:14px;text-align:center;margin-bottom:28px;" class="reveal">
-    <p style="color:var(--amber);font-size:.875rem;">⚠️ AI analysis temporarily unavailable. Technical analysis shown above.</p>
   </div>
   {% endif %}
 
-  <!-- DISCLAIMER (light grey, visible) -->
-  <div style="background:#F8FAFE;border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;" class="reveal">
-    <p style="font-size:.73rem;color:var(--slate-light);text-align:center;line-height:1.6;">
-      ⚠️ Disclaimer: Analytical interpretations based on available market signals and public news. Not investment advice. Consult a financial advisor before making investment decisions.
+  {% endif %}
+
+  <!-- Disclaimer -->
+  <div class="card-premium !py-6 !bg-gray-50 !border-gray-200 text-center mt-12">
+    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest leading-loose">
+      ⚠️ Disclaimer: Analytical interpretations are based on historical market signals. This is for educational purposes only and does not constitute financial advice.
     </p>
   </div>
 
-  {% endif %}{# end market_data.close != 0 #}
+  {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -457,170 +210,43 @@ document.addEventListener('DOMContentLoaded', function() {
   if (labels && labels.length && values && values.length) {
     const ctx = document.getElementById('nepse30DayChart').getContext('2d');
     const isPos = values[values.length-1] >= values[0];
-    const color = isPos ? '#0F7A5A' : '#C0392B';
+    const color = isPos ? '#10b981' : '#ef4444';
     new Chart(ctx, {
       type: 'line',
-      data: { labels, datasets: [{ data: values, borderColor: color, borderWidth: 2, pointRadius: 0, fill: true,
-        backgroundColor: (ctx) => {
-          const g = ctx.chart.ctx.createLinearGradient(0,0,0,200);
-          g.addColorStop(0, isPos ? 'rgba(15,122,90,.12)' : 'rgba(192,57,43,.12)');
-          g.addColorStop(1, 'rgba(255,255,255,0)');
-          return g;
-        }, tension: 0.4 }] },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{enabled:false}},
-        scales:{x:{display:false},y:{display:false}}, elements:{line:{borderCapStyle:'round'}} }
+      data: { 
+        labels, 
+        datasets: [{ 
+          data: values, 
+          borderColor: color, 
+          borderWidth: 4, 
+          pointRadius: 0, 
+          fill: true,
+          backgroundColor: (ctx) => {
+            const g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
+            g.addColorStop(0, isPos ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)');
+            g.addColorStop(1, 'rgba(255,255,255,0)');
+            return g;
+          }, 
+          tension: 0.4 
+        }] 
+      },
+      options: { 
+        responsive:true, 
+        maintainAspectRatio:false, 
+        plugins:{legend:{display:false},tooltip:{enabled:true}},
+        scales:{
+          x:{display:false},
+          y:{
+            display:true,
+            position: 'right',
+            grid: { display: false },
+            ticks: { font: { size: 10, weight: 'bold' }, color: '#94a3b8' }
+          }
+        }, 
+        interaction: { intersect: false, mode: 'index' }
+      }
     });
   }
-  // Reveal on scroll
-  const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.1});
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 });
 </script>
-
-<!-- ═══════════════════════════════════
-     SECTION 2 — LIVE MARKET SNAPSHOT (white cards)
-════════════════════════════════════ -->
-<section style="background:#F9FAFC;border-top:1px solid var(--border);padding:64px 0;">
-  <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;" class="reveal">
-      <div>
-        <span class="ns-section-label">Live Market</span>
-        <h2 style="font-size:1.4rem;font-weight:700;color:var(--navy);margin-top:6px;">Today's NEPSE Snapshot</h2>
-      </div>
-      <a href="/market" style="font-size:.8rem;color:var(--gold);display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-weight:500;">
-        Full Market Data
-        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-      </a>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
-
-      <div class="ns-card reveal" style="padding:20px;transition-delay:.05s;background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <p style="font-size:.65rem;font-weight:700;color:var(--slate-light);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);">NEPSE Index</p>
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;">
-            <svg width="13" height="13" fill="none" stroke="var(--gold)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          </div>
-        </div>
-        <p class="ns-stat" style="font-size:1.5rem;margin-bottom:8px;">2,847.63</p>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="ns-pill" style="background:var(--emerald-bg);color:var(--emerald);">▲ 51.4</span>
-          <span style="font-size:.72rem;color:var(--slate-light);">+1.84%</span>
-        </div>
-        <canvas data-sparkline="2780,2798,2773,2810,2828,2835,2820,2848" data-gain="true" width="200" height="36" style="width:100%;margin-top:10px;"></canvas>
-      </div>
-
-      <div class="ns-card reveal" style="padding:20px;transition-delay:.1s;background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <p style="font-size:.65rem;font-weight:700;color:var(--slate-light);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);">Daily Change</p>
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--emerald-bg);display:flex;align-items:center;justify-content:center;">
-            <svg width="13" height="13" fill="none" stroke="var(--emerald)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-          </div>
-        </div>
-        <p class="ns-stat" style="font-size:1.5rem;color:var(--emerald);margin-bottom:8px;">+51.40</p>
-        <span class="ns-pill" style="background:var(--emerald-bg);color:var(--emerald);">Bullish</span>
-        <p style="font-size:.72rem;color:var(--slate-light);margin-top:10px;">Prev. close 2,796.23</p>
-      </div>
-
-      <div class="ns-card reveal" style="padding:20px;transition-delay:.15s;background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <p style="font-size:.65rem;font-weight:700;color:var(--slate-light);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);">Turnover</p>
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;">
-            <svg width="13" height="13" fill="none" stroke="var(--gold)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-        </div>
-        <p class="ns-stat" style="font-size:1.5rem;margin-bottom:8px;">2.14B</p>
-        <span style="font-size:.72rem;color:var(--slate-light);">NPR</span>
-        <p style="font-size:.72rem;color:var(--slate-light);margin-top:10px;">18,432 transactions</p>
-      </div>
-
-      <div class="ns-card reveal" style="padding:20px;transition-delay:.2s;border-top:3px solid var(--emerald);background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <p style="font-size:.65rem;font-weight:700;color:var(--slate-light);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);">Top Gainer</p>
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--emerald-bg);display:flex;align-items:center;justify-content:center;">
-            <svg width="13" height="13" fill="none" stroke="var(--emerald)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-          </div>
-        </div>
-        <p style="font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:2px;">UPPER</p>
-        <p class="ns-stat" style="font-size:1.2rem;color:var(--emerald);">312 <span style="font-size:.8rem;">▲ 4.1%</span></p>
-        <canvas data-sparkline="280,285,290,295,300,302,308,312" data-gain="true" width="200" height="36" style="width:100%;margin-top:10px;"></canvas>
-      </div>
-
-      <div class="ns-card reveal" style="padding:20px;transition-delay:.25s;border-top:3px solid var(--red);background:#FFFFFF;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <p style="font-size:.65rem;font-weight:700;color:var(--slate-light);text-transform:uppercase;letter-spacing:.07em;font-family:var(--fm);">Top Loser</p>
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--red-bg);display:flex;align-items:center;justify-content:center;">
-            <svg width="13" height="13" fill="none" stroke="var(--red)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-          </div>
-        </div>
-        <p style="font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:2px;">NICA</p>
-        <p class="ns-stat" style="font-size:1.2rem;color:var(--red);">874 <span style="font-size:.8rem;">▼ 1.1%</span></p>
-        <canvas data-sparkline="890,885,882,880,878,876,875,874" data-gain="false" width="200" height="36" style="width:100%;margin-top:10px;"></canvas>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════
-     SECTION 3 — FEATURES (light bg, white cards)
-════════════════════════════════════ -->
-<section style="background:#FFFFFF;border-top:1px solid var(--border);padding:80px 0;">
-  <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
-    <div style="text-align:center;margin-bottom:48px;" class="reveal">
-      <span class="ns-section-label">What We Offer</span>
-      <h2 style="font-size:1.75rem;font-weight:700;color:var(--navy);margin-top:10px;margin-bottom:12px;letter-spacing:-.02em;">Everything You Need to Navigate NEPSE</h2>
-      <p style="color:var(--slate-light);max-width:480px;margin:0 auto;font-size:.9rem;line-height:1.6;">A complete toolkit for Nepali investors — from learning the basics to advanced market analysis.</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
-
-      <div class="ns-card reveal" style="padding:24px;transition-delay:.05s;background:#FFFFFF;">
-        <div style="width:44px;height:44px;border-radius:12px;background:var(--gold-light);border:1px solid var(--gold-mid);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-          <svg width="20" height="20" fill="none" stroke="var(--gold-deep)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        </div>
-        <h3 style="font-size:.95rem;font-weight:600;color:var(--navy);margin-bottom:8px;">Learn NEPSE</h3>
-        <p style="font-size:.82rem;color:var(--slate-light);line-height:1.65;margin-bottom:16px;">Structured lessons from IPO basics to advanced technical analysis, curated for Nepali investors.</p>
-        <a href="/learn" style="font-size:.78rem;color:var(--gold);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
-          Explore Lessons <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        </a>
-      </div>
-
-      <div class="ns-card reveal" style="padding:24px;transition-delay:.1s;background:#FFFFFF;">
-        <div style="width:44px;height:44px;border-radius:12px;background:var(--border-soft);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-          <svg width="20" height="20" fill="none" stroke="var(--navy-mid)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-        </div>
-        <h3 style="font-size:.95rem;font-weight:600;color:var(--navy);margin-bottom:8px;">Company Analysis</h3>
-        <p style="font-size:.82rem;color:var(--slate-light);line-height:1.65;margin-bottom:16px;">Deep dive into financials, PE ratios, EPS, and price history for every NEPSE-listed company.</p>
-        <a href="/companies" style="font-size:.78rem;color:var(--navy-mid);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
-          Browse Companies <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        </a>
-      </div>
-
-      <div class="ns-card reveal" style="padding:24px;transition-delay:.15s;background:#FFFFFF;">
-        <div style="width:44px;height:44px;border-radius:12px;background:var(--emerald-bg);border:1px solid #A7F3D0;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-          <svg width="20" height="20" fill="none" stroke="var(--emerald)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-        </div>
-        <h3 style="font-size:.95rem;font-weight:600;color:var(--navy);margin-bottom:8px;">Portfolio Tracking</h3>
-        <p style="font-size:.82rem;color:var(--slate-light);line-height:1.65;margin-bottom:16px;">Monitor your holdings with gain/loss tracking, sector allocation, and performance charts.</p>
-        <a href="/portfolio" style="font-size:.78rem;color:var(--emerald);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
-          Track Portfolio <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        </a>
-      </div>
-
-      <div class="ns-card reveal" style="padding:24px;transition-delay:.2s;background:#FFFFFF;">
-        <div style="width:44px;height:44px;border-radius:12px;background:var(--amber-bg);border:1px solid #FDE68A;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
-          <svg width="20" height="20" fill="none" stroke="var(--amber)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <h3 style="font-size:.95rem;font-weight:600;color:var(--navy);margin-bottom:8px;">Trading Simulator</h3>
-        <p style="font-size:.82rem;color:var(--slate-light);line-height:1.65;margin-bottom:16px;">Practice buying and selling with virtual money using real NEPSE data — zero risk, real experience.</p>
-        <a href="/simulator" style="font-size:.78rem;color:var(--amber);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
-          Try Simulator <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
 {% endblock %}

@@ -76,8 +76,18 @@ class NEPSEMarketData:
             else:
                 trend = "Stable"
             
+            # Handle malformed dates (like the "1", "2", "3" in the current CSV)
+            current_date = datetime.now()
+            try:
+                if 'data' in latest and latest['data'].year > 2000:
+                    display_date = latest['data'].strftime('%B %d, %Y')
+                else:
+                    display_date = current_date.strftime('%B %d, %Y')
+            except:
+                display_date = current_date.strftime('%B %d, %Y')
+
             return {
-                'date': latest['data'].strftime('%B %d, %Y') if 'data' in latest else datetime.now().strftime('%B %d, %Y'),
+                'date': display_date,
                 'open': float(latest['Open']) if 'Open' in latest else 0,
                 'high': float(latest['High']) if 'High' in latest else 0,
                 'low': float(latest['Low']) if 'Low' in latest else 0,

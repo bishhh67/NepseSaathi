@@ -1,39 +1,32 @@
 {% load static %}
 <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full">
-  <!-- Solid background overlay - add inline style as backup -->
-  <div id="navbar-bg" class="absolute inset-0 transition-all duration-300 w-full" 
-       style="background-color: #1E293B !important; border-bottom: 1px solid #334155 !important;"></div>
+  <!-- Glass background overlay -->
+  <div id="navbar-bg" class="absolute inset-0 transition-all duration-300 w-full backdrop-blur-md bg-white/80 border-b border-gray-200"></div>
 
   <nav class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
     <div class="flex items-center justify-between h-16 lg:h-18">
 
       <!-- Logo -->
       <a href="/" class="flex items-center gap-2.5 group flex-shrink-0">
-        <div class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shadow-glow transition-transform group-hover:scale-110 duration-200">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 duration-200">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 17L9 11L13 15L21 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M17 7H21V11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <span class="text-lg font-semibold tracking-tight">
-          <span class="text-[#F8FAFC]">NEPSE</span><span class="text-accent"> Sathi</span>
+        <span class="text-lg font-bold tracking-tight">
+          <span class="text-gray-900">NEPSE</span><span class="text-blue-600"> Sathi</span>
         </span>
       </a>
 
       <!-- Center Nav Links (desktop) -->
       <div class="hidden lg:flex items-center gap-1">
-        {% for link in nav_links %}
-          <a href="{{ link.url }}" class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">{{ link.label }}</a>
-        {% empty %}
-          <a href="/"          class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] rounded-lg bg-[#10B981]/10">Home</a>
-          <a href="/learn"     class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Learn</a>
-          <a href="/why-moved/" class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Analyse</a>
-          <a href="/forecast/"    class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Forecast</a>
-          <a href="/livemarket"     class="px-3.5 py-2 text-sm font-medium text-[#F8FAFC] hover:text-[#10B981] rounded-lg hover:bg-[#10B981]/10 transition-all duration-150">Live market </a>
-        {% endfor %}
+        <a href="/" class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-150 {% if request.path == '/' %}text-blue-600 bg-blue-50{% else %}text-gray-600 hover:text-blue-600 hover:bg-blue-50{% endif %}">Home</a>
+        <a href="/learn" class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-150 {% if '/learn' in request.path %}text-blue-600 bg-blue-50{% else %}text-gray-600 hover:text-blue-600 hover:bg-blue-50{% endif %}">Learn</a>
+        <a href="/why-moved/" class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-150 {% if '/why-moved/' in request.path %}text-blue-600 bg-blue-50{% else %}text-gray-600 hover:text-blue-600 hover:bg-blue-50{% endif %}">Analyse</a>
+        <a href="/forecast/" class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-150 {% if '/forecast/' in request.path %}text-blue-600 bg-blue-50{% else %}text-gray-600 hover:text-blue-600 hover:bg-blue-50{% endif %}">Forecast</a>
+        <a href="/livemarket/" class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-150 {% if '/livemarket' in request.path %}text-blue-600 bg-blue-50{% else %}text-gray-600 hover:text-blue-600 hover:bg-blue-50{% endif %}">Live market</a>
       </div>
-
-     
-    
+    </div>
   </nav>
-</header>
+</header>

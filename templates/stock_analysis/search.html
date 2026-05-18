@@ -1,129 +1,112 @@
-<!-- templates/stock_analysis/search.html -->
 {% extends "base.html" %}
 
-{% block title %}Why Stock Moved - NEPSE Sathi{% endblock %}
+{% block title %}Analyse Why Stock Moved - NEPSE Sathi{% endblock %}
 
 {% block extra_head %}
 <style>
-  /* Additional styles specific to this feature */
   .autocomplete-suggestions {
     position: absolute;
     z-index: 50;
     width: 100%;
-    background: #1E293B;
-    border: 1px solid #334155;
-    border-radius: 0.5rem;
-    margin-top: 0.25rem;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    margin-top: 0.5rem;
     max-height: 240px;
     overflow-y: auto;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--card-shadow-hover);
   }
   
   .autocomplete-suggestion {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1.25rem;
     cursor: pointer;
     transition: background 0.2s;
+    border-bottom: 1px solid #f8fafc;
   }
   
   .autocomplete-suggestion:hover {
-    background: #334155;
+    background: #f1f5f9;
   }
-  
-  .gradient-bg {
-    background: linear-gradient(135deg, #0EA5E9 0%, #8B5CF6 100%);
-  }
-  
-  .card-hover {
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  }
+
+  .autocomplete-suggestion:last-child { border: none; }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 py-12">
+<div class="max-w-4xl mx-auto px-6 py-12 pt-24">
   <!-- Hero Section -->
-  <div class="text-center mb-12 animate-fade-up">
-    <div class="inline-flex items-center gap-2 bg-accent/10 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6 border border-accent/20">
-      <span class="text-accent text-sm font-medium">🔍 Market Intelligence</span>
+  <div class="text-center mb-16">
+    <div class="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-2 mb-6 border border-blue-100">
+      <span class="text-blue-600 text-sm font-bold">🔍 Market Intelligence</span>
     </div>
-    <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">
+    <h1 class="text-5xl md:text-6xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
       Why Stock Moved?
     </h1>
-    <p class="text-slate-300 text-lg max-w-2xl mx-auto">
-      Understand the forces driving NEPSE stock movements — powered by technical analysis and market data
+    <p class="text-gray-500 text-xl max-w-2xl mx-auto">
+      Understand the forces driving NEPSE stock movements — powered by technical analysis and real market data.
     </p>
   </div>
 
   <!-- Search Card -->
-  <div class="bg-gradient-to-br from-secondary/50 to-primary/30 backdrop-blur-sm rounded-2xl border border-border p-8 shadow-card animate-slide-right">
+  <div class="card-premium">
+    <form method="GET" action="/analyze/" class="space-y-8">
+      <div>
+        <label class="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">
+          Stock Symbol
+        </label>
+        <div class="relative">
+          <input type="text" 
+                 id="symbol-input"
+                 name="symbol"
+                 value="{{ default_symbol }}"
+                 class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-gray-900 text-lg font-semibold transition-all"
+                 placeholder="e.g., NABIL, SHIVM, NEPSE"
+                 autocomplete="off"
+                 required>
+          <div id="suggestions" class="autocomplete-suggestions hidden"></div>
+        </div>
+      </div>
 
-    
-    <!-- Change your form to this -->
-<form method="GET" action="/analyze/" class="space-y-6">
-  <div>
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-      Stock Symbol
-    </label>
-    <div class="relative">
-      <input type="text" 
-             id="symbol-input"
-             name="symbol"
-             value="{{ default_symbol }}"
-             class="w-full px-4 py-3 bg-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-white text-lg"
-             placeholder="e.g., NABIL, SHIVM, NEPSE"
-             autocomplete="off"
-             required>
-      <div id="suggestions" class="autocomplete-suggestions hidden"></div>
-    </div>
-  </div>
+      <div>
+        <label class="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">
+          Select Trading Date
+        </label>
+        <input type="date" 
+               id="date-input"
+               name="date"
+               value="{{ default_date }}"
+               class="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-gray-900 font-semibold transition-all"
+               required>
+      </div>
 
-  <div>
-    <label class="block text-sm font-medium text-slate-300 mb-2">
-      Select Trading Date
-    </label>
-    <input type="date" 
-           id="date-input"
-           name="date"
-           value="{{ default_date }}"
-           class="w-full px-4 py-3 bg-primary border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-white"
-           required>
-  </div>
-
-  <button type="submit" 
-          class="w-full gradient-bg text-white font-semibold py-3 px-6 rounded-xl hover:shadow-glow transition transform hover:scale-[1.02]">
-    Analyze Stock Movement 🔍
-  </button>
-</form>
-
+      <button type="submit" 
+              class="w-full bg-blue-600 text-white font-bold py-4 px-8 rounded-2xl hover:bg-blue-700 shadow-lg hover:shadow-blue-200 transition-all transform hover:-translate-y-1">
+        Analyze Stock Movement 🔍
+      </button>
+    </form>
   </div>
 
   <!-- Features Section -->
-  <div class="mt-12 grid md:grid-cols-3 gap-6">
-    <div class="bg-secondary/30 backdrop-blur-sm rounded-xl p-5 border border-border">
-      <div class="text-3xl mb-3">📊</div>
-      <h3 class="font-semibold mb-2">Price Action Analysis</h3>
-      <p class="text-sm text-slate-400">Detailed breakdown of daily price movements and percentage changes</p>
+  <div class="mt-16 grid md:grid-cols-3 gap-8">
+    <div class="card-premium !p-6 !py-8 text-center">
+      <div class="text-4xl mb-4">📊</div>
+      <h3 class="font-bold text-gray-900 mb-3 text-lg">Price Action</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Detailed breakdown of daily price movements and percentage changes</p>
     </div>
-    <div class="bg-secondary/30 backdrop-blur-sm rounded-xl p-5 border border-border">
-      <div class="text-3xl mb-3">📈</div>
-      <h3 class="font-semibold mb-2">Volume Patterns</h3>
-      <p class="text-sm text-slate-400">Volume spike detection and comparison with 20-day average</p>
+    <div class="card-premium !p-6 !py-8 text-center">
+      <div class="text-4xl mb-4">📈</div>
+      <h3 class="font-bold text-gray-900 mb-3 text-lg">Volume Patterns</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Volume spike detection and comparison with 20-day average</p>
     </div>
-    <div class="bg-secondary/30 backdrop-blur-sm rounded-xl p-5 border border-border">
-      <div class="text-3xl mb-3">🎯</div>
-      <h3 class="font-semibold mb-2">Technical Signals</h3>
-      <p class="text-sm text-slate-400">Support/resistance breaks, trend analysis, and momentum indicators</p>
+    <div class="card-premium !p-6 !py-8 text-center">
+      <div class="text-4xl mb-4">🎯</div>
+      <h3 class="font-bold text-gray-900 mb-3 text-lg">Technical Signals</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Support/resistance breaks and momentum indicators</p>
     </div>
   </div>
 </div>
 
 <script>
-  // Get symbols from Django template
   const symbols = {{ symbols|safe }};
   const input = document.getElementById('symbol-input');
   const suggestionsDiv = document.getElementById('suggestions');
@@ -142,13 +125,12 @@
     if (matches.length > 0) {
       suggestionsDiv.innerHTML = matches.map((s, idx) => 
         `<div class="autocomplete-suggestion" data-symbol="${s}" data-index="${idx}">
-          <span class="font-mono text-accent">${s}</span>
+          <span class="font-bold text-blue-600">${s}</span>
          </div>`
       ).join('');
       suggestionsDiv.classList.remove('hidden');
       activeSuggestion = -1;
       
-      // Add click handlers
       document.querySelectorAll('.autocomplete-suggestion').forEach(div => {
         div.addEventListener('click', function() {
           input.value = this.dataset.symbol;
@@ -160,7 +142,6 @@
     }
   });
   
-  // Keyboard navigation
   input.addEventListener('keydown', function(e) {
     const suggestions = document.querySelectorAll('.autocomplete-suggestion');
     if (suggestions.length === 0) return;
@@ -183,18 +164,17 @@
   function highlightSuggestion(suggestions, index) {
     suggestions.forEach((s, i) => {
       if (i === index) {
-        s.style.background = '#334155';
+        s.style.background = '#eff6ff';
       } else {
         s.style.background = '';
       }
     });
   }
   
-  // Close suggestions when clicking outside
   document.addEventListener('click', function(e) {
     if (!input.contains(e.target) && !suggestionsDiv.contains(e.target)) {
       suggestionsDiv.classList.add('hidden');
     }
   });
 </script>
-{% endblock %}
+{% endblock %}

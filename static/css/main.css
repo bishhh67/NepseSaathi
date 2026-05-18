@@ -306,23 +306,12 @@ body .reveal.visible {
 
 
 
-/* Navbar scroll styles - using CSS instead of inline JS */
-/* FORCE NAVBAR - ALWAYS BLUE - NO INLINE STYLES NEEDED */
-/* FORCE NAVBAR ALWAYS NAVY */
-html body #navbar-bg,
-html.light body #navbar-bg,
-html.dark body #navbar-bg,
-body #navbar-bg,
-#navbar-bg,
-#navbar .absolute {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  background: #1E293B !important;
-  background-color: #1E293B !important;
-  border-bottom: 1px solid #334155 !important;
+/* Navbar scroll styles - simplified for light theme */
+html body #navbar-bg {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--border) !important;
   opacity: 1 !important;
-  transition: none !important;
 }
 
 /* Kill any top-page transparency */
