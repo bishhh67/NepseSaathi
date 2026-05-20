@@ -1,495 +1,2119 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Learn NEPSE — Master Stock Market Investing{% endblock %}
+{% block title %}Learn NEPSE | NEPSE Sathi{% endblock %}
 
 {% block extra_head %}
 <style>
-  :root {
-    --navy: #0F172A;
-    --navy-light: #1E293B;
-    --slate: #475569;
-    --slate-light: #94A3B8;
-    --gold: #C9A84C;
-    --gold-light: #FDF6E3;
-    --emerald: #10B981;
-    --emerald-bg: #ECFDF5;
-    --red: #EF4444;
-    --surface: #FFFFFF;
-    --border: #E2E8F0;
-  }
-  
-  .level-card {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .level-card:hover {
-    border-color: var(--gold);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  }
-  
-  .level-card.selected {
-    border-color: var(--gold);
-    background: var(--gold-light);
-    box-shadow: 0 4px 12px rgba(201,168,76,0.15);
-  }
-  
-  .lesson-accordion {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 16px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-  
-  .lesson-header {
-    background: var(--surface);
-    padding: 20px 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background 0.2s ease;
-  }
-  
-  .lesson-header:hover {
-    background: #F8FAFC;
-  }
-  
-  .lesson-header.active {
-    background: var(--gold-light);
-    border-bottom: 1px solid var(--gold);
-  }
-  
-  .lesson-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--navy);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .lesson-number {
-    width: 32px;
-    height: 32px;
-    background: var(--gold-light);
-    border-radius: 8px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: var(--gold);
-    font-size: 0.9rem;
-  }
-  
-  .lesson-header.active .lesson-number {
-    background: var(--gold);
-    color: white;
-  }
-  
-  .lesson-icon {
-    font-size: 1.3rem;
-  }
-  
-  .lesson-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-  }
-  
-  .lesson-content.show {
-    max-height: 800px;
-    transition: max-height 0.6s ease-in;
-  }
-  
-  .lesson-inner {
-    padding: 24px;
-    border-top: 1px solid var(--border);
-  }
-  
-  .start-lesson-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--gold);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    margin-top: 16px;
-  }
-  
-  .start-lesson-btn:hover {
-    background: #B8960C;
-    transform: translateX(4px);
-  }
-  
-  .recommendation-badge {
-    background: var(--emerald-bg);
-    color: var(--emerald);
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .level-tag {
-    background: var(--navy-light);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 600;
-  }
-  
-  @media (max-width: 768px) {
-    .level-card { padding: 16px; }
-    .lesson-header { padding: 16px; }
-    .lesson-title { font-size: 0.95rem; }
-  }
+/* ============================================
+   LEARN PAGE STYLES - Matching Home Page Theme
+   ============================================ */
+
+:root {
+  --white: #FFFFFF;
+  --bg: #F8FAFC;
+  --surface: #FFFFFF;
+  --navy: #0F172A;
+  --navy-mid: #1E293B;
+  --navy-light: #334155;
+  --slate: #334155;
+  --slate-light: #475569;
+  --slate-lighter: #64748B;
+  --slate-border: #CBD5E1;
+  --slate-bg: #F1F5F9;
+  --gold: #D4AF37;
+  --gold-hover: #B8960C;
+  --gold-soft: #E6C76A;
+  --gold-light: #FBF3D5;
+  --gold-mid: #F0DC82;
+  --red: #DC2626;
+  --red-light: #FEE2E2;
+  --emerald: #059669;
+  --emerald-light: #D1FAE5;
+  --amber: #D97706;
+  --amber-light: #FEF3C7;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover: 0 4px 12px rgba(212,175,55,0.15), 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* TABS */
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--slate-bg);
+  border-radius: 12px;
+  padding: 0.5rem;
+  border: 1px solid var(--slate-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  color: var(--slate-light);
+  border: none;
+  background: transparent;
+}
+.tab.active {
+  background: var(--gold);
+  color: white;
+  box-shadow: var(--shadow-hover);
+}
+.tab:hover:not(.active) {
+  background: var(--gold-light);
+  color: var(--gold-hover);
+}
+
+/* Sections */
+.page-section {
+  display: none;
+  animation: fadeUp 0.4s ease;
+}
+.page-section.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+.sec-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+.sec-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.sec-sub {
+  color: var(--slate-lighter);
+  font-size: 0.9rem;
+  margin-bottom: 1.8rem;
+  line-height: 1.6;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--slate-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.28s ease;
+  box-shadow: var(--shadow-card);
+}
+.card:hover {
+  border-color: var(--gold-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Grids */
+.g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+.g3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+.g4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+.badge-gold { color: var(--gold-hover); border-color: var(--gold-mid); background: var(--gold-light); }
+.badge-green { color: var(--emerald); border-color: #A7F3D0; background: var(--emerald-light); }
+.badge-amber { color: var(--amber); border-color: #FDE68A; background: var(--amber-light); }
+.badge-red { color: var(--red); border-color: #FECACA; background: var(--red-light); }
+.badge-slate { color: var(--slate); border-color: var(--slate-border); background: var(--slate-bg); }
+
+/* Buttons */
+.btn {
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--gold);
+  color: white;
+  box-shadow: var(--shadow-card);
+}
+.btn-primary:hover {
+  background: var(--gold-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.btn-ghost {
+  background: var(--slate-bg);
+  border: 1px solid var(--slate-border);
+  color: var(--slate);
+}
+.btn-ghost:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-mid);
+  color: var(--gold-hover);
+}
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.8rem; border-radius: 6px; }
+
+/* Progress Bar */
+.prog {
+  height: 6px;
+  background: var(--slate-bg);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+.prog-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1s ease;
+}
+.prog-gold { background: linear-gradient(90deg, var(--gold), var(--gold-hover)); }
+.prog-green { background: linear-gradient(90deg, var(--emerald), #34d399); }
+.prog-amber { background: linear-gradient(90deg, var(--amber), #fbbf24); }
+
+/* Lesson Styles */
+.lesson-item {
+  transition: all 0.2s ease;
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--slate-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.lesson-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background: var(--slate-bg);
+  cursor: pointer;
+  font-weight: 600;
+}
+.lesson-header:hover {
+  background: var(--gold-light);
+}
+.lesson-toggle {
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+.lesson-content {
+  display: none;
+  padding: 1rem;
+  background: white;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+.lesson-content ul, .lesson-content ol {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.lesson-content p {
+  margin-bottom: 0.5rem;
+}
+.lesson-content strong {
+  color: var(--gold-hover);
+}
+.lesson-content .highlight {
+  background: var(--gold-light);
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* Quiz Styles */
+.quiz-opt {
+  background: var(--slate-bg);
+  border: 1px solid var(--slate-border);
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.4rem 0;
+}
+.quiz-opt:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-mid);
+}
+.quiz-opt.correct {
+  background: var(--emerald-light);
+  border-color: var(--emerald);
+  color: var(--emerald);
+}
+.quiz-opt.wrong {
+  background: var(--red-light);
+  border-color: var(--red);
+  color: var(--red);
+}
+.quiz-feedback {
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.8rem;
+  margin-top: 0.7rem;
+  display: none;
+}
+.qf-ok { background: var(--emerald-light); border: 1px solid var(--emerald); color: var(--emerald); }
+.qf-bad { background: var(--red-light); border: 1px solid var(--red); color: var(--red); }
+
+/* Lesson Quiz */
+.lesson-quiz {
+  margin-top: 1rem;
+}
+.quiz-question {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  background: var(--slate-bg);
+  border-radius: 8px;
+}
+.quiz-question p {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.quiz-question label {
+  display: block;
+  margin: 0.3rem 0;
+  cursor: pointer;
+}
+.quiz-question input {
+  margin-right: 0.5rem;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+  z-index: 9999;
+  transition: transform 0.3s ease, opacity 0.3s;
+  opacity: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart Area */
+.chart-area {
+  background: var(--slate-bg);
+  border: 1px solid var(--slate-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.ind-toggle {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.ind-btn {
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--slate-border);
+  background: var(--surface);
+  transition: all 0.2s;
+}
+.ind-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+}
+
+/* Drop Target */
+.drop-target {
+  min-height: 60px;
+  border: 2px dashed var(--slate-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+.pattern-chip {
+  display: inline-block;
+  background: var(--slate-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: grab;
+  margin: 0.25rem;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-
-<div style="max-width: 1000px; margin: 0 auto; padding: 120px 24px 60px;">
-  
-  <!-- Header -->
-  <div style="text-align: center; margin-bottom: 48px;">
-    <span style="background: var(--gold-light); color: var(--gold); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Structured Learning Path</span>
-    <h1 style="font-size: 2.2rem; font-weight: 700; color: var(--navy); margin-top: 16px; margin-bottom: 12px;">Master NEPSE Investing</h1>
-    <p style="color: var(--slate); font-size: 1rem; max-width: 600px; margin: 0 auto;">From absolute beginner to advanced trader — follow our structured curriculum designed for Nepali investors</p>
+<!-- TAB BAR -->
+<div style="position:sticky;top:60px;z-index:100;background:var(--surface);backdrop-filter:blur(16px);padding:0.7rem 1.5rem;border-bottom:1px solid var(--slate-border);">
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('roadmap',this)">🗺️ Roadmap</button>
+    <button class="tab" onclick="switchTab('quizzes',this)">🧩 Quizzes</button>
+    <button class="tab" onclick="switchTab('flashcards',this)">🃏 Flashcards</button>
+    <button class="tab" onclick="switchTab('glossary',this)">📖 Glossary</button>
+    <button class="tab" onclick="switchTab('charts',this)">📊 Charts Lab</button>
+    <button class="tab" onclick="switchTab('scenarios',this)">🎭 Scenarios</button>
   </div>
-
-  <!-- Level Selection Section -->
-  <div style="margin-bottom: 48px;">
-    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--navy); margin-bottom: 20px;">📊 What's your current level?</h2>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-      
-      <!-- Beginner Level -->
-      <div class="level-card" data-level="beginner" onclick="selectLevel('beginner')">
-        <div style="font-size: 2rem; margin-bottom: 12px;">🌱</div>
-        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Beginner</h3>
-        <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 12px;">New to stock market — never invested before</p>
-        <div class="level-tag">Start from Lesson 1</div>
-      </div>
-      
-      <!-- Intermediate Level -->
-      <div class="level-card" data-level="intermediate" onclick="selectLevel('intermediate')">
-        <div style="font-size: 2rem; margin-bottom: 12px;">📈</div>
-        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Intermediate</h3>
-        <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 12px;">Knows basics, wants technical & fundamental analysis</p>
-        <div class="level-tag">Start from Lesson 3</div>
-      </div>
-      
-      <!-- Advanced Level -->
-      <div class="level-card" data-level="advanced" onclick="selectLevel('advanced')">
-        <div style="font-size: 2rem; margin-bottom: 12px;">🎯</div>
-        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Advanced</h3>
-        <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 12px;">Experienced trader seeking advanced strategies</p>
-        <div class="level-tag">Start from Lesson 4-5</div>
-      </div>
-      
-    </div>
-  </div>
-
-  <!-- Personalized Recommendation Section (shows after level selection) -->
-  <div id="recommendation-section" style="display: none; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border-radius: 20px; padding: 32px; margin-bottom: 48px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-      <div>
-        <div class="recommendation-badge" style="background: rgba(255,255,255,0.15); color: var(--gold);">
-          <span>🎓</span> Personalized Learning Path
-        </div>
-        <h3 id="recommendation-title" style="font-size: 1.3rem; font-weight: 700; color: white; margin-top: 12px; margin-bottom: 8px;">Recommended Starting Point</h3>
-        <p id="recommendation-text" style="color: rgba(255,255,255,0.8); font-size: 0.95rem;"></p>
-      </div>
-      <a id="recommendation-link" href="#" class="start-lesson-btn" style="background: var(--gold); color: var(--navy); margin-top: 0;">
-        Start Learning Now →
-      </a>
-    </div>
-  </div>
-
-  <!-- Lessons Accordion Section -->
-  <div style="margin-top: 32px;">
-    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--navy); margin-bottom: 20px;">📚 Curriculum — 5 Core Lessons</h2>
-    
-    <!-- Lesson 1 -->
-    <div class="lesson-accordion" id="lesson1">
-      <div class="lesson-header" onclick="toggleLesson(1)">
-        <div class="lesson-title">
-          <span class="lesson-number">1</span>
-          <span class="lesson-icon">🏦</span>
-          <span>Introduction to NEPSE & Stock Market Basics</span>
-        </div>
-        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-inner">
-          <!-- ============================================= -->
-          <!-- PLACE YOUR LESSON 1 CONTENT HERE              -->
-          <!-- You can include: text, images, videos, etc.   -->
-          <!-- Or link to your existing lesson1.html file:   -->
-          <!-- ============================================= -->
-          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
-            <strong>Lesson 1 Overview:</strong> Understanding what NEPSE is, how the stock market works, basic terminology, and getting started with investing in Nepal.
-          </p>
-       
-          <!-- Option 3: Link to your lesson file -->
-          <a href="{% url 'lesson1' %}" class="start-lesson-btn">📖 Read Full Lesson 1 </a>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Lesson 2 -->
-    <div class="lesson-accordion" id="lesson2">
-      <div class="lesson-header" onclick="toggleLesson(2)">
-        <div class="lesson-title">
-          <span class="lesson-number">2</span>
-          <span class="lesson-icon">📊</span>
-          <span>How to Open a Demat Account & Start Trading</span>
-        </div>
-        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-inner">
-        
-          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
-            <strong>Lesson 2 Overview:</strong> Step-by-step guide to opening a Demat account, choosing a broker, and placing your first trade on NEPSE.
-          </p>
-          <a href="{% url 'lesson2' %}" class="start-lesson-btn">📖 Read Full Lesson 2 →</a>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Lesson 3 -->
-    <div class="lesson-accordion" id="lesson3">
-      <div class="lesson-header" onclick="toggleLesson(3)">
-        <div class="lesson-title">
-          <span class="lesson-number">3</span>
-          <span class="lesson-icon">🔍</span>
-          <span>Fundamental Analysis — Evaluating Companies</span>
-        </div>
-        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-inner">
-          <!-- ============================================= -->
-          <!-- PLACE YOUR LESSON 3 CONTENT HERE              -->
-          <!-- ============================================= -->
-          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
-            <strong>Lesson 3 Overview:</strong> Learn to read financial statements, calculate PE ratio, EPS, ROI, and identify undervalued stocks in Nepal.
-          </p>
-          <a href="{% url 'lesson3' %}" class="start-lesson-btn">📖 Read Full Lesson 3 →</a>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Lesson 4 -->
-    <div class="lesson-accordion" id="lesson4">
-      <div class="lesson-header" onclick="toggleLesson(4)">
-        <div class="lesson-title">
-          <span class="lesson-number">4</span>
-          <span class="lesson-icon">📈</span>
-          <span>Technical Analysis — Charts & Indicators</span>
-        </div>
-        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-inner">
-          <!-- ============================================= -->
-          <!-- PLACE YOUR LESSON 4 CONTENT HERE              -->
-          <!-- ============================================= -->
-          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
-            <strong>Lesson 4 Overview:</strong> Master candlestick patterns, support/resistance, RSI, MACD, and other technical indicators used in NEPSE trading.
-          </p>
-          <a href="{% url 'lesson4' %}" class="start-lesson-btn">📖 Read Full Lesson 4 →</a>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Lesson 5 -->
-    <div class="lesson-accordion" id="lesson5">
-      <div class="lesson-header" onclick="toggleLesson(5)">
-        <div class="lesson-title">
-          <span class="lesson-number">5</span>
-          <span class="lesson-icon">🎯</span>
-          <span>Advanced Strategies — IPOs, Sector Rotation & Risk Management</span>
-        </div>
-        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M6 9l6 6 6-6"/>
-        </svg>
-      </div>
-      <div class="lesson-content">
-        <div class="lesson-inner">
-          <!-- ============================================= -->
-          <!-- PLACE YOUR LESSON 5 CONTENT HERE              -->
-          <!-- ============================================= -->
-          <p style="color: var(--slate); line-height: 1.7; margin-bottom: 16px;">
-            <strong>Lesson 5 Overview:</strong> Advanced topics including IPO analysis, sector rotation strategies, portfolio diversification, and risk management.
-          </p>
-          <a href="{% url 'lesson5' %}" class="start-lesson-btn">📖 Read Full Lesson 5 →</a>
-        </div>
-      </div>
-    </div>
-    
-  </div>
-  
-  <!-- Progress Tracker (Optional) -->
-  <div style="margin-top: 48px; padding: 24px; background: #F8FAFC; border-radius: 16px; text-align: center;">
-    <span style="font-size: 2rem;">📖</span>
-    <h3 style="font-size: 1rem; font-weight: 600; color: var(--navy); margin-top: 8px;">Track Your Progress</h3>
-    <p style="font-size: 0.85rem; color: var(--slate); margin-top: 4px;">Complete lessons and mark them as done to track your learning journey</p>
-    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap;">
-      <span id="progress-text" style="font-size: 0.8rem; color: var(--slate-light);">0 of 5 lessons completed</span>
-    </div>
-  </div>
-  
 </div>
 
-<script>
-  // Track open lesson (only one open at a time)
-  let currentOpenLesson = null;
-  
-  // Toggle lesson function
-  function toggleLesson(lessonNumber) {
-    const lessonContent = document.querySelector(`#lesson${lessonNumber} .lesson-content`);
-    const lessonHeader = document.querySelector(`#lesson${lessonNumber} .lesson-header`);
-    const chevron = document.querySelector(`#lesson${lessonNumber} .chevron`);
-    
-    // If clicking the already open lesson, close it
-    if (currentOpenLesson === lessonNumber) {
-      lessonContent.classList.remove('show');
-      lessonHeader.classList.remove('active');
-      if (chevron) chevron.style.transform = 'rotate(0deg)';
-      currentOpenLesson = null;
-    } else {
-      // Close previously open lesson
-      if (currentOpenLesson !== null) {
-        const prevContent = document.querySelector(`#lesson${currentOpenLesson} .lesson-content`);
-        const prevHeader = document.querySelector(`#lesson${currentOpenLesson} .lesson-header`);
-        const prevChevron = document.querySelector(`#lesson${currentOpenLesson} .chevron`);
-        if (prevContent) prevContent.classList.remove('show');
-        if (prevHeader) prevHeader.classList.remove('active');
-        if (prevChevron) prevChevron.style.transform = 'rotate(0deg)';
-      }
-      
-      // Open new lesson
-      lessonContent.classList.add('show');
-      lessonHeader.classList.add('active');
-      if (chevron) chevron.style.transform = 'rotate(180deg)';
-      currentOpenLesson = lessonNumber;
-    }
-  }
-  
-  // Level selection function
-  let selectedLevel = null;
-  
-  function selectLevel(level) {
-    selectedLevel = level;
-    
-    // Update UI - remove selected class from all level cards
-    document.querySelectorAll('.level-card').forEach(card => {
-      card.classList.remove('selected');
-    });
-    
-    // Add selected class to clicked card
-    const selectedCard = document.querySelector(`.level-card[data-level="${level}"]`);
-    selectedCard.classList.add('selected');
-    
-    // Show recommendation section
-    const recommendationSection = document.getElementById('recommendation-section');
-    recommendationSection.style.display = 'block';
-    
-    // Update recommendation based on level
-    const recommendationTitle = document.getElementById('recommendation-title');
-    const recommendationText = document.getElementById('recommendation-text');
-    const recommendationLink = document.getElementById('recommendation-link');
-    
-    if (level === 'beginner') {
-      recommendationTitle.textContent = '🌱 Start from the Beginning';
-      recommendationText.textContent = 'As a beginner, we recommend starting with Lesson 1 to build a strong foundation. No prior knowledge required — we\'ll guide you step by step.';
-      recommendationLink.href = '#lesson1';
-      
-      // Auto scroll to lesson 1
-      setTimeout(() => {
-        document.getElementById('lesson1').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        toggleLesson(1);
-      }, 300);
-      
-    } else if (level === 'intermediate') {
-      recommendationTitle.textContent = '📊 Jump to Lesson 3';
-      recommendationText.textContent = 'You already know the basics. Start with Lesson 3 to master fundamental and technical analysis, then move to advanced strategies.';
-      recommendationLink.href = '#lesson3';
-      
-      setTimeout(() => {
-        document.getElementById('lesson3').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        toggleLesson(3);
-      }, 300);
-      
-    } else if (level === 'advanced') {
-      recommendationTitle.textContent = '🎯 Start with Lessons 4 & 5';
-      recommendationText.textContent = 'Experienced trader? Dive directly into technical analysis (Lesson 4) and advanced strategies (Lesson 5) to sharpen your edge.';
-      recommendationLink.href = '#lesson4';
-      
-      setTimeout(() => {
-        document.getElementById('lesson4').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        toggleLesson(4);
-      }, 300);
-    }
-  }
-  
-  // Optional: Track completed lessons (stores in localStorage)
-  function markLessonComplete(lessonNum) {
-    let completed = JSON.parse(localStorage.getItem('completedLessons') || '[]');
-    if (!completed.includes(lessonNum)) {
-      completed.push(lessonNum);
-      localStorage.setItem('completedLessons', JSON.stringify(completed));
-      updateProgress();
-    }
-  }
-  
-  function updateProgress() {
-    const completed = JSON.parse(localStorage.getItem('completedLessons') || '[]');
-    const progressText = document.getElementById('progress-text');
-    if (progressText) {
-      progressText.textContent = `${completed.length} of 5 lessons completed`;
-    }
-  }
-  
-  // Load progress on page load
-  updateProgress();
-  
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-</script>
+<!-- TAB 1: ROADMAP -->
+<div id="tab-roadmap" class="page-section active">
+<div class="wrap">
+  <div class="sec-label">Learning Path</div>
+  <h2 class="sec-title">Your NEPSE Roadmap</h2>
+  <p class="sec-sub">Structured progression from beginner to expert investor. Click any lesson to expand and learn.</p>
 
+  <div class="g4" style="margin-bottom:2rem;" id="pathGrid">
+    <div class="card" style="cursor:pointer;border-color:var(--gold);background:var(--gold-light)" onclick="setPath('beginner',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">🌱</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Complete Beginner</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Start from scratch</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="setPath('analyst',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">📊</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Stock Analyst</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Master fundamentals</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="setPath('trader',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">📈</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Active Trader</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Technical analysis focus</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="setPath('advanced',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">🏆</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Advanced Investor</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Deep market mastery</div>
+    </div>
+  </div>
+
+  <div style="background:var(--gold-light);border:1px solid var(--gold-mid);border-radius:16px;padding:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem;">
+    <div style="display:flex;align-items:center;gap:1.2rem;">
+      <div style="font-size:2.5rem;">🎯</div>
+      <div>
+        <div style="font-weight:700;font-size:1.05rem;">Continue: Stock Market Foundations</div>
+        <div style="font-size:.8rem;color:var(--slate-lighter);margin-top:.2rem;">Level 1 · Lesson 1 of 7</div>
+        <div style="display:flex;align-items:center;gap:.8rem;margin-top:.6rem;">
+          <div class="prog" style="width:160px;"><div class="prog-fill prog-gold" style="width:30%"></div></div>
+          <span style="font-size:.72rem;color:var(--slate-lighter);">30% complete</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+      <div style="text-align:center">
+        <div style="font-size:2rem;font-weight:800;color:var(--gold)" id="globalXP">0</div>
+        <div style="font-size:.7rem;color:var(--slate-lighter);">Total XP</div>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('▶ Select a lesson to start learning!')">▶ Continue Learning</button>
+    </div>
+  </div>
+
+  <div id="roadmapLevels"></div>
+</div>
+</div>
+
+<!-- TAB 2: QUIZZES -->
+<div id="tab-quizzes" class="page-section">
+<div class="wrap">
+  <div class="sec-label">Test Yourself</div>
+  <h2 class="sec-title">Interactive Quizzes</h2>
+  <p class="sec-sub">Earn XP for every correct answer and track your progress.</p>
+
+  <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem;background:var(--slate-bg);border:1px solid var(--slate-border);border-radius:12px;padding:1.2rem 1.5rem;">
+    <div style="flex:1">
+      <div style="font-size:.72rem;color:var(--slate-lighter);margin-bottom:.3rem">PROGRESS</div>
+      <div class="prog"><div class="prog-fill prog-gold" id="quizProg" style="width:0%"></div></div>
+    </div>
+    <div style="text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--gold)" id="quizXP">0</div><div style="font-size:.68rem;color:var(--slate-lighter)">XP THIS SESSION</div></div>
+    <div style="text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--emerald)" id="quizScore">0/0</div><div style="font-size:.68rem;color:var(--slate-lighter)">CORRECT</div></div>
+  </div>
+
+  <div class="g2" id="quizContainer"></div>
+</div>
+</div>
+
+<!-- TAB 3: FLASHCARDS -->
+<div id="tab-flashcards" class="page-section">
+<div class="wrap">
+  <div class="sec-label">Terminology Mastery</div>
+  <h2 class="sec-title">NEPSE Flashcards</h2>
+  <p class="sec-sub">Tap any card to flip it. Click learned to mark as mastered.</p>
+
+  <div style="max-width:520px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <span style="font-size:.8rem;color:var(--slate-lighter)">Card <span id="fcCurrent">1</span> of <span id="fcTotal">12</span></span>
+      <div style="display:flex;gap:.5rem">
+        <span class="badge badge-green" id="fcLearned">0 Learned</span>
+        <span class="badge badge-amber" id="fcSkipped">0 Skipped</span>
+      </div>
+    </div>
+
+    <div class="flashcard-scene" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="fc-face fc-front">
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.8rem">NEPSE TERM</div>
+          <div class="fc-term" id="fcTerm">P/E Ratio</div>
+          <div class="fc-hint" style="font-size:.75rem;color:var(--slate-lighter)">Tap to reveal definition ↓</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.8rem">DEFINITION</div>
+          <div class="fc-def" id="fcDef">Price-to-Earnings Ratio: Share price divided by earnings per share.</div>
+          <div style="margin-top:.8rem;font-size:.72rem;color:var(--gold)">📌 NEPSE avg P/E: 18-25x</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.8rem;margin-top:1.2rem;">
+      <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="fcAction('skip')">← Skip</button>
+      <button class="btn btn-ghost btn-sm" onclick="flipCard()" style="flex:1">🔄 Flip</button>
+      <button class="btn btn-primary btn-sm" style="flex:1;" onclick="fcAction('learn')">Learned ✓</button>
+    </div>
+
+    <div class="fc-nav" id="fcDots" style="margin-top:1.2rem;flex-wrap:wrap;gap:.4rem;"></div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 4: GLOSSARY -->
+<div id="tab-glossary" class="page-section">
+<div class="wrap">
+  <div class="sec-label">Financial Dictionary</div>
+  <h2 class="sec-title">NEPSE Glossary</h2>
+  <p class="sec-sub">Search and learn key terms used in Nepal's stock market.</p>
+
+  <div class="glossary-search" style="position:relative;margin-bottom:2rem;">
+    <input type="text" id="glossarySearch" placeholder="Search terms like EPS, PE Ratio, Circuit Breaker, Demat..." onkeyup="searchGlossary()" style="width:100%;padding:1rem;background:var(--slate-bg);border:1px solid var(--slate-border);border-radius:12px;font-size:1rem;">
+  </div>
+
+  <div id="glossaryResults"></div>
+</div>
+</div>
+
+<!-- TAB 5: CHARTS LAB -->
+<div id="tab-charts" class="page-section">
+<div class="wrap">
+  <div class="sec-label">Visual Learning</div>
+  <h2 class="sec-title">Interactive Charts Lab</h2>
+  <p class="sec-sub">Toggle indicators and study technical analysis on simulated NEPSE data.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div style="font-weight:700;margin-bottom:.8rem;">NABIL Bank — Simulated Price Data</div>
+    <div class="ind-toggle">
+      <button class="ind-btn active" data-ind="price" onclick="toggleInd(this)">● Price</button>
+      <button class="ind-btn" data-ind="ma20" onclick="toggleInd(this)">○ MA20</button>
+      <button class="ind-btn" data-ind="ma50" onclick="toggleInd(this)">○ MA50</button>
+      <button class="ind-btn" data-ind="rsi" onclick="toggleInd(this)">○ RSI</button>
+    </div>
+    <div class="chart-area" style="height:250px;padding:1rem;">
+      <canvas id="mainChart" style="width:100%;height:100%"></canvas>
+    </div>
+    <div class="chart-area" id="rsiArea" style="height:80px;padding:.5rem;margin-top:.8rem;display:none;">
+      <canvas id="rsiChart" style="width:100%;height:100%"></canvas>
+    </div>
+  </div>
+
+  <div style="font-weight:700;font-size:1.2rem;margin-bottom:.8rem;">🕯️ Candlestick Pattern Matching</div>
+  <p class="sec-sub" style="margin-bottom:1rem">Drag each pattern name to its correct diagram.</p>
+  <div class="card">
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.2rem;" id="patternPool">
+      <div class="pattern-chip" draggable="true" data-pattern="doji">⚖️ Doji</div>
+      <div class="pattern-chip" draggable="true" data-pattern="hammer">🔨 Hammer</div>
+      <div class="pattern-chip" draggable="true" data-pattern="engulf">🕯️ Bullish Engulfing</div>
+      <div class="pattern-chip" draggable="true" data-pattern="shooting">🌠 Shooting Star</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;">
+      <div>
+        <div style="text-align:center;padding:0.5rem;">🕯️ Long body, small wick</div>
+        <div class="drop-target" data-correct="engulf"></div>
+      </div>
+      <div>
+        <div style="text-align:center;padding:0.5rem;">🔨 Small body, long lower wick</div>
+        <div class="drop-target" data-correct="hammer"></div>
+      </div>
+      <div>
+        <div style="text-align:center;padding:0.5rem;">➕ Open = Close</div>
+        <div class="drop-target" data-correct="doji"></div>
+      </div>
+      <div>
+        <div style="text-align:center;padding:0.5rem;">🌠 Small body, long upper wick</div>
+        <div class="drop-target" data-correct="shooting"></div>
+      </div>
+    </div>
+    <button class="btn btn-ghost" style="margin-top:1rem;width:100%" onclick="checkPatterns()">Check Matching ✓</button>
+    <div class="quiz-feedback qf-ok" id="pattern-ok" style="display:none">✅ Perfect! +100 XP</div>
+    <div class="quiz-feedback qf-bad" id="pattern-bad" style="display:none">❌ Try again!</div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 6: SCENARIOS -->
+<div id="tab-scenarios" class="page-section">
+<div class="wrap">
+  <div class="sec-label">Case Studies</div>
+  <h2 class="sec-title">Market Scenarios</h2>
+  <p class="sec-sub">Read real-world NEPSE situations and make your decision.</p>
+  <div id="scenarioContainer"></div>
+
+  <div style="margin-top:2rem;">
+    <div style="font-weight:700;font-size:1.2rem;margin-bottom:.4rem;">⚙️ Financial Ratio Calculator</div>
+    <p class="sec-sub">Calculate key ratios from any NEPSE company.</p>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+        <div><label style="font-size:.7rem;color:var(--slate-lighter);">Net Profit (Lakhs)</label><input type="number" id="ratNetProfit" value="5000" class="stock-input" oninput="calcRatios()" style="width:100%;padding:0.5rem;border:1px solid var(--slate-border);border-radius:6px;"></div>
+        <div><label style="font-size:.7rem;color:var(--slate-lighter);">Shares (Lakhs)</label><input type="number" id="ratShares" value="100" class="stock-input" oninput="calcRatios()" style="width:100%;padding:0.5rem;border:1px solid var(--slate-border);border-radius:6px;"></div>
+        <div><label style="font-size:.7rem;color:var(--slate-lighter);">Price (Rs)</label><input type="number" id="ratPrice" value="1200" class="stock-input" oninput="calcRatios()" style="width:100%;padding:0.5rem;border:1px solid var(--slate-border);border-radius:6px;"></div>
+        <div><label style="font-size:.7rem;color:var(--slate-lighter);">Dividend (Rs)</label><input type="number" id="ratDividend" value="20" class="stock-input" oninput="calcRatios()" style="width:100%;padding:0.5rem;border:1px solid var(--slate-border);border-radius:6px;"></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;" id="ratioResults"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="toast"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let quizCorrect=0, quizTotal=0, quizXPearned=0;
+
+function showToast(msg, type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(80px)';},2800);
+}
+
+function updateGlobalXP(){
+  document.getElementById('globalXP').textContent = quizXPearned;
+}
+
+function switchTab(name,el){
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='charts') setTimeout(drawCharts,100);
+}
+// ========== COMPLETE ROADMAP WITH PREMIUM VISUAL LESSONS ==========
+
+// ========== ENHANCED ROADMAP LEVELS — Drop-in replacement for the `levels` array ==========
+// Improvements: larger/clearer SVG diagrams, real images from internet, richer content
+const levels = [
+  {
+    n: 1,
+    title: '📚 Stock Market Foundations',
+    desc: 'What is a stock? How do markets work? No jargon, just clear concepts.',
+    lessons: 7,
+    pct: 0,
+    status: 'active',
+    tags: ['beginner'],
+    icon: '📚',
+    items: [
+      {
+        title: 'What is a Stock?',
+        content: `
+<p>When a company needs money to grow — build a factory, hire staff, buy equipment — it can either <strong>borrow money</strong> (take a loan) or <strong>sell a piece of itself</strong>. That piece is called a <strong>stock</strong> or <strong>share</strong>.</p>
+
+<div style="background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:1.2rem;margin:1.2rem 0;font-size:1rem;">
+  <strong>Simple definition:</strong> A stock is legal proof that you own a tiny percentage of a company. If the company grows, your stake becomes more valuable. If it struggles, it loses value.
+</div>
+
+<!-- Real-world image to anchor the concept -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/NYSE_trading_floor.jpg/1280px-NYSE_trading_floor.jpg"
+       alt="NYSE trading floor showing how stocks are bought and sold"
+       style="width:100%;height:220px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    📍 The New York Stock Exchange floor — the world's largest stock market. NEPSE in Kathmandu works on the same fundamental principles.
+  </div>
+</div>
+
+<!-- Enlarged ownership diagram -->
+<svg width="100%" viewBox="0 0 720 320" role="img" style="margin:1rem 0;">
+  <title>Company ownership split into shares</title>
+  <defs>
+    <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Company box -->
+  <rect x="30" y="20" width="210" height="110" rx="12" fill="#FBF3D5" stroke="#D4AF37" stroke-width="2"/>
+  <text x="135" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#7B5E10">🏢 NABIL Bank</text>
+  <text x="135" y="82" text-anchor="middle" font-size="12" fill="#8B6914">Total shares: 10,000,000</text>
+  <text x="135" y="104" text-anchor="middle" font-size="12" fill="#8B6914">Total Value: Rs 50 billion</text>
+
+  <!-- Arrow -->
+  <line x1="242" y1="75" x2="298" y2="75" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr1)"/>
+  <text x="270" y="68" text-anchor="middle" font-size="11" fill="#64748B">divides into</text>
+
+  <!-- Shares block -->
+  <rect x="302" y="20" width="388" height="110" rx="12" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="496" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="#1E293B">Each share = 1/10,000,000 ownership</text>
+  <rect x="322" y="68" width="82" height="42" rx="7" fill="#E6C76A" stroke="#D4AF37" stroke-width="1.2"/>
+  <text x="363" y="93" text-anchor="middle" font-size="12" font-weight="600" fill="#7B5E10">You: 100</text>
+  <rect x="414" y="68" width="82" height="42" rx="7" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="455" y="93" text-anchor="middle" font-size="12" fill="#334155">Investor B</text>
+  <rect x="506" y="68" width="82" height="42" rx="7" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="547" y="93" text-anchor="middle" font-size="12" fill="#334155">Investor C</text>
+  <rect x="598" y="68" width="82" height="42" rx="7" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="639" y="93" text-anchor="middle" font-size="11" fill="#334155">9.9M others</text>
+
+  <!-- What you get — full width row -->
+  <rect x="30" y="158" width="660" height="140" rx="12" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="360" y="182" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">As a shareholder, you get three things:</text>
+
+  <rect x="55" y="196" width="190" height="84" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.2"/>
+  <text x="150" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#065F46">💰 Dividends</text>
+  <text x="150" y="244" text-anchor="middle" font-size="11" fill="#047857">Your share of the</text>
+  <text x="150" y="260" text-anchor="middle" font-size="11" fill="#047857">company's annual profit</text>
+
+  <rect x="265" y="196" width="190" height="84" rx="10" fill="#FBF3D5" stroke="#D4AF37" stroke-width="1.2"/>
+  <text x="360" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#7B5E10">📈 Capital Gain</text>
+  <text x="360" y="244" text-anchor="middle" font-size="11" fill="#8B6914">Profit when you sell</text>
+  <text x="360" y="260" text-anchor="middle" font-size="11" fill="#8B6914">at a higher price</text>
+
+  <rect x="475" y="196" width="200" height="84" rx="10" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.2"/>
+  <text x="575" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#5B21B6">🗳️ Voting Rights</text>
+  <text x="575" y="244" text-anchor="middle" font-size="11" fill="#6D28D9">Vote at AGMs on</text>
+  <text x="575" y="260" text-anchor="middle" font-size="11" fill="#6D28D9">company decisions</text>
+</svg>
+
+<!-- Story: How it feels to be a shareholder -->
+<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1.2rem;margin:1.2rem 0;">
+  <strong>🧑‍💼 Real story:</strong> Imagine NABIL Bank earns Rs 10 billion profit this year. They declare a 40% cash dividend. You own 500 shares at face value Rs 100 each. You receive <strong>Rs 20,000</strong> deposited directly into your bank account — just for holding shares. That's what ownership means.
+</div>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Two types of stock in Nepal:</h4>
+<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+  <thead><tr style="background:var(--slate-bg);">
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);font-size:0.93rem;">Type</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Voting Rights</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Dividend</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">In Nepal</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Common Stock (साधारण शेयर)</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">✅ Yes</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Variable — depends on profit</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Most NEPSE stocks</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Preferred Stock (अग्राधिकार शेयर)</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">❌ No</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Fixed rate, paid first</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Rare in NEPSE</td></tr>
+  </tbody>
+</table>
+
+<div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:1.1rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>💡 Key takeaway:</strong> Stocks are not lottery tickets. They are ownership stakes in real businesses. When you buy NABIL, you own a piece of Nepal's largest private bank. Your returns depend on how well that business performs — not luck.
+</div>
+        `
+      },
+      {
+        title: 'How Stock Markets Work',
+        content: `
+<p>A stock market is simply an organised place where buyers and sellers meet to trade shares at a price they both agree on. Without a centralised market, you'd need to find your own buyer every time — chaotic and unfair.</p>
+
+<div style="background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:1.2rem;margin:1.2rem 0;font-size:0.95rem;">
+  <strong>Real-world analogy:</strong> Asan Tole bazaar in Kathmandu. Sellers set out goods, buyers walk through, a price forms based on how much everyone wants the item that day. NEPSE works exactly the same way — but for company shares, digitally, with strict rules.
+</div>
+
+<!-- Image of Kathmandu/NEPSE building for context -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Nepal_Stock_Exchange.jpg/1200px-Nepal_Stock_Exchange.jpg"
+       alt="NEPSE Nepal Stock Exchange building in Kathmandu"
+       style="width:100%;height:200px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    📍 NEPSE headquarters in Singhadurbar, Kathmandu — the heart of Nepal's capital markets since 1993.
+  </div>
+</div>
+
+<!-- Enlarged market structure diagram -->
+<svg width="100%" viewBox="0 0 720 330" role="img" style="margin:1rem 0;">
+  <title>How NEPSE connects companies and investors</title>
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr2g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr2o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- SEBON (top regulator) -->
+  <rect x="250" y="14" width="220" height="56" rx="10" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="360" y="38" text-anchor="middle" font-size="14" font-weight="700" fill="#5B21B6">SEBON</text>
+  <text x="360" y="58" text-anchor="middle" font-size="11" fill="#6D28D9">Securities Board — sets all rules</text>
+
+  <line x1="360" y1="72" x2="360" y2="102" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr2)"/>
+
+  <!-- NEPSE (central box) -->
+  <rect x="220" y="106" width="280" height="64" rx="12" fill="#FBF3D5" stroke="#D4AF37" stroke-width="2"/>
+  <text x="360" y="132" text-anchor="middle" font-size="16" font-weight="700" fill="#7B5E10">🏛️ NEPSE</text>
+  <text x="360" y="154" text-anchor="middle" font-size="11" fill="#8B6914">The marketplace — all trades happen here</text>
+
+  <!-- Company (left) -->
+  <rect x="30" y="220" width="195" height="88" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="127" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#065F46">🏢 Companies</text>
+  <text x="127" y="268" text-anchor="middle" font-size="11" fill="#047857">List shares to raise</text>
+  <text x="127" y="285" text-anchor="middle" font-size="11" fill="#047857">capital for growth</text>
+  <text x="127" y="300" text-anchor="middle" font-size="10" fill="#047857">e.g. NABIL, HIDCL, NLIC</text>
+
+  <!-- Broker (center) -->
+  <rect x="252" y="220" width="216" height="88" rx="10" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="360" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#1E293B">🏦 Licensed Broker</text>
+  <text x="360" y="268" text-anchor="middle" font-size="11" fill="#475569">Your gateway to NEPSE.</text>
+  <text x="360" y="285" text-anchor="middle" font-size="11" fill="#475569">Places orders on your behalf</text>
+  <text x="360" y="300" text-anchor="middle" font-size="10" fill="#475569">e.g. NMB Sec, Kumari Capital</text>
+
+  <!-- Investor (right) -->
+  <rect x="495" y="220" width="195" height="88" rx="10" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+  <text x="592" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#1D4ED8">👤 Investors</text>
+  <text x="592" y="268" text-anchor="middle" font-size="11" fill="#2563EB">Buy shares hoping</text>
+  <text x="592" y="285" text-anchor="middle" font-size="11" fill="#2563EB">prices rise over time</text>
+  <text x="592" y="300" text-anchor="middle" font-size="10" fill="#2563EB">That's you! 🎯</text>
+
+  <!-- Arrows: Company → NEPSE -->
+  <path d="M220 215 L220 170 L222 170" fill="none" stroke="#059669" stroke-width="1.5" marker-end="url(#arr2g)"/>
+
+  <!-- Investor → Broker -->
+  <path d="M495 264 L470 264" fill="none" stroke="#3B82F6" stroke-width="1.5" marker-end="url(#arr2b)"/>
+  <!-- Broker → NEPSE -->
+  <path d="M360 220 L360 172" fill="none" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr2)"/>
+
+  <!-- CDSC -->
+  <rect x="518" y="106" width="178" height="64" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="607" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#92400E">CDSC</text>
+  <text x="607" y="150" text-anchor="middle" font-size="11" fill="#B45309">Settles trades, holds</text>
+  <text x="607" y="163" text-anchor="middle" font-size="11" fill="#B45309">your Demat account</text>
+  <line x1="500" y1="138" x2="518" y2="138" stroke="#D97706" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr2o)"/>
+</svg>
+
+<p style="font-size:0.9rem;color:var(--slate-lighter);margin-top:0.5rem;">Every participant has a specific role. You can't trade directly on NEPSE — you must go through a licensed broker (like NMB Securities, Kumari Capital, etc.).</p>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">The journey of a single trade:</h4>
+
+<svg width="100%" viewBox="0 0 720 120" role="img" style="margin:0.5rem 0;">
+  <title>Journey of a buy order from investor to settlement</title>
+  <defs>
+    <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect x="10" y="30" width="118" height="60" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+  <text x="69" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#1D4ED8">You place</text>
+  <text x="69" y="72" text-anchor="middle" font-size="11" fill="#2563EB">Buy order</text>
+  <text x="69" y="88" text-anchor="middle" font-size="9" fill="#60a5fa">via MeroShare</text>
+
+  <line x1="130" y1="60" x2="155" y2="60" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr3)"/>
+
+  <rect x="157" y="30" width="118" height="60" rx="8" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="216" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#1E293B">Broker</text>
+  <text x="216" y="72" text-anchor="middle" font-size="11" fill="#475569">forwards order</text>
+  <text x="216" y="88" text-anchor="middle" font-size="9" fill="#94a3b8">to NEPSE system</text>
+
+  <line x1="277" y1="60" x2="302" y2="60" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr3)"/>
+
+  <rect x="304" y="30" width="118" height="60" rx="8" fill="#FBF3D5" stroke="#D4AF37" stroke-width="1.5"/>
+  <text x="363" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#7B5E10">NEPSE</text>
+  <text x="363" y="72" text-anchor="middle" font-size="11" fill="#8B6914">matches with</text>
+  <text x="363" y="88" text-anchor="middle" font-size="9" fill="#8B6914">a seller's order</text>
+
+  <line x1="424" y1="60" x2="449" y2="60" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr3)"/>
+
+  <rect x="451" y="30" width="118" height="60" rx="8" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="510" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#92400E">CDSC</text>
+  <text x="510" y="72" text-anchor="middle" font-size="11" fill="#B45309">clears trade</text>
+  <text x="510" y="88" text-anchor="middle" font-size="9" fill="#B45309">T+3 days</text>
+
+  <line x1="571" y1="60" x2="596" y2="60" stroke="#D4AF37" stroke-width="2" marker-end="url(#arr3)"/>
+
+  <rect x="598" y="30" width="112" height="60" rx="8" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="654" y="55" text-anchor="middle" font-size="11" font-weight="600" fill="#065F46">Shares in</text>
+  <text x="654" y="72" text-anchor="middle" font-size="11" fill="#047857">your Demat</text>
+  <text x="654" y="88" text-anchor="middle" font-size="9" fill="#047857">✅ Done!</text>
+</svg>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Key facts to remember:</h4>
+<ul style="font-size:0.95rem;line-height:2;padding-left:1.2rem;">
+  <li>NEPSE is Nepal's <strong>only</strong> licensed stock exchange</li>
+  <li>Open <strong>Sunday–Thursday, 11 AM–3 PM</strong></li>
+  <li>Closed Fridays, Saturdays, and government holidays</li>
+  <li>Over <strong>200 companies</strong> listed across 10+ sectors</li>
+  <li>Trades settle on <strong>T+3</strong> — your shares arrive 3 business days after purchase</li>
+</ul>
+        `
+      },
+      {
+        title: 'Price & the Demand–Supply Law',
+        content: `
+<p>Stock prices move for one reason only: <strong>the balance between buyers and sellers</strong>. If more people want to buy a stock than sell it, the price rises. If more want to sell than buy, it falls. That's it — everything else (news, earnings, politics) works <em>through</em> this mechanism.</p>
+
+<!-- Supply-demand image for visual anchoring -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Supply-and-demand.svg/800px-Supply-and-demand.svg.png"
+       alt="Classic supply and demand curve showing price equilibrium"
+       style="width:100%;max-height:240px;object-fit:contain;display:block;background:#fff;padding:1rem;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    📊 The classic supply-demand curve. In stocks: demand = buyers, supply = sellers. Where they meet = market price.
+  </div>
+</div>
+
+<!-- Enlarged buyer/seller diagram -->
+<svg width="100%" viewBox="0 0 720 280" role="img" style="margin:1rem 0;">
+  <title>How buyer-seller balance moves stock prices</title>
+
+  <!-- Scenario A: More buyers -->
+  <rect x="20" y="16" width="320" height="250" rx="14" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="180" y="46" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">More BUYERS than sellers</text>
+
+  <circle cx="82" cy="108" r="26" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="82" y="113" text-anchor="middle" font-size="13" fill="#065F46">Buy</text>
+  <circle cx="142" cy="108" r="26" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="142" y="113" text-anchor="middle" font-size="13" fill="#065F46">Buy</text>
+  <circle cx="202" cy="108" r="26" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="202" y="113" text-anchor="middle" font-size="13" fill="#065F46">Buy</text>
+  <circle cx="262" cy="108" r="26" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="262" y="113" text-anchor="middle" font-size="13" fill="#065F46">Buy</text>
+  <circle cx="322" cy="108" r="22" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="322" y="113" text-anchor="middle" font-size="11" fill="#991B1B">Sell</text>
+
+  <rect x="50" y="152" width="270" height="90" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="185" y="182" text-anchor="middle" font-size="24" font-weight="700" fill="#059669">📈 Price RISES</text>
+  <text x="185" y="207" text-anchor="middle" font-size="12" fill="#047857">Buyers compete → bid higher</text>
+  <text x="185" y="225" text-anchor="middle" font-size="12" fill="#047857">Seller gets best price</text>
+
+  <!-- Scenario B: More sellers -->
+  <rect x="380" y="16" width="320" height="250" rx="14" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="540" y="46" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">More SELLERS than buyers</text>
+
+  <circle cx="400" cy="108" r="22" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="400" y="113" text-anchor="middle" font-size="11" fill="#065F46">Buy</text>
+  <circle cx="460" cy="108" r="26" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="460" y="113" text-anchor="middle" font-size="12" fill="#991B1B">Sell</text>
+  <circle cx="520" cy="108" r="26" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="520" y="113" text-anchor="middle" font-size="12" fill="#991B1B">Sell</text>
+  <circle cx="580" cy="108" r="26" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="580" y="113" text-anchor="middle" font-size="12" fill="#991B1B">Sell</text>
+  <circle cx="640" cy="108" r="26" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="640" y="113" text-anchor="middle" font-size="12" fill="#991B1B">Sell</text>
+
+  <rect x="408" y="152" width="270" height="90" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="543" y="182" text-anchor="middle" font-size="24" font-weight="700" fill="#DC2626">📉 Price FALLS</text>
+  <text x="543" y="207" text-anchor="middle" font-size="12" fill="#991B1B">Sellers compete → accept less</text>
+  <text x="543" y="225" text-anchor="middle" font-size="12" fill="#991B1B">Buyer gets a bargain</text>
+</svg>
+
+<!-- What moves stock prices: expanded -->
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">What causes buyers and sellers to act?</h4>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;">
+  <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1rem;">
+    <strong style="color:#065F46;display:block;margin-bottom:0.5rem;font-size:0.95rem;">📈 Things that attract BUYERS</strong>
+    <ul style="font-size:0.88rem;line-height:1.8;padding-left:1.1rem;color:#1e293b;margin:0;">
+      <li>Strong company earnings report</li>
+      <li>High dividend announcement</li>
+      <li>New hydro project completion</li>
+      <li>Interest rate cuts by NRB</li>
+      <li>General market optimism (bull run)</li>
+    </ul>
+  </div>
+  <div style="background:#fff1f2;border:1.5px solid #fca5a5;border-radius:10px;padding:1rem;">
+    <strong style="color:#991B1B;display:block;margin-bottom:0.5rem;font-size:0.95rem;">📉 Things that attract SELLERS</strong>
+    <ul style="font-size:0.88rem;line-height:1.8;padding-left:1.1rem;color:#1e293b;margin:0;">
+      <li>Poor earnings or loss reported</li>
+      <li>Dividend cut or no dividend</li>
+      <li>Regulatory fines (e.g. by NRB)</li>
+      <li>Interest rate hikes — FD looks better</li>
+      <li>Market crash / panic selling</li>
+    </ul>
+  </div>
+</div>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Types of orders you can place:</h4>
+<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+  <thead><tr style="background:var(--slate-bg);">
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Order Type</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">What it does</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Best for</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Market Order</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Buys/sells immediately at the current market price</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Speed matters more than exact price</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Limit Order</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Only executes if price reaches your target</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">You want a specific buy/sell price</td></tr>
+  </tbody>
+</table>
+
+<div style="background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:1.1rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>Example:</strong> NABIL is trading at Rs 950. You want to buy only at Rs 930. Place a <em>limit buy order</em> at Rs 930. If the price dips to 930, your order fills automatically. If it never does, you don't buy — and that's exactly what you wanted.
+</div>
+        `
+      },
+      {
+        title: 'Dividends — Getting Paid to Hold',
+        content: `
+<p>A dividend is the company sharing a portion of its profits directly with shareholders. In Nepal, dividends come in two forms: <strong>cash dividends</strong> (money deposited into your bank) and <strong>stock dividends</strong> (bonus shares — covered in the next lesson).</p>
+
+<!-- Visual image: concept of dividends/passive income -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=900&q=80"
+       alt="Passive income / dividends concept"
+       style="width:100%;height:200px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    💰 Dividends = your money working for you. While you sleep, your shares earn you a share of the company's profits.
+  </div>
+</div>
+
+<!-- Enlarged dividend flow diagram -->
+<svg width="100%" viewBox="0 0 720 290" role="img" style="margin:1rem 0;">
+  <title>How dividends flow from company profit to investor</title>
+  <defs>
+    <marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Step 1: Company profit -->
+  <rect x="20" y="26" width="188" height="96" rx="12" fill="#FBF3D5" stroke="#D4AF37" stroke-width="1.5"/>
+  <text x="114" y="58" text-anchor="middle" font-size="12" font-weight="600" fill="#7B5E10">🏢 NABIL Bank earns</text>
+  <text x="114" y="84" text-anchor="middle" font-size="22" font-weight="700" fill="#D4AF37">Rs 8 B</text>
+  <text x="114" y="106" text-anchor="middle" font-size="11" fill="#8B6914">annual net profit</text>
+
+  <line x1="210" y1="74" x2="248" y2="74" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr4)"/>
+  <text x="229" y="66" text-anchor="middle" font-size="10" fill="#64748B">Board</text>
+  <text x="229" y="88" text-anchor="middle" font-size="10" fill="#64748B">decides</text>
+
+  <!-- Step 2: Dividend decision -->
+  <rect x="252" y="26" width="218" height="96" rx="12" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="361" y="55" text-anchor="middle" font-size="12" font-weight="600" fill="#1E293B">Dividend declared:</text>
+  <text x="361" y="78" text-anchor="middle" font-size="18" font-weight="700" fill="#059669">30% cash</text>
+  <text x="361" y="100" text-anchor="middle" font-size="11" fill="#475569">= Rs 30 per share (face Rs 100)</text>
+
+  <line x1="472" y1="74" x2="510" y2="74" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr4)"/>
+
+  <!-- Step 3: Investor receives -->
+  <rect x="514" y="26" width="188" height="96" rx="12" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="608" y="55" text-anchor="middle" font-size="12" font-weight="600" fill="#065F46">You own 200 shares</text>
+  <text x="608" y="78" text-anchor="middle" font-size="20" font-weight="700" fill="#059669">Rs 6,000</text>
+  <text x="608" y="100" text-anchor="middle" font-size="11" fill="#047857">200 × Rs 30 = Rs 6,000</text>
+
+  <!-- Timeline below -->
+  <rect x="20" y="152" width="680" height="120" rx="12" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="360" y="177" text-anchor="middle" font-size="13" font-weight="700" fill="#1E293B">Dividend timeline in Nepal (typical sequence)</text>
+
+  <circle cx="100" cy="222" r="8" fill="#D4AF37"/>
+  <text x="100" y="248" text-anchor="middle" font-size="11" font-weight="600" fill="#7B5E10">AGM</text>
+  <text x="100" y="264" text-anchor="middle" font-size="10" fill="#8B6914">Announced</text>
+
+  <line x1="110" y1="222" x2="222" y2="222" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+  <circle cx="232" cy="222" r="8" fill="#D4AF37"/>
+  <text x="232" y="248" text-anchor="middle" font-size="11" font-weight="600" fill="#7B5E10">Record date</text>
+  <text x="232" y="264" text-anchor="middle" font-size="10" fill="#8B6914">Must own by here</text>
+
+  <line x1="245" y1="222" x2="360" y2="222" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+  <circle cx="372" cy="222" r="8" fill="#D4AF37"/>
+  <text x="372" y="248" text-anchor="middle" font-size="11" font-weight="600" fill="#7B5E10">SEBON OK</text>
+  <text x="372" y="264" text-anchor="middle" font-size="10" fill="#8B6914">Regulator confirms</text>
+
+  <line x1="384" y1="222" x2="500" y2="222" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+  <circle cx="512" cy="222" r="8" fill="#059669"/>
+  <text x="512" y="248" text-anchor="middle" font-size="11" font-weight="600" fill="#065F46">💰 Payment</text>
+  <text x="512" y="264" text-anchor="middle" font-size="10" fill="#047857">To your bank account</text>
+</svg>
+
+<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1.2rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>Dividend yield formula:</strong><br><br>
+  <code style="background:white;padding:0.3rem 0.7rem;border-radius:6px;font-size:0.95rem;display:inline-block;margin-bottom:0.7rem;">Dividend Yield = (Annual Dividend ÷ Current Market Price) × 100</code><br><br>
+  Example: Rs 30 dividend, share price Rs 950 → <strong>3.16% yield</strong>. Compare this against bank FD rates (~7%) to judge value.
+</div>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Cash dividend vs Bonus share — side by side:</h4>
+<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+  <thead><tr style="background:var(--slate-bg);">
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Feature</th>
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Cash Dividend</th>
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Bonus Shares</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">What you get</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Money in bank</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Extra shares in Demat</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Tax</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">5% deducted at source</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">5% on equivalent value</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Company cash impact</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Cash leaves company</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">No cash leaves — retained earnings convert to shares</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Your value immediately</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Same portfolio + cash received</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">More shares, lower price per share — same total</td></tr>
+  </tbody>
+</table>
+
+<p style="font-size:0.88rem;color:var(--slate-lighter);margin-top:1rem;">⚠️ <strong>Tax note:</strong> In Nepal, dividends are taxed at <strong>5%</strong> at source. So if you're owed Rs 6,000, you receive Rs 5,700 — the company deducts Rs 300 before payment.</p>
+        `
+      },
+      {
+        title: 'Bonus Shares — Free Shares Explained',
+        content: `
+<p>Bonus shares are <strong>extra shares given free</strong> to existing shareholders. The company doesn't pay cash — instead it converts its retained earnings into new shares and distributes them. You get more shares, but the share price adjusts proportionally, so your <em>total value stays exactly the same</em> on the day of issue.</p>
+
+<div style="background:#fffbeb;border-left:4px solid #f59e0b;border-radius:8px;padding:1.2rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>Why do companies issue bonus shares?</strong> They want to reward shareholders but conserve cash for operations. It also lowers the per-share price, making the stock more affordable for small investors — important in NEPSE where high-priced stocks can feel out of reach.
+</div>
+
+<!-- Pizza analogy image -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=80"
+       alt="Pizza cut into pieces - analogy for stock split and bonus shares"
+       style="width:100%;height:180px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    🍕 Think of it like cutting a pizza into more slices. You don't get <em>more pizza</em> — you get <em>more slices of the same pizza</em>. Each slice (share) is smaller, but you own the same amount overall.
+  </div>
+</div>
+
+<!-- Enlarged before/after diagram -->
+<svg width="100%" viewBox="0 0 720 310" role="img" style="margin:1rem 0;">
+  <title>Effect of 1:1 bonus share on shareholding and price</title>
+
+  <!-- Before -->
+  <rect x="20" y="16" width="298" height="280" rx="14" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="169" y="50" text-anchor="middle" font-size="15" font-weight="700" fill="#1E293B">BEFORE bonus</text>
+
+  <rect x="44" y="66" width="250" height="70" rx="10" fill="#FBF3D5" stroke="#D4AF37" stroke-width="1.5"/>
+  <text x="169" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="#7B5E10">You own: 100 shares</text>
+  <text x="169" y="120" text-anchor="middle" font-size="12" fill="#8B6914">Market price: Rs 800 each</text>
+
+  <rect x="44" y="152" width="250" height="70" rx="10" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="169" y="184" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">Portfolio value</text>
+  <text x="169" y="208" text-anchor="middle" font-size="22" font-weight="700" fill="#1E293B">Rs 80,000</text>
+
+  <rect x="44" y="238" width="250" height="42" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.2"/>
+  <text x="169" y="264" text-anchor="middle" font-size="12" fill="#5B21B6">Avg cost per share: Rs 800</text>
+
+  <!-- Arrow: 1:1 bonus -->
+  <rect x="328" y="120" width="64" height="70" rx="10" fill="#D4AF37"/>
+  <text x="360" y="148" text-anchor="middle" font-size="13" font-weight="700" fill="white">1 : 1</text>
+  <text x="360" y="166" text-anchor="middle" font-size="11" fill="white">Bonus</text>
+  <text x="360" y="182" text-anchor="middle" font-size="11" fill="white">issued</text>
+
+  <!-- After -->
+  <rect x="402" y="16" width="298" height="280" rx="14" fill="white" stroke="#059669" stroke-width="2"/>
+  <text x="551" y="50" text-anchor="middle" font-size="15" font-weight="700" fill="#065F46">AFTER bonus (1:1)</text>
+
+  <rect x="426" y="66" width="250" height="70" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="551" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="#065F46">You own: 200 shares ✓</text>
+  <text x="551" y="120" text-anchor="middle" font-size="12" fill="#047857">Market price adjusts: Rs 400</text>
+
+  <rect x="426" y="152" width="250" height="70" rx="10" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="551" y="184" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">Portfolio value</text>
+  <text x="551" y="208" text-anchor="middle" font-size="22" font-weight="700" fill="#1E293B">Rs 80,000</text>
+
+  <rect x="426" y="238" width="250" height="42" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.2"/>
+  <text x="551" y="264" text-anchor="middle" font-size="12" fill="#5B21B6">Avg cost per share: Rs 400 ✓</text>
+</svg>
+
+<h4 style="color:var(--navy);margin:1.2rem 0 0.7rem;font-size:1.05rem;">When bonus shares ARE valuable:</h4>
+<ul style="font-size:0.95rem;line-height:2;padding-left:1.2rem;">
+  <li>If the market doesn't fully adjust the price down (common in NEPSE bull runs), you gain</li>
+  <li>Your <strong>number of shares increases</strong>, so future dividends are earned on more shares</li>
+  <li>Lower share price attracts <strong>more retail buyers</strong>, which can push price back up</li>
+  <li>Good companies that issue consistent bonus shares signal <strong>strong retained earnings</strong></li>
+</ul>
+
+<div style="background:#fff1f2;border-left:4px solid #f87171;border-radius:8px;padding:1.1rem;margin:1.2rem 0;font-size:0.92rem;">
+  <strong>Common mistake:</strong> Many beginners think bonus shares are "free money" and rush to buy before the record date. But the price adjusts on ex-date, so you're not gaining anything extra — you're just getting more shares at a proportionally lower price. <em>Don't buy a stock only for the bonus.</em>
+</div>
+
+<div style="background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;padding:1.1rem;margin:1.2rem 0;font-size:0.92rem;">
+  <strong>📘 Real NEPSE example:</strong> NABIL Bank announced a 30% bonus share in 2022/23. If you held 1,000 shares before the bonus, you received 300 additional shares free. Your per-share price adjusted down by ~23%, but your total holding value remained the same on the record date.
+</div>
+        `
+      },
+      {
+        title: 'Market Indices — Reading the Scoreboard',
+        content: `
+<p>A stock market index is a <strong>single number that summarises how hundreds of stocks are performing</strong>. Rather than checking every stock individually, the index tells you at a glance: "is the overall market up or down today?"</p>
+
+<!-- Image: stock market scoreboard/screen -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80"
+       alt="Stock market screens showing indices and ticker data"
+       style="width:100%;height:200px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    📺 Market index screens like this exist in every trading room. NEPSE's index is the equivalent scoreboard for Nepal's entire stock market.
+  </div>
+</div>
+
+<!-- Enlarged index calculation diagram -->
+<svg width="100%" viewBox="0 0 720 280" role="img" style="margin:1rem 0;">
+  <title>How the NEPSE index is calculated from individual stocks</title>
+  <defs>
+    <marker id="arr5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Individual stocks (top row) -->
+  <rect x="16" y="16" width="148" height="86" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="90" y="44" text-anchor="middle" font-size="12" font-weight="600" fill="#065F46">NABIL Bank</text>
+  <text x="90" y="68" text-anchor="middle" font-size="18" font-weight="700" fill="#059669">+3.2%</text>
+  <text x="90" y="90" text-anchor="middle" font-size="10" fill="#047857">Rs 950 → Rs 980</text>
+
+  <rect x="178" y="16" width="148" height="86" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="252" y="44" text-anchor="middle" font-size="12" font-weight="600" fill="#065F46">NLIC</text>
+  <text x="252" y="68" text-anchor="middle" font-size="18" font-weight="700" fill="#059669">+1.8%</text>
+  <text x="252" y="90" text-anchor="middle" font-size="10" fill="#047857">Rs 1200 → Rs 1222</text>
+
+  <rect x="340" y="16" width="148" height="86" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="414" y="44" text-anchor="middle" font-size="12" font-weight="600" fill="#991B1B">HIDCL</text>
+  <text x="414" y="68" text-anchor="middle" font-size="18" font-weight="700" fill="#DC2626">-1.1%</text>
+  <text x="414" y="90" text-anchor="middle" font-size="10" fill="#991B1B">Rs 270 → Rs 267</text>
+
+  <rect x="502" y="16" width="148" height="86" rx="10" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="576" y="44" text-anchor="middle" font-size="12" font-weight="600" fill="#065F46">NMB Bank</text>
+  <text x="576" y="68" text-anchor="middle" font-size="18" font-weight="700" fill="#059669">+2.5%</text>
+  <text x="576" y="90" text-anchor="middle" font-size="10" fill="#047857">Rs 350 → Rs 359</text>
+
+  <text x="680" y="64" text-anchor="middle" font-size="22" fill="#94a3b8">…</text>
+
+  <!-- Converging arrows to index -->
+  <line x1="90" y1="104" x2="245" y2="180" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <line x1="252" y1="104" x2="295" y2="180" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <line x1="414" y1="104" x2="380" y2="180" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr5)"/>
+  <line x1="576" y1="104" x2="465" y2="180" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr5)"/>
+
+  <!-- NEPSE Index result -->
+  <rect x="170" y="182" width="380" height="82" rx="14" fill="#FBF3D5" stroke="#D4AF37" stroke-width="2.5"/>
+  <text x="360" y="210" text-anchor="middle" font-size="14" font-weight="700" fill="#7B5E10">NEPSE Index today</text>
+  <text x="268" y="248" text-anchor="middle" font-size="26" font-weight="700" fill="#D4AF37">2,180</text>
+  <text x="430" y="248" text-anchor="middle" font-size="18" font-weight="700" fill="#059669">↑ +1.9%</text>
+</svg>
+
+<p style="font-size:0.9rem;color:var(--slate-lighter);margin-top:0.5rem;">The index uses a weighted calculation — bigger companies have more impact. NABIL Bank moving 3% affects the index more than a small hydropower company moving 5%.</p>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Key NEPSE indices:</h4>
+<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+  <thead><tr style="background:var(--slate-bg);">
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Index</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Tracks</th>
+    <th style="padding:0.8rem;text-align:left;border:1px solid var(--slate-border);">Use case</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>NEPSE Index</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">All listed companies</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Overall market health</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Sensitive Index</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Top companies by float</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Institutional benchmark</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Banking Sub-index</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">All commercial banks</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Banking sector bets</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Hydropower Sub-index</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">All hydro companies</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Energy sector bets</td></tr>
+  </tbody>
+</table>
+
+<div style="background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;padding:1.1rem;margin:1.2rem 0;font-size:0.92rem;">
+  <strong>📘 How to read "NEPSE is up 2% today":</strong> It means the weighted average of all listed stocks rose 2%. Banking and insurance stocks have bigger influence. If NABIL, GBIME, and NIC Asia all rose strongly, the whole index looks green — even if your small hydro stock fell.
+</div>
+        `
+      },
+    ]
+  },
+  {
+    n: 2,
+    title: '🇳🇵 Getting Started with NEPSE',
+    desc: 'Demat accounts, NEPSE sectors, IPO process — Nepal-specific step-by-step guide.',
+    lessons: 6,
+    pct: 0,
+    status: 'active',
+    tags: ['beginner'],
+    icon: '🇳🇵',
+    items: [
+      {
+        title: 'What is NEPSE & Who Regulates It?',
+        content: `
+<p>NEPSE stands for <strong>Nepal Stock Exchange Limited</strong>. It is the <em>only</em> authorised stock exchange in Nepal, established in 1993. No share of any listed Nepali company can be legally bought or sold outside NEPSE.</p>
+
+<!-- NEPSE building image -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Nepal_Stock_Exchange.jpg/1200px-Nepal_Stock_Exchange.jpg"
+       alt="NEPSE Nepal Stock Exchange building"
+       style="width:100%;height:220px;object-fit:cover;display:block;"
+       onerror="this.parent.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    📍 Nepal Stock Exchange (NEPSE) building, Singhadurbar area, Kathmandu. Established 1993, trading began 1994.
+  </div>
+</div>
+
+<!-- Enlarged regulatory structure diagram -->
+<svg width="100%" viewBox="0 0 720 310" role="img" style="margin:1rem 0;">
+  <title>NEPSE regulatory and operational structure</title>
+  <defs>
+    <marker id="arr6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr6r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr6g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arr6o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Government of Nepal (top) -->
+  <rect x="250" y="12" width="220" height="56" rx="10" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="360" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="#5B21B6">Government of Nepal</text>
+  <text x="360" y="56" text-anchor="middle" font-size="11" fill="#6D28D9">Ministry of Finance — ultimate authority</text>
+
+  <line x1="360" y1="70" x2="360" y2="98" stroke="#7C3AED" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr6)"/>
+
+  <!-- SEBON -->
+  <rect x="220" y="100" width="280" height="60" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="360" y="124" text-anchor="middle" font-size="14" font-weight="700" fill="#991B1B">SEBON</text>
+  <text x="360" y="146" text-anchor="middle" font-size="11" fill="#B91C1C">Securities Board of Nepal — regulates all markets</text>
+
+  <line x1="360" y1="162" x2="360" y2="190" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr6r)"/>
+
+  <!-- NEPSE -->
+  <rect x="210" y="192" width="300" height="62" rx="12" fill="#FBF3D5" stroke="#D4AF37" stroke-width="2.5"/>
+  <text x="360" y="218" text-anchor="middle" font-size="16" font-weight="700" fill="#7B5E10">🏛️ NEPSE</text>
+  <text x="360" y="242" text-anchor="middle" font-size="11" fill="#8B6914">Operates trading platform — Singhadurbar, Kathmandu</text>
+
+  <!-- CDSC (right) -->
+  <rect x="536" y="192" width="172" height="62" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="622" y="218" text-anchor="middle" font-size="13" font-weight="700" fill="#92400E">CDSC</text>
+  <text x="622" y="238" text-anchor="middle" font-size="11" fill="#B45309">Demat accounts</text>
+  <text x="622" y="252" text-anchor="middle" font-size="11" fill="#B45309">+ trade settlement</text>
+  <line x1="512" y1="223" x2="536" y2="223" stroke="#D97706" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr6o)"/>
+
+  <!-- Brokers (below NEPSE) -->
+  <rect x="30" y="278" width="148" height="26" rx="6" fill="white" stroke="#CBD5E1" stroke-width="1.2"/>
+  <text x="104" y="296" text-anchor="middle" font-size="11" fill="#475569">NMB Securities</text>
+  <rect x="196" y="278" width="148" height="26" rx="6" fill="white" stroke="#CBD5E1" stroke-width="1.2"/>
+  <text x="270" y="296" text-anchor="middle" font-size="11" fill="#475569">Kumari Capital</text>
+  <rect x="362" y="278" width="148" height="26" rx="6" fill="white" stroke="#CBD5E1" stroke-width="1.2"/>
+  <text x="436" y="296" text-anchor="middle" font-size="11" fill="#475569">…50+ more brokers</text>
+
+  <line x1="300" y1="256" x2="104" y2="276" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr6g)"/>
+  <line x1="330" y1="256" x2="270" y2="276" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr6g)"/>
+  <line x1="390" y1="256" x2="436" y2="276" stroke="#CBD5E1" stroke-width="1.5" marker-end="url(#arr6g)"/>
+</svg>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Quick facts you'll be tested on:</h4>
+<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+  <thead><tr style="background:var(--slate-bg);">
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Fact</th>
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Detail</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Founded</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">1993 (trading started 1994)</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Trading days</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Sunday–Thursday (Nepal's work week)</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Trading hours</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">11:00 AM – 3:00 PM (pre-open 10:55 AM)</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Listed companies</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">200+ across 10+ sectors</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Settlement</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">T+3 (trade day + 3 working days)</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);"><strong>Market cap</strong></td><td style="padding:0.8rem;border:1px solid var(--slate-border);">~Rs 3–4 trillion (fluctuates with index)</td></tr>
+  </tbody>
+</table>
+
+<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1.1rem;margin:1.2rem 0;font-size:0.92rem;">
+  <strong>Why does SEBON matter to you?</strong> SEBON sets all the rules — from how much commission brokers can charge, to how IPO allotments work, to when companies must publish their financial results. When SEBON tightens regulations, it directly affects how NEPSE operates and how prices move.
+</div>
+        `
+      },
+      {
+        title: 'Opening a Demat Account — Step by Step',
+        content: `
+<p>Before you can buy a single share, you need two accounts working together: a <strong>Demat account</strong> (holds your shares digitally) and a <strong>trading account</strong> (places orders through a broker). In Nepal, both come together when you register through a NEPSE-licensed broker.</p>
+
+<div style="background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:1.2rem;margin:1.2rem 0;font-size:0.95rem;">
+  <strong>Why "Demat"?</strong> It's short for "dematerialised" — before Demat, share certificates were physical paper. CDSC (Central Depository System and Clearing Limited) maintains Nepal's Demat system. Your BOID (Beneficial Owner Identification) number is your unique Demat identity.
+</div>
+
+<!-- Image: person using phone/computer for digital account -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=900&q=80"
+       alt="Person opening online investment account on laptop"
+       style="width:100%;height:190px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    💻 The process is now mostly digital — you can initiate your Demat account online, though biometric verification still requires a physical visit.
+  </div>
+</div>
+
+<!-- Enlarged step-by-step diagram -->
+<svg width="100%" viewBox="0 0 720 240" role="img" style="margin:1rem 0;">
+  <title>Step-by-step process to open a Demat account in Nepal</title>
+  <defs>
+    <marker id="arr7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Step boxes — wider and taller -->
+  <rect x="10" y="16" width="124" height="192" rx="12" fill="white" stroke="#D4AF37" stroke-width="1.8"/>
+  <text x="72" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="#D4AF37">1</text>
+  <text x="72" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="#7B5E10">Choose</text>
+  <text x="72" y="94" text-anchor="middle" font-size="13" font-weight="600" fill="#7B5E10">a broker</text>
+  <text x="72" y="120" text-anchor="middle" font-size="10" fill="#8B6914">Pick from NEPSE's</text>
+  <text x="72" y="136" text-anchor="middle" font-size="10" fill="#8B6914">list of 50+</text>
+  <text x="72" y="152" text-anchor="middle" font-size="10" fill="#8B6914">licensed brokers</text>
+
+  <line x1="136" y1="112" x2="152" y2="112" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr7)"/>
+
+  <rect x="154" y="16" width="124" height="192" rx="12" fill="white" stroke="#D4AF37" stroke-width="1.8"/>
+  <text x="216" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="#D4AF37">2</text>
+  <text x="216" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="#7B5E10">Submit</text>
+  <text x="216" y="94" text-anchor="middle" font-size="13" font-weight="600" fill="#7B5E10">documents</text>
+  <text x="216" y="120" text-anchor="middle" font-size="10" fill="#8B6914">Citizenship copy</text>
+  <text x="216" y="136" text-anchor="middle" font-size="10" fill="#8B6914">2 photos + PAN card</text>
+  <text x="216" y="152" text-anchor="middle" font-size="10" fill="#8B6914">Bank account details</text>
+
+  <line x1="280" y1="112" x2="296" y2="112" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr7)"/>
+
+  <rect x="298" y="16" width="124" height="192" rx="12" fill="white" stroke="#D4AF37" stroke-width="1.8"/>
+  <text x="360" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="#D4AF37">3</text>
+  <text x="360" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="#7B5E10">Biometric</text>
+  <text x="360" y="94" text-anchor="middle" font-size="13" font-weight="600" fill="#7B5E10">verification</text>
+  <text x="360" y="120" text-anchor="middle" font-size="10" fill="#8B6914">Done at broker office</text>
+  <text x="360" y="136" text-anchor="middle" font-size="10" fill="#8B6914">or CDSC partner</text>
+  <text x="360" y="152" text-anchor="middle" font-size="10" fill="#8B6914">banks — in person</text>
+
+  <line x1="424" y1="112" x2="440" y2="112" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr7)"/>
+
+  <rect x="442" y="16" width="124" height="192" rx="12" fill="white" stroke="#059669" stroke-width="1.8"/>
+  <text x="504" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="#059669">4</text>
+  <text x="504" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="#065F46">Receive your</text>
+  <text x="504" y="94" text-anchor="middle" font-size="13" font-weight="600" fill="#065F46">BOID number</text>
+  <text x="504" y="120" text-anchor="middle" font-size="10" fill="#047857">16-digit unique</text>
+  <text x="504" y="136" text-anchor="middle" font-size="10" fill="#047857">BOID from CDSC</text>
+  <text x="504" y="152" text-anchor="middle" font-size="10" fill="#047857">Typically 3–7 days</text>
+
+  <line x1="568" y1="112" x2="584" y2="112" stroke="#CBD5E1" stroke-width="2" marker-end="url(#arr7)"/>
+
+  <rect x="586" y="16" width="124" height="192" rx="12" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+  <text x="648" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="#059669">5</text>
+  <text x="648" y="76" text-anchor="middle" font-size="13" font-weight="600" fill="#065F46">Activate</text>
+  <text x="648" y="94" text-anchor="middle" font-size="13" font-weight="600" fill="#065F46">MeroShare</text>
+  <text x="648" y="120" text-anchor="middle" font-size="10" fill="#047857">meroshare.cdsc</text>
+  <text x="648" y="136" text-anchor="middle" font-size="10" fill="#047857">.com.np</text>
+  <text x="648" y="152" text-anchor="middle" font-size="10" fill="#047857">🎉 You can trade!</text>
+
+  <text x="360" y="226" text-anchor="middle" font-size="12" fill="#64748B">Typical total time: 1–2 weeks from application to active trading</text>
+</svg>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">What is MeroShare?</h4>
+<p style="font-size:0.93rem;line-height:1.7;">MeroShare is CDSC's official online portal at <strong>meroshare.cdsc.com.np</strong>. Through it you can: apply for IPOs, view your share portfolio, check dividend history, and transfer shares. It's essential — without MeroShare access, you can't apply for any IPO.</p>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Documents checklist:</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:0.8rem 0;font-size:0.92rem;">
+  <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:1rem;">
+    <strong style="color:#065F46;display:block;margin-bottom:0.5rem;">✅ Required Documents</strong>
+    <ul style="margin:0;padding-left:1.1rem;line-height:1.8;">
+      <li>Citizenship certificate (copy)</li>
+      <li>Passport-size photos (2–3)</li>
+      <li>PAN card or PAN number</li>
+      <li>Bank account details (ASBA-linked)</li>
+      <li>Mobile number</li>
+      <li>Email address</li>
+    </ul>
+  </div>
+  <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:1rem;">
+    <strong style="color:#1D4ED8;display:block;margin-bottom:0.5rem;">💡 Good to Know</strong>
+    <ul style="margin:0;padding-left:1.1rem;line-height:1.8;">
+      <li>One person = one Demat account</li>
+      <li>Minors can have accounts (guardian required)</li>
+      <li>Account opening is free at most brokers</li>
+      <li>Annual maintenance fee: ~Rs 50–200</li>
+      <li>ASBA bank must be NRB-approved</li>
+    </ul>
+  </div>
+</div>
+        `
+      },
+      {
+        title: 'NEPSE Sectors — Understanding the Market',
+        content: `
+<p>NEPSE groups listed companies into sectors based on their primary business. Understanding sectors helps you make smarter decisions — instead of picking random stocks, you can study an entire industry and compare companies within it.</p>
+
+<!-- Sector pie chart image or relevant infographic -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=900&q=80"
+       alt="Financial sector diversity - banks, hydro, insurance"
+       style="width:100%;height:190px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    🏦💧🛡️ Nepal's stock market spans banking, hydropower, insurance, manufacturing and more — each sector behaves differently in different economic conditions.
+  </div>
+</div>
+
+<!-- Enlarged sector diagram -->
+<svg width="100%" viewBox="0 0 720 330" role="img" style="margin:1rem 0;">
+  <title>NEPSE market sectors with relative size and characteristics</title>
+
+  <!-- Banking — largest sector -->
+  <rect x="16" y="16" width="326" height="90" rx="12" fill="#FBF3D5" stroke="#D4AF37" stroke-width="2"/>
+  <text x="48" y="48" font-size="14" font-weight="700" fill="#7B5E10">🏦 Banking &amp; Financial</text>
+  <text x="48" y="70" font-size="12" fill="#8B6914">~45% of total market cap — the LARGEST sector</text>
+  <text x="48" y="90" font-size="11" fill="#8B6914">NABIL, NBB, GBIME, NMB, NIC Asia, Prabhu Bank, SBI…</text>
+  <rect x="294" y="28" width="38" height="66" rx="6" fill="#D4AF37" opacity="0.4"/>
+  <text x="313" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="#7B5E10">45%</text>
+
+  <!-- Hydropower -->
+  <rect x="356" y="16" width="348" height="90" rx="12" fill="#D1FAE5" stroke="#059669" stroke-width="1.5"/>
+  <text x="388" y="48" font-size="14" font-weight="700" fill="#065F46">💧 Hydropower &amp; Energy</text>
+  <text x="388" y="70" font-size="12" fill="#047857">~20% of total market cap</text>
+  <text x="388" y="90" font-size="11" fill="#047857">HIDCL, CHCL, UPPER TAMAKOSHI, API, RHPL, NHDL…</text>
+
+  <!-- Insurance -->
+  <rect x="16" y="122" width="220" height="82" rx="12" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="48" y="152" font-size="13" font-weight="700" fill="#5B21B6">🛡️ Insurance</text>
+  <text x="48" y="172" font-size="12" fill="#6D28D9">~12% market cap</text>
+  <text x="48" y="192" font-size="11" fill="#6D28D9">NLIC, SICL, NIGI, LICN, PICL…</text>
+
+  <!-- Manufacturing -->
+  <rect x="252" y="122" width="220" height="82" rx="12" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+  <text x="284" y="152" font-size="13" font-weight="700" fill="#92400E">🏭 Manufacturing</text>
+  <text x="284" y="172" font-size="12" fill="#B45309">~8% market cap</text>
+  <text x="284" y="192" font-size="11" fill="#B45309">Bottlers Nepal, HMG, Unilever NP…</text>
+
+  <!-- Others -->
+  <rect x="488" y="122" width="216" height="82" rx="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="520" y="152" font-size="13" font-weight="700" fill="#334155">🏨 Hotels &amp; Others</text>
+  <text x="520" y="172" font-size="12" fill="#475569">~15% market cap</text>
+  <text x="520" y="192" font-size="11" fill="#475569">Soaltee, Taragaon, CBBL, DDBL…</text>
+
+  <!-- Characteristics comparison -->
+  <rect x="16" y="222" width="688" height="96" rx="12" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="360" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#1E293B">Sector characteristics at a glance</text>
+
+  <text x="100" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#7B5E10">Banking</text>
+  <text x="100" y="290" text-anchor="middle" font-size="10" fill="#475569">High liquidity</text>
+  <text x="100" y="308" text-anchor="middle" font-size="10" fill="#475569">Stable dividends</text>
+
+  <text x="270" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#065F46">Hydropower</text>
+  <text x="270" y="290" text-anchor="middle" font-size="10" fill="#475569">Seasonal volatility</text>
+  <text x="270" y="308" text-anchor="middle" font-size="10" fill="#475569">High growth potential</text>
+
+  <text x="440" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">Insurance</text>
+  <text x="440" y="290" text-anchor="middle" font-size="10" fill="#475569">Consistent returns</text>
+  <text x="440" y="308" text-anchor="middle" font-size="10" fill="#475569">Lower volatility</text>
+
+  <text x="610" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#92400E">Manufacturing</text>
+  <text x="610" y="290" text-anchor="middle" font-size="10" fill="#475569">Business cycle tied</text>
+  <text x="610" y="308" text-anchor="middle" font-size="10" fill="#475569">Limited NEPSE presence</text>
+</svg>
+
+<div style="background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:1.1rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>Investor tip:</strong> Since banking stocks make up ~45% of NEPSE's total market cap, when big banks like NABIL or GBIME move significantly, the overall NEPSE index follows. If you understand banking sector health, you understand most of what drives the index.
+</div>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">How to pick a sector to invest in:</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;font-size:0.9rem;">
+  <div style="background:#fefce8;border:1.5px solid #fde68a;border-radius:8px;padding:1rem;">
+    <strong style="color:#92400E;display:block;margin-bottom:0.5rem;">If you want stability 🏦</strong>
+    <p style="margin:0;color:#451a03;">Banking and insurance sectors — they pay regular dividends and are backed by NRB regulations. Less exciting, but more predictable.</p>
+  </div>
+  <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:1rem;">
+    <strong style="color:#065F46;display:block;margin-bottom:0.5rem;">If you want growth 💧</strong>
+    <p style="margin:0;color:#14532d;">Hydropower sector — Nepal has enormous hydro potential. New projects completing = revenue starts flowing. Higher risk, higher reward.</p>
+  </div>
+</div>
+        `
+      },
+      {
+        title: 'How IPOs Work in Nepal',
+        content: `
+<p>An IPO (Initial Public Offering) is when a private company sells its shares to the public for the first time. In Nepal, IPOs are extremely popular — oversubscription of 50–100× is common for hydropower projects, and listing-day gains can be dramatic.</p>
+
+<!-- IPO excitement image -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80"
+       alt="Stock market IPO listing day excitement"
+       style="width:100%;height:190px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    🔔 IPO listing day in Nepal can be dramatic — hydropower companies routinely see 20–50% gains on the first trading day as retail investors flood in.
+  </div>
+</div>
+
+<!-- Enlarged IPO process diagram -->
+<svg width="100%" viewBox="0 0 720 280" role="img" style="margin:1rem 0;">
+  <title>IPO process flow in Nepal from company to investor</title>
+  <defs>
+    <marker id="arr8" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Company side -->
+  <rect x="16" y="16" width="178" height="96" rx="12" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+  <text x="105" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">Company needs</text>
+  <text x="105" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">capital to grow</text>
+  <text x="105" y="96" text-anchor="middle" font-size="10" fill="#6D28D9">Hydropower plant, bank expansion…</text>
+
+  <line x1="196" y1="64" x2="230" y2="64" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr8)"/>
+
+  <!-- SEBON approval -->
+  <rect x="234" y="16" width="172" height="96" rx="12" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="320" y="46" text-anchor="middle" font-size="12" font-weight="700" fill="#991B1B">SEBON reviews</text>
+  <text x="320" y="66" text-anchor="middle" font-size="12" font-weight="700" fill="#991B1B">prospectus</text>
+  <text x="320" y="96" text-anchor="middle" font-size="10" fill="#B91C1C">Approves if finances are sound</text>
+
+  <line x1="408" y1="64" x2="442" y2="64" stroke="#94a3b8" stroke-width="2" marker-end="url(#arr8)"/>
+
+  <!-- Public subscription -->
+  <rect x="446" y="16" width="172" height="96" rx="12" fill="#FBF3D5" stroke="#D4AF37" stroke-width="1.5"/>
+  <text x="532" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#7B5E10">IPO opens</text>
+  <text x="532" y="64" text-anchor="middle" font-size="11" fill="#8B6914">7–21 days to apply</text>
+  <text x="532" y="82" text-anchor="middle" font-size="11" fill="#8B6914">via MeroShare</text>
+  <text x="532" y="100" text-anchor="middle" font-size="10" fill="#8B6914">Min 10 kitta (units)</text>
+
+  <!-- How to apply section — enlarged -->
+  <rect x="16" y="136" width="688" height="128" rx="12" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="360" y="162" text-anchor="middle" font-size="13" font-weight="700" fill="#1E293B">How YOU apply for an IPO — MeroShare in 5 steps</text>
+
+  <circle cx="98" cy="208" r="18" fill="#D4AF37"/>
+  <text x="98" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="white">1</text>
+  <text x="98" y="236" text-anchor="middle" font-size="10" fill="#475569">Login to</text>
+  <text x="98" y="250" text-anchor="middle" font-size="10" fill="#475569">MeroShare</text>
+
+  <line x1="118" y1="208" x2="175" y2="208" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr8)"/>
+
+  <circle cx="195" cy="208" r="18" fill="#D4AF37"/>
+  <text x="195" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="white">2</text>
+  <text x="195" y="236" text-anchor="middle" font-size="10" fill="#475569">Find open</text>
+  <text x="195" y="250" text-anchor="middle" font-size="10" fill="#475569">IPO listing</text>
+
+  <line x1="215" y1="208" x2="272" y2="208" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr8)"/>
+
+  <circle cx="292" cy="208" r="18" fill="#D4AF37"/>
+  <text x="292" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="white">3</text>
+  <text x="292" y="236" text-anchor="middle" font-size="10" fill="#475569">Enter kitta</text>
+  <text x="292" y="250" text-anchor="middle" font-size="10" fill="#475569">quantity</text>
+
+  <line x1="312" y1="208" x2="369" y2="208" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr8)"/>
+
+  <circle cx="389" cy="208" r="18" fill="#D4AF37"/>
+  <text x="389" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="white">4</text>
+  <text x="389" y="236" text-anchor="middle" font-size="10" fill="#475569">ASBA locks</text>
+  <text x="389" y="250" text-anchor="middle" font-size="10" fill="#475569">your amount</text>
+
+  <line x1="409" y1="208" x2="466" y2="208" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr8)"/>
+
+  <circle cx="486" cy="208" r="18" fill="#D4AF37"/>
+  <text x="486" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="white">5</text>
+  <text x="486" y="236" text-anchor="middle" font-size="10" fill="#475569">Wait for</text>
+  <text x="486" y="250" text-anchor="middle" font-size="10" fill="#475569">allotment</text>
+
+  <line x1="506" y1="208" x2="563" y2="208" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr8)"/>
+
+  <circle cx="583" cy="208" r="18" fill="#059669"/>
+  <text x="583" y="214" text-anchor="middle" font-size="14" font-weight="700" fill="white">✓</text>
+  <text x="583" y="236" text-anchor="middle" font-size="10" fill="#047857">Shares in</text>
+  <text x="583" y="250" text-anchor="middle" font-size="10" fill="#047857">your Demat</text>
+</svg>
+
+<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:1.1rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>ASBA — what it means:</strong> "Application Supported by Blocked Amount." Your money is not taken until you're allotted shares. If you're not allotted, the full amount is automatically unblocked. No risk of losing your capital in the application process.
+</div>
+
+<div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:1.1rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>Oversubscription reality:</strong> If a company offers 100,000 shares but 5 million are applied for, it's oversubscribed 50×. Allotment is done by lucky draw. You might apply for 10 shares and get 10 — or nothing. Everyone who gets allotment usually gets the same minimum quantity.
+</div>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">IPO vs Secondary Market — What's the difference?</h4>
+<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+  <thead><tr style="background:var(--slate-bg);">
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Feature</th>
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">IPO (Primary Market)</th>
+    <th style="padding:0.8rem;border:1px solid var(--slate-border);">Secondary Market (NEPSE daily trading)</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Where</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">MeroShare application</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Through your broker on NEPSE</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Price set by</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Company (usually face value Rs 100)</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Market forces (supply &amp; demand)</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Certainty</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Not guaranteed — lucky draw if oversubscribed</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Guaranteed if you meet the price</td></tr>
+    <tr><td style="padding:0.8rem;border:1px solid var(--slate-border);">Risk</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Lower (ASBA protects your money)</td><td style="padding:0.8rem;border:1px solid var(--slate-border);">Higher (price can fall after you buy)</td></tr>
+  </tbody>
+</table>
+        `
+      },
+      {
+        title: 'Trading Hours & Circuit Breakers',
+        content: `
+<p>NEPSE has strict rules about <em>when</em> trading happens and <em>how much</em> prices can move in a session. Circuit breakers are safety valves — automatic trading halts that prevent panic-driven crashes from spiralling out of control.</p>
+
+<!-- Image: trading floor with clocks or urgency -->
+<div style="margin:1.5rem 0;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+  <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80"
+       alt="Stock market trading hours and circuit breaker concept"
+       style="width:100%;height:180px;object-fit:cover;display:block;"
+       onerror="this.style.display='none'"/>
+  <div style="background:#f8f9fa;padding:0.6rem 1rem;font-size:0.8rem;color:#6b7280;">
+    ⏰ The 11 AM–3 PM window is when all the action happens. Outside these hours, no trades are executed — plan accordingly.
+  </div>
+</div>
+
+<!-- Enlarged trading schedule diagram -->
+<svg width="100%" viewBox="0 0 720 230" role="img" style="margin:1rem 0;">
+  <title>NEPSE daily trading schedule</title>
+
+  <!-- Timeline bar -->
+  <rect x="30" y="72" width="660" height="26" rx="5" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+
+  <!-- Pre-open phase -->
+  <rect x="30" y="72" width="58" height="26" rx="5" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+  <text x="59" y="60" text-anchor="middle" font-size="11" font-weight="600" fill="#92400E">Pre-open</text>
+  <text x="59" y="48" text-anchor="middle" font-size="10" fill="#B45309">10:55 AM</text>
+  <text x="59" y="115" text-anchor="middle" font-size="10" fill="#B45309">Orders collected</text>
+  <text x="59" y="129" text-anchor="middle" font-size="10" fill="#B45309">No matching yet</text>
+
+  <!-- Trading phase -->
+  <rect x="88" y="72" width="480" height="26" rx="0" fill="#D1FAE5" stroke="#059669" stroke-width="1"/>
+  <text x="328" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="#065F46">Continuous Trading Session</text>
+  <text x="328" y="48" text-anchor="middle" font-size="11" fill="#047857">11:00 AM → 3:00 PM</text>
+  <text x="328" y="115" text-anchor="middle" font-size="11" fill="#047857">Buy/sell orders matched in real time — most volume here</text>
+
+  <!-- Closing -->
+  <rect x="568" y="72" width="122" height="26" rx="5" fill="#EDE9FE" stroke="#7C3AED" stroke-width="1"/>
+  <text x="629" y="60" text-anchor="middle" font-size="11" font-weight="600" fill="#5B21B6">Post-close</text>
+  <text x="629" y="48" text-anchor="middle" font-size="10" fill="#6D28D9">3:00 PM+</text>
+  <text x="629" y="115" text-anchor="middle" font-size="10" fill="#6D28D9">Settlement begins</text>
+  <text x="629" y="129" text-anchor="middle" font-size="10" fill="#6D28D9">T+3 cycle starts</text>
+
+  <!-- Time markers -->
+  <line x1="88" y1="65" x2="88" y2="104" stroke="#059669" stroke-width="1.5"/>
+  <line x1="568" y1="65" x2="568" y2="104" stroke="#059669" stroke-width="1.5"/>
+
+  <!-- Days closed label -->
+  <rect x="30" y="158" width="660" height="52" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.5"/>
+  <text x="360" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#991B1B">🔴 NEPSE CLOSED on: Fridays · Saturdays · All public holidays</text>
+  <text x="360" y="200" text-anchor="middle" font-size="11" fill="#B91C1C">Plan ahead — you cannot exit positions when markets are closed. Dashain/Tihar = extended closures.</text>
+</svg>
+
+<h4 style="color:var(--navy);margin:1.4rem 0 0.7rem;font-size:1.05rem;">Circuit breakers — how market pauses work:</h4>
+
+<svg width="100%" viewBox="0 0 720 210" role="img" style="margin:0.5rem 0;">
+  <title>NEPSE circuit breaker levels and market response</title>
+
+  <rect x="16" y="14" width="688" height="184" rx="14" fill="white" stroke="#CBD5E1" stroke-width="1.5"/>
+  <text x="360" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">When the market moves too fast — automatic halts kick in</text>
+
+  <!-- Level 1: 5% -->
+  <rect x="36" y="58" width="648" height="36" rx="7" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+  <rect x="36" y="58" width="148" height="36" rx="7" fill="#D97706"/>
+  <text x="110" y="80" text-anchor="middle" font-size="13" font-weight="700" fill="white">±5% move</text>
+  <text x="430" y="80" text-anchor="middle" font-size="12" fill="#92400E">→ 15-minute trading halt · Warning level · Prices pause</text>
+
+  <!-- Level 2: 10% -->
+  <rect x="36" y="104" width="648" height="36" rx="7" fill="#FEE2E2" stroke="#DC2626" stroke-width="1"/>
+  <rect x="36" y="104" width="210" height="36" rx="7" fill="#DC2626"/>
+  <text x="141" y="126" text-anchor="middle" font-size="13" font-weight="700" fill="white">±10% move</text>
+  <text x="445" y="126" text-anchor="middle" font-size="12" fill="#991B1B">→ 45-minute halt · Index frozen · High alert</text>
+
+  <!-- Level 3: 15% -->
+  <rect x="36" y="150" width="648" height="36" rx="7" fill="#F3F4F6" stroke="#374151" stroke-width="1"/>
+  <rect x="36" y="150" width="280" height="36" rx="7" fill="#374151"/>
+  <text x="176" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="white">±15% move</text>
+  <text x="490" y="172" text-anchor="middle" font-size="12" fill="#374151">→ 60-minute halt OR early market close for the day</text>
+</svg>
+
+<div style="background:var(--gold-light);border-left:4px solid var(--gold);border-radius:8px;padding:1.1rem;margin:1.2rem 0;font-size:0.93rem;">
+  <strong>Individual stock circuit breakers also exist:</strong> A single stock can't move more than a certain % in one session (typically 10% up or down for most stocks). This prevents manipulation and gives investors time to react. If a stock hits its circuit limit, trading in that stock specifically is halted — the rest of the market continues.
+</div>
+
+<div style="background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;padding:1.1rem;margin:1.2rem 0;font-size:0.92rem;">
+  <strong>📘 Real example:</strong> In 2021, when Nepal's NEPSE index crashed 10% in a single session (from ~3,200 to below 2,900), the circuit breaker triggered. Trading was halted for 45 minutes, giving investors time to calm down before resuming. Without this mechanism, panic selling could have pushed it much lower.
+</div>
+        `
+      },
+    ]
+  }
+];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////
+function renderRoadmap() {
+  const c = document.getElementById('roadmapLevels');
+  c.innerHTML = levels.map(l => {
+    const nodeColor = l.status === 'done' ? 'var(--emerald)' : l.status === 'active' ? 'var(--gold)' : 'var(--slate-border)';
+    const nodeLabel = l.status === 'done' ? '✓' : l.n;
+    const pctColor = l.pct === 100 ? 'var(--emerald)' : l.pct > 0 ? 'var(--gold)' : 'var(--slate-lighter)';
+    
+    const lessonHtml = l.items.length ? `
+      <div class="lesson-list" id="ll-${l.n}" style="margin-top: 1rem; border-top: 1px solid var(--slate-border); padding-top: 1rem;">
+        ${l.items.map((item, idx) => `
+          <div class="lesson-item">
+            <div class="lesson-header" onclick="toggleLesson(${l.n}, ${idx})">
+              <span>📖 ${item.title}</span>
+              <span class="lesson-toggle">▼</span>
+            </div>
+            <div class="lesson-content" id="lesson-${l.n}-${idx}">
+              ${item.content}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : '';
+    
+    return `<div class="roadmap-level" id="rl-${l.n}" style="display: flex; align-items: flex-start; gap: 1.2rem; margin-bottom: 1.4rem;">
+      <div style="flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: 800; border: 2px solid ${nodeColor}; color: ${nodeColor}; background: white;">${nodeLabel}</div>
+      <div class="card" style="flex: 1; max-width: 680px;">
+        <div style="font-weight: 700; font-size: 1rem;">${l.icon} ${l.title}</div>
+        <div style="font-size: 0.8rem; color: var(--slate-lighter); margin-top: 0.3rem;">${l.desc}</div>
+        <div style="display: flex; gap: 0.6rem; margin-top: 0.6rem;">
+          <span class="badge badge-slate">📖 ${l.lessons} lessons</span>
+          ${l.status === 'active' ? '<span class="badge badge-amber">▶ In Progress</span>' : ''}
+        </div>
+        <div style="margin-top: 0.9rem;">
+          <div class="prog"><div class="prog-fill" style="width: ${l.pct}%; background: ${pctColor};"></div></div>
+        </div>
+        ${lessonHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleLesson(levelNum, lessonIdx) {
+  const content = document.getElementById(`lesson-${levelNum}-${lessonIdx}`);
+  const header = content.previousElementSibling;
+  const toggle = header.querySelector('.lesson-toggle');
+  
+  if (content.style.display === 'none' || !content.style.display) {
+    content.style.display = 'block';
+    toggle.innerHTML = '▲';
+  } else {
+    content.style.display = 'none';
+    toggle.innerHTML = '▼';
+  }
+}
+
+function checkLessonQuiz(btn) {
+  const quizDiv = btn.parentElement;
+  const questions = quizDiv.querySelectorAll('.quiz-question');
+  let allCorrect = true;
+  
+  questions.forEach((q) => {
+    const selected = q.querySelector('input:checked');
+    const correct = q.dataset.correct;
+    if (!selected || selected.value !== correct) {
+      allCorrect = false;
+    }
+  });
+  
+  const feedback = quizDiv.querySelector('.quiz-feedback');
+  if (allCorrect) {
+    feedback.style.display = 'block';
+    quizXPearned += 50;
+    showToast('🎉 Quiz passed! +50 XP', 'success');
+    updateGlobalXP();
+    document.getElementById('quizXP').textContent = quizXPearned;
+  } else {
+    showToast('❌ Some answers are incorrect. Try again!', 'error');
+  }
+}
+
+function setPath(path,el){
+  document.querySelectorAll('#pathGrid .card').forEach(c=>{c.style.borderColor='';c.style.background='white';});
+  el.style.borderColor='var(--gold)';el.style.background='var(--gold-light)';
+  showToast(`✅ ${path} path highlighted`,'success');
+}
+
+// ========== GLOSSARY ==========
+const glossaryTerms = [
+  { term: "P/E Ratio", definition: "Price-to-Earnings ratio. Stock price divided by earnings per share.", category: "Valuation", example: "Price Rs. 1000, EPS Rs. 50 = P/E 20x" },
+  { term: "EPS", definition: "Earnings Per Share. Net profit divided by total shares.", category: "Fundamental", example: "Rs. 10cr profit, 1cr shares = EPS Rs. 10" },
+  { term: "Market Cap", definition: "Total market value: Price × Shares Outstanding.", category: "Valuation", example: "Rs. 950 × 5cr shares = Rs. 4750cr" },
+  { term: "Dividend Yield", definition: "Annual dividend divided by stock price.", category: "Income", example: "Rs. 80 dividend / Rs. 1000 price = 8%" },
+  { term: "Circuit Breaker", definition: "Trading halts at 10% move to prevent extreme volatility.", category: "Rules", example: "If stock drops 10%, trading pauses" }
+];
+
+function renderGlossary(filter=''){
+  const container = document.getElementById('glossaryResults');
+  const filtered = glossaryTerms.filter(t => 
+    t.term.toLowerCase().includes(filter.toLowerCase()) || 
+    t.definition.toLowerCase().includes(filter.toLowerCase())
+  );
+  container.innerHTML = filtered.map(term => `
+    <div class="card" style="margin-bottom:1rem;cursor:pointer;" onclick="this.classList.toggle('expanded')">
+      <h4 style="color:var(--gold);margin-bottom:0.3rem;">${term.term} <span class="badge badge-slate">${term.category}</span></h4>
+      <p>${term.definition}</p>
+      <div style="display:none;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--slate-border);" class="term-example">📌 Example: ${term.example}</div>
+    </div>
+  `).join('');
+  setTimeout(() => {
+    document.querySelectorAll('#glossaryResults .card').forEach(card => {
+      card.addEventListener('click', () => {
+        const example = card.querySelector('.term-example');
+        if(example) example.style.display = example.style.display === 'none' ? 'block' : 'none';
+      });
+    });
+  }, 100);
+}
+
+function searchGlossary(){
+  const search = document.getElementById('glossarySearch').value;
+  renderGlossary(search);
+}
+
+// ========== QUIZZES ==========
+const quizData = [
+  {q:'What does a high P/E ratio generally indicate?',opts:['Stock is undervalued','Investors expect high future growth','Company pays high dividends'],correct:1,xp:40},
+  {q:'What is NEPSE circuit breaker threshold?',opts:['5%','10%','15%'],correct:1,xp:40},
+  {q:'What does EPS stand for?',opts:['Equity Per Share','Earnings Per Share','Exchange Price'],correct:1,xp:30}
+];
+
+function renderQuizzes(){
+  const c=document.getElementById('quizContainer');
+  c.innerHTML=quizData.map((q,i)=>`
+    <div class="card">
+      <div style="display:flex;gap:.5rem;margin-bottom:.8rem"><span class="badge badge-gold">+${q.xp} XP</span></div>
+      <div style="font-weight:600;margin-bottom:1rem;">${q.q}</div>
+      <div>${q.opts.map((o,j)=>`<div class="quiz-opt" onclick="answerQuiz(${i},${j},${q.correct},${q.xp})">${o}</div>`).join('')}</div>
+      <div class="quiz-feedback qf-ok" id="qf-ok-${i}">✅ Correct! +${q.xp} XP</div>
+      <div class="quiz-feedback qf-bad" id="qf-bad-${i}">❌ Try again!</div>
+    </div>
+  `).join('');
+}
+
+function answerQuiz(qi,chosen,correct,xp){
+  const isOk=chosen===correct;
+  quizTotal++;
+  if(isOk){quizCorrect++;quizXPearned+=xp;showToast(`🎉 +${xp} XP`,'success');}
+  if(isOk) document.getElementById(`qf-ok-${qi}`).style.display='block';
+  else document.getElementById(`qf-bad-${qi}`).style.display='block';
+  document.getElementById('quizXP').textContent=quizXPearned;
+  document.getElementById('quizScore').textContent=`${quizCorrect}/${quizTotal}`;
+  document.getElementById('quizProg').style.width=`${(quizTotal/quizData.length)*100}%`;
+  updateGlobalXP();
+}
+
+// ========== FLASHCARDS ==========
+const flashCards = glossaryTerms.map(t => ({term: t.term, def: t.definition}));
+let fcIndex=0,fcLearned=0,fcSkipped=0;
+
+function renderFC(){
+  if(fcIndex>=flashCards.length) fcIndex=0;
+  document.getElementById('fcTerm').textContent=flashCards[fcIndex].term;
+  document.getElementById('fcDef').textContent=flashCards[fcIndex].def;
+  document.getElementById('fcCurrent').textContent=fcIndex+1;
+  document.getElementById('fcTotal').textContent=flashCards.length;
+  document.getElementById('fcLearned').textContent=fcLearned+' Learned';
+  document.getElementById('fcSkipped').textContent=fcSkipped+' Skipped';
+  document.getElementById('flashcard').classList.remove('flipped');
+  renderFCDots();
+}
+
+function renderFCDots(){
+  const d=document.getElementById('fcDots');
+  d.innerHTML=flashCards.map((_,i)=>`<div class="fc-dot ${i===fcIndex?'active':''}" onclick="goFC(${i})"></div>`).join('');
+}
+
+function flipCard(){document.getElementById('flashcard').classList.toggle('flipped');}
+function goFC(i){fcIndex=i;renderFC();}
+function fcAction(type){
+  if(type==='learn'){fcLearned++;quizXPearned+=20;showToast('✅ +20 XP','success');}
+  else fcSkipped++;
+  fcIndex=(fcIndex+1)%flashCards.length;
+  renderFC();
+  updateGlobalXP();
+}
+
+// ========== CHARTS ==========
+let chartData=[];
+let activeInds=new Set(['price']);
+
+function genChartData(){
+  let p=1200;
+  return Array.from({length:60},()=>{p+=((Math.random()-.47)*35);return Math.max(900,Math.round(p));});
+}
+
+function movingAvg(data,period){
+  return data.map((_,i)=>i<period-1?null:data.slice(i-period+1,i+1).reduce((a,b)=>a+b,0)/period);
+}
+
+function drawCharts(){
+  if(!chartData.length)chartData=genChartData();
+  const canvas=document.getElementById('mainChart');
+  if(!canvas)return;
+  const W=canvas.offsetWidth||600;const H=canvas.offsetHeight||200;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const min=Math.min(...chartData)-50,max=Math.max(...chartData)+50;
+  
+  if(activeInds.has('price')){
+    ctx.beginPath();ctx.strokeStyle='#D4AF37';ctx.lineWidth=2;
+    chartData.forEach((v,i)=>{let x=i/(chartData.length-1)*W,y=H-((v-min)/(max-min))*(H-20)-10;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+  }
+  if(activeInds.has('ma20')){let ma20=movingAvg(chartData,20);
+    ctx.beginPath();ctx.strokeStyle='#059669';ctx.lineWidth=1.5;
+    ma20.forEach((v,i)=>{if(v){let x=i/(chartData.length-1)*W,y=H-((v-min)/(max-min))*(H-20)-10;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}});ctx.stroke();}
+  if(activeInds.has('rsi')){
+    document.getElementById('rsiArea').style.display='block';
+    const rsiCanvas=document.getElementById('rsiChart');
+    if(rsiCanvas){
+      const rsiCtx=rsiCanvas.getContext('2d');
+      rsiCanvas.width=W;rsiCanvas.height=70;
+      rsiCtx.clearRect(0,0,W,70);
+      rsiCtx.beginPath();rsiCtx.strokeStyle='#D4AF37';
+      for(let i=0;i<50;i++){let x=i/49*W,y=35+Math.sin(i/5)*20;rsiCtx.lineTo(x,y);}
+      rsiCtx.stroke();
+    }
+  }else{document.getElementById('rsiArea').style.display='none';}
+}
+
+function toggleInd(btn){
+  const ind=btn.dataset.ind;
+  if(activeInds.has(ind)){activeInds.delete(ind);btn.classList.remove('active');btn.textContent=`○ ${ind.toUpperCase()}`;}
+  else{activeInds.add(ind);btn.classList.add('active');btn.textContent=`● ${ind.toUpperCase()}`;}
+  drawCharts();
+}
+
+// ========== SCENARIOS ==========
+const scenarios = [
+  {desc:'Government announces streamlined approval for hydropower projects.',options:['Buy Hydropower','Sell Hydropower','Wait'],correct:0,xp:45,implication:'Hydropower stocks likely to rally'},
+  {desc:'Major banks announce 25% dividend, beating expectations.',options:['Buy Banking','Sell Banking','Hold Cash'],correct:0,xp:45,implication:'Banking sector sentiment improves'}
+];
+
+function renderScenarios(){
+  const c=document.getElementById('scenarioContainer');
+  c.innerHTML=scenarios.map((s,i)=>`
+    <div class="card" style="margin-bottom:1rem">
+      <div style="padding:.8rem;background:var(--slate-bg);border-radius:8px;margin-bottom:.8rem;">${s.desc}</div>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;">${s.options.map((o,j)=>`<button class="btn btn-ghost btn-sm" onclick="answerScenario(${i},${j},${s.correct},${s.xp})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback qf-ok" id="scenario-ok-${i}" style="display:none">✅ +${s.xp} XP. ${s.implication}</div>
+      <div class="quiz-feedback qf-bad" id="scenario-bad-${i}" style="display:none">❌ ${s.implication}</div>
+    </div>
+  `).join('');
+}
+
+function answerScenario(idx,choice,correct,xp){
+  const isOk=choice===correct;
+  if(isOk){quizXPearned+=xp;showToast(`🎉 +${xp} XP`,'success');document.getElementById(`scenario-ok-${idx}`).style.display='block';}
+  else{document.getElementById(`scenario-bad-${idx}`).style.display='block';}
+  updateGlobalXP();
+}
+
+function calcRatios(){
+  let np=parseFloat(document.getElementById('ratNetProfit')?.value)||0;
+  let shares=parseFloat(document.getElementById('ratShares')?.value)||1;
+  let price=parseFloat(document.getElementById('ratPrice')?.value)||0;
+  let div=parseFloat(document.getElementById('ratDividend')?.value)||0;
+  let eps=np*100000/shares;
+  let pe=price/eps;
+  let dy=(div/price)*100;
+  document.getElementById('ratioResults').innerHTML=`
+    <div><span class="badge badge-slate">EPS</span><br><strong>₹${eps.toFixed(2)}</strong></div>
+    <div><span class="badge badge-slate">P/E</span><br><strong>${pe.toFixed(1)}x</strong></div>
+    <div><span class="badge badge-slate">Div Yield</span><br><strong>${dy.toFixed(1)}%</strong></div>
+  `;
+}
+
+// ========== PATTERN MATCHING ==========
+function checkPatterns(){
+  let allCorrect=true;
+  document.querySelectorAll('.drop-target').forEach(target=>{
+    const chip=target.querySelector('.pattern-chip');
+    const expected=target.dataset.correct;
+    if(chip && chip.dataset.pattern!==expected) allCorrect=false;
+    if(!chip && target.children.length>0) allCorrect=false;
+  });
+  if(allCorrect){document.getElementById('pattern-ok').style.display='block';quizXPearned+=100;showToast('🎉 +100 XP','success');updateGlobalXP();}
+  else{document.getElementById('pattern-bad').style.display='block';}
+}
+
+// Drag and drop setup
+document.querySelectorAll('.pattern-chip').forEach(chip=>{
+  chip.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',chip.dataset.pattern);});
+});
+document.querySelectorAll('.drop-target').forEach(target=>{
+  target.addEventListener('dragover',e=>e.preventDefault());
+  target.addEventListener('drop',e=>{
+    e.preventDefault();
+    const pattern=e.dataTransfer.getData('text/plain');
+    const correct=target.dataset.correct;
+    const chip=document.querySelector(`.pattern-chip[data-pattern="${pattern}"]`);
+    if(chip && pattern===correct){
+      target.innerHTML='';
+      target.appendChild(chip.cloneNode(true));
+      showToast('✓ Correct match!','success');
+    }else if(chip){showToast('❌ Wrong match!','error');}
+  });
+});
+
+// ========== INITIALIZE ==========
+window.onload=()=>{
+  renderRoadmap();
+  renderQuizzes();
+  renderFC();
+  renderGlossary();
+  renderScenarios();
+  drawCharts();
+  updateGlobalXP();
+};
+
+window.switchTab=switchTab;
+window.toggleLesson=toggleLesson;
+window.checkLessonQuiz=checkLessonQuiz;
+window.setPath=setPath;
+window.answerQuiz=answerQuiz;
+window.flipCard=flipCard;
+window.goFC=goFC;
+window.fcAction=fcAction;
+window.toggleInd=toggleInd;
+window.answerScenario=answerScenario;
+window.calcRatios=calcRatios;
+window.checkPatterns=checkPatterns;
+window.searchGlossary=searchGlossary;
+window.showToast=showToast;
+</script>
 {% endblock %}
