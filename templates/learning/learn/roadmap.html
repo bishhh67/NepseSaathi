@@ -1,0 +1,54 @@
+<div class="wrap" style="max-width: 1400px;">
+  <div class="sec-label">Learning Path</div>
+  <h2 class="sec-title">Your NEPSE Roadmap</h2>
+  
+
+  <div class="g4" style="margin-bottom:2rem;" id="pathGrid">
+    <div class="card" style="cursor:pointer;border-color:var(--gold);background:var(--gold-light)" onclick="setPath('beginner',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">🌱</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Complete Beginner</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Start from scratch</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="setPath('analyst',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">📊</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Stock Analyst</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Master fundamentals</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="setPath('trader',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">📈</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Active Trader</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Technical analysis focus</div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="setPath('advanced',this)">
+      <div style="font-size:1.6rem;margin-bottom:.5rem">🏆</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.3rem">Advanced Investor</div>
+      <div style="font-size:.75rem;color:var(--slate-lighter)">Deep market mastery</div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg, var(--gold-light) 0%, #FFF8E7 100%);border:1px solid var(--gold-mid);border-radius:20px;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem;">
+    <div style="display:flex;align-items:center;gap:1.2rem;">
+      <div style="background:var(--gold);width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;box-shadow:0 4px 12px rgba(212,175,55,0.3);">🎯</div>
+      <div>
+        <div style="font-weight:700;font-size:1.05rem;">Continue: Stock Market Foundations</div>
+        <div style="font-size:.8rem;color:var(--slate-lighter);margin-top:.2rem;">Level 1 · Lesson 1 of 7</div>
+        <div style="display:flex;align-items:center;gap:.8rem;margin-top:.6rem;">
+          <div class="prog" style="width:200px;"><div class="prog-fill prog-gold" style="width:30%"></div></div>
+          <span style="font-size:.72rem;color:var(--slate-lighter);">30% complete</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+      <div style="text-align:center;background:white;padding:0.5rem 1rem;border-radius:12px;">
+        <div style="font-size:0.7rem;color:var(--slate-lighter);">Total XP</div>
+        <div style="font-size:1.8rem;font-weight:800;color:var(--gold)" id="globalXP">0</div>
+      </div>
+      <button class="btn btn-primary" onclick="showToast('▶ Select a lesson to start learning!')" style="padding:0.8rem 2rem;">▶ Continue Learning</button>
+    </div>
+  </div>
+
+  <!-- ROADMAP WITH ARROW FLOW BETWEEN LEVELS -->
+  <div style="display:flex; flex-direction: column; gap: 2rem;" id="roadmapLevels">
+    <!-- Levels will be dynamically inserted here -->
+  </div>
+</div>
